@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "386692353743",
+    "firebase_url": "https://console.firebase.google.com/project/merkado-cfaa7/firestore/data/~2F",
+    "project_id": "merkado-cfaa7",
+    "storage_bucket": "merkado-cfaa7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386692353743:android:016a59a6abd4bdf204f1ba",
+        "android_client_info": {
+          "package_name": "com.example.merkado"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386692353743-g57lbsehlj8m5e6mq4o7c158hstid07o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_JVEXL6cLkdg8SHHeSv46MwfXygNluPY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386692353743-g57lbsehlj8m5e6mq4o7c158hstid07o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "386692353743-n8jumeavggqd1pt4ipeuh31tnb0ltc3u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.merkado"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
