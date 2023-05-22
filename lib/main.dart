@@ -12,6 +12,7 @@ import 'screens/authentication/user/login_screen.dart';
 import 'screens/authentication/user/register_screen.dart';
 
 import 'screens/farmer_screens/farmer_homescreen.dart';
+import './screens/farmer_screens/farmer_screen_controller.dart';
 
 import 'screens/organization_screens/organization_homescreen.dart';
 
@@ -68,7 +69,8 @@ class _MerkadoState extends State<Merkado> {
           HomePageScreen.routeName: (ctx) => const HomePageScreen(),
 
           //Farmer Side Routes
-          FarmerHomeScreen.routeName: (ctx) => const FarmerHomeScreen(),
+          FarmerScreenController.routeName: (ctx) =>
+              const FarmerScreenController(),
 
           //Organization Side Routes
           OrganizationHomeScreen.routeName: (ctx) =>

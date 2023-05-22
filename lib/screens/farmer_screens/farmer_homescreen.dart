@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 
 import '../authentication/user/login_screen.dart';
 
-class FarmerHomeScreen extends StatefulWidget {
+class HomePage extends StatefulWidget {
   static const routeName = '/farmer_home';
-  const FarmerHomeScreen({super.key});
+  const HomePage({super.key});
 
   @override
-  State<FarmerHomeScreen> createState() => _FarmerHomeScreenState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _FarmerHomeScreenState extends State<FarmerHomeScreen> {
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
