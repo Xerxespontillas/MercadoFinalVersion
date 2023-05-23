@@ -7,7 +7,7 @@ import 'validators.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
-  static const routeName = '/forgot_password';
+  static const routeName = '/forgot-password';
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }

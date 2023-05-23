@@ -2,9 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../authentication/user/login_screen.dart';
+import 'organization_location_screen.dart';
 
 class OrganizationHomeScreen extends StatefulWidget {
-  static const routeName = '/org_home';
+  static const routeName = '/org-home';
   const OrganizationHomeScreen({super.key});
 
   @override
@@ -12,6 +13,25 @@ class OrganizationHomeScreen extends StatefulWidget {
 }
 
 class _OrganizationHomeScreenState extends State<OrganizationHomeScreen> {
+  // Future<void> _orgLocation() async {
+  //   final organizationProvider =
+  //       Provider.of<OrganizationProvider>(context, listen: false);
+  //   final org = organizationProvider.currentOrganization;
+
+  //   if (org != null) {
+  //     await FirebaseFirestore.instance
+  //         .collection('merchantLocations')
+  //         .doc(org.orgName)
+  //         .set({
+  //       'address': org.address,
+  //       'merchant': 'Farmer\'s Organization',
+  //       'status': 'onUserMap',
+  //     });
+  //   }
+  //   // ignore: use_build_context_synchronously
+  //   Navigator.pushNamed(context, OrganizationLocationScreen.routeName);
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,6 +50,13 @@ class _OrganizationHomeScreenState extends State<OrganizationHomeScreen> {
             const Text(
               'Put your organization screen content here',
               style: TextStyle(fontSize: 18),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(
+                    context, OrganizationLocationScreen.routeName);
+              },
+              child: const Text('Organization\'s Location'),
             ),
             Container(
               margin: const EdgeInsets.only(left: 30),

@@ -139,12 +139,12 @@ class AuthProvider extends ChangeNotifier {
           } else if (collectionName == 'farmers') {
             // Navigate to the farmer screen
             // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, '/farmer_home',
+            Navigator.pushReplacementNamed(context, '/farmer-home',
                 arguments: userData);
           } else if (collectionName == 'organizations') {
             // Navigate to the organization screen
             // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, '/org_home',
+            Navigator.pushReplacementNamed(context, '/org-home',
                 arguments: userData);
           } else {
             // Handle the case when no role type is found

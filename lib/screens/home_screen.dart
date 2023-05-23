@@ -2,9 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'authentication/user/login_screen.dart';
+import 'user_location_screen.dart';
 
 class HomePageScreen extends StatefulWidget {
-  static const routeName = '/home_page';
+  static const routeName = '/home-page';
 
   const HomePageScreen({Key? key}) : super(key: key);
 
@@ -31,6 +32,12 @@ class _HomePageScreenState extends State<HomePageScreen> {
             const Text(
               'Put your customer screen content here',
               style: TextStyle(fontSize: 18),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, UserLocationScreen.routeName);
+              },
+              child: const Text('User\'s Location'),
             ),
             Container(
               margin: const EdgeInsets.only(left: 30),

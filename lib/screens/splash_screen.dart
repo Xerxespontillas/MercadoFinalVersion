@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
-  static const routeName = '/splash_screen';
+  static const routeName = '/splash-screen';
 
   @override
   // ignore: library_private_types_in_public_api
@@ -76,21 +76,21 @@ class _SplashScreenState extends State<SplashScreen>
 
       if (role == 'Customer') {
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacementNamed(context, '/home_page');
+        Navigator.pushReplacementNamed(context, '/home-page');
       } else if (role == 'Farmer') {
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacementNamed(context, '/farmer_home');
+        Navigator.pushReplacementNamed(context, '/farmer-home');
       } else if (role == 'Organization') {
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacementNamed(context, '/organization_home');
+        Navigator.pushReplacementNamed(context, '/org-home');
       } else {
         // Handle the case when no user type is found
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacementNamed(context, '/login_user');
+        Navigator.pushReplacementNamed(context, '/login-user');
       }
     } else {
       // No authenticated user found, navigate to the login screen
-      Navigator.pushReplacementNamed(context, '/login_user');
+      Navigator.pushReplacementNamed(context, '/login-user');
     }
   }
 
