@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../authentication/user/login_screen.dart';
 import '../../widgets/bottom_navigation_bar.dart';
 
 //screens
@@ -13,6 +11,7 @@ class FarmerScreenController extends StatefulWidget {
   const FarmerScreenController({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _FarmerScreenControllerState createState() => _FarmerScreenControllerState();
 }
 
@@ -27,15 +26,15 @@ class _FarmerScreenControllerState extends State<FarmerScreenController> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _children = [
-      HomePage(),
-      NewProductPost(),
-      Center(child: Text('Messaging Page')),
-      Center(child: Text('Settings Page')),
+    final List<Widget> children = [
+      const HomePage(),
+      const NewProductPost(),
+      const Center(child: Text('Messaging Page')),
+      const Center(child: Text('Settings Page')),
     ];
 
     return Scaffold(
-      body: _children[_currentIndex],
+      body: children[_currentIndex],
       bottomNavigationBar: CustomBottomNavBar(
         onTabTapped: onTabTapped,
         currentIndex: _currentIndex,
