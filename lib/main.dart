@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
-import 'package:merkado/screens/home_screen.dart';
-import 'package:merkado/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'providers/auth_provider.dart';
+import 'providers/customer_provider.dart';
+import 'providers/farmers_provider.dart';
+import 'providers/organization_provider.dart';
+
+import 'screens/home_screen.dart';
+import 'screens/splash_screen.dart';
+import 'screens/farmer_screens/farmer_location_screen.dart';
+import 'screens/user_location_screen.dart';
+import 'screens/organization_screens/organization_location_screen.dart';
+import 'screens/farmer_screens/farmer_screen_controller.dart';
+import 'screens/organization_screens/organization_homescreen.dart';
 import 'screens/authentication/user/forgot_password.dart';
 import 'screens/authentication/user/login_screen.dart';
 import 'screens/authentication/user/register_screen.dart';
-
-import 'screens/farmer_screens/farmer_homescreen.dart';
-import './screens/farmer_screens/farmer_screen_controller.dart';
-
-import 'screens/organization_screens/organization_homescreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,6 +56,15 @@ class _MerkadoState extends State<Merkado> {
         ChangeNotifierProvider(
           create: (context) => AuthProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => FarmersProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => OrganizationProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CustomersProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -67,14 +80,17 @@ class _MerkadoState extends State<Merkado> {
           LoginScreen.routeName: (ctx) => const LoginScreen(),
           ForgotPasswordScreen.routeName: (ctx) => const ForgotPasswordScreen(),
           HomePageScreen.routeName: (ctx) => const HomePageScreen(),
-
+          UserLocationScreen.routeName: (ctx) => const UserLocationScreen(),
           //Farmer Side Routes
           FarmerScreenController.routeName: (ctx) =>
               const FarmerScreenController(),
+          FarmerLocationScreen.routeName: (ctx) => const FarmerLocationScreen(),
 
           //Organization Side Routes
           OrganizationHomeScreen.routeName: (ctx) =>
               const OrganizationHomeScreen(),
+          OrganizationLocationScreen.routeName: (ctx) =>
+              const OrganizationLocationScreen(),
         },
       ),
     );

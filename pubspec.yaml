@@ -46,6 +46,10 @@ dependencies:
   file_picker: ^5.3.0
   get: ^4.6.5
   font_awesome_flutter: ^10.4.0
+  geolocator: ^9.0.2
+  google_maps_flutter: ^2.2.7
+  permission_handler: ^10.2.0
+  firebase_database: ^10.2.1
 
 dev_dependencies:
   flutter_test:

@@ -9,7 +9,7 @@ import '../farmer_screens/farmer_homescreen.dart';
 import '../farmer_screens/farmer_new_post.dart';
 
 class FarmerScreenController extends StatefulWidget {
-  static const routeName = '/farmer_home';
+  static const routeName = '/farmer-home';
   const FarmerScreenController({Key? key}) : super(key: key);
 
   @override

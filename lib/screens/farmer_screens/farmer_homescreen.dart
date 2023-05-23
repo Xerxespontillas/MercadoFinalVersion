@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:merkado/screens/farmer_screens/farmer_location_screen.dart';
 
 import '../authentication/user/login_screen.dart';
 
 class HomePage extends StatefulWidget {
-  static const routeName = '/farmer_home';
+  static const routeName = '/farmer-home';
   const HomePage({super.key});
 
   @override
@@ -12,6 +13,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // Future<void> _farmersLocation() async {
+  //   final farmersProvider =
+  //       Provider.of<FarmersProvider>(context, listen: false);
+  //   final farmers = farmersProvider.currentFarmers;
+
+  //   if (farmers != null) {
+  //     await FirebaseFirestore.instance
+  //         .collection('merchantLocations')
+  //         .doc(farmers.fullName)
+  //         .set({
+  //       'address': farmers.address,
+  //       'merchant': 'Farmer',
+  //       'status': 'onUserMap',
+  //     });
+  //   }
+  //   // ignore: use_build_context_synchronously
+  //   Navigator.pushNamed(context, FarmerLocationScreen.routeName);
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,6 +50,12 @@ class _HomePageState extends State<HomePage> {
             const Text(
               'Put your farmer screen content here',
               style: TextStyle(fontSize: 18),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, FarmerLocationScreen.routeName);
+              },
+              child: const Text('Farmer\'s Location'),
             ),
             Container(
               margin: const EdgeInsets.only(left: 30),
