@@ -27,7 +27,7 @@ Future<bool> checkConnectivityAndHandleLogin(BuildContext context) async {
                 ),
                 const SizedBox(height: 16.0),
                 const Text(
-                  "You don't have any internet connection.\nPlease connect to the internet and try again.",
+                  "You don't have any internet connection.Please connect to the internet and try again.",
                   style: TextStyle(
                     fontSize: 16.0,
                   ),
