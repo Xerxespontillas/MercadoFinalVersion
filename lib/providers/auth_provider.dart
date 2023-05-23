@@ -3,7 +3,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '/screens/home_screen.dart';
 
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -135,7 +134,7 @@ class AuthProvider extends ChangeNotifier {
           if (collectionName == 'customers') {
             // Navigate to the customer screen
             // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, HomePageScreen.routeName,
+            Navigator.pushReplacementNamed(context, '/home_page',
                 arguments: userData);
           } else if (collectionName == 'farmers') {
             // Navigate to the farmer screen
@@ -151,11 +150,51 @@ class AuthProvider extends ChangeNotifier {
             // Handle the case when no role type is found
             print('No valid role type found for the user.');
           }
+        } else {
+          // Handle the case when no user data is found
+          // ignore: use_build_context_synchronously
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Login Error'),
+                content: const Text('Incorrect email or password.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
         }
       }
     } catch (e) {
       // Handle login errors
       print('Login failed: $e');
+      // Show dialog for login failure
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Login Error'),
+            content: const Text(
+              'Invalid email or password.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 }

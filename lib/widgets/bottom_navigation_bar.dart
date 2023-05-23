@@ -4,7 +4,8 @@ class CustomBottomNavBar extends StatelessWidget {
   final Function(int) onTabTapped;
   final int currentIndex;
 
-  CustomBottomNavBar({
+  const CustomBottomNavBar({
+    super.key,
     required this.onTabTapped,
     required this.currentIndex,
   });
@@ -14,10 +15,10 @@ class CustomBottomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       onTap: onTabTapped,
       currentIndex: currentIndex,
-      backgroundColor: Color(0xFF33FF00),
+      backgroundColor: const Color(0xFF33FF00),
       selectedItemColor: Colors.black,
       unselectedItemColor: Colors.grey[600],
-      items: [
+      items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home_outlined),
           label: 'Home',

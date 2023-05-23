@@ -182,12 +182,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                   await checkConnectivityAndHandleLogin(
                                       context);
                               if (isConnected) {
-                                // ignore: use_build_context_synchronously
-                                authProvider.login(
-                                  emailController: _emailController,
-                                  passwordController: _passwordController,
-                                  context: context,
-                                );
+                                if (_formKey.currentState!.validate()) {
+                                  // Form is valid, proceed with login
+                                  // ignore: use_build_context_synchronously
+                                  authProvider.login(
+                                    emailController: _emailController,
+                                    passwordController: _passwordController,
+                                    context: context,
+                                  );
+                                }
                               }
                             },
                           ),

@@ -403,16 +403,50 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          await authProvider.register(
-                            formKey: formKey,
-                            emailController: emailController,
-                            passwordController: passwordController,
-                            fullNameController: fullNameController,
-                            addressController: addressController,
-                            phoneNumberController: phoneNumberController,
-                            roleController: roleController,
-                            orgController: orgController,
-                          );
+                          if (formKey.currentState?.validate() ?? false) {
+                            await authProvider.register(
+                              formKey: formKey,
+                              emailController: emailController,
+                              passwordController: passwordController,
+                              fullNameController: fullNameController,
+                              addressController: addressController,
+                              phoneNumberController: phoneNumberController,
+                              roleController: roleController,
+                              orgController: orgController,
+                            );
+
+                            if (authProvider.isAuthenticated) {
+                              // Determine the user's role type
+                              String role = roleController.text;
+                              String snackbarMessage = '';
+
+                              if (role == 'Customer') {
+                                snackbarMessage =
+                                    'Successfully registered as a Customer!';
+                              } else if (role == 'Farmer') {
+                                snackbarMessage =
+                                    'Successfully registered as a Farmer!';
+                              } else if (role == 'Organization') {
+                                snackbarMessage =
+                                    'Successfully registered as an Organization!';
+                              }
+
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(snackbarMessage)),
+                              );
+
+                              // ignore: use_build_context_synchronously
+                              Navigator.pushReplacementNamed(
+                                  context, '/login_user');
+                            } else {
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Registration failed.')),
+                              );
+                            }
+                          }
                         },
                       ),
                     ),
@@ -454,11 +488,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const RegisterScreen()));
+                          Navigator.pushReplacementNamed(
+                              context, '/login_user');
                         },
                       ),
                     ),
