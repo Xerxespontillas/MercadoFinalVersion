@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 
 import 'package:merkado/screens/authentication/user/validators.dart';
@@ -48,20 +50,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  Widget myDropdownButton(controller) {
+  Widget myDropdownButton(TextEditingController controller) {
     return DropdownButtonFormField<int>(
-      value: _value,
+      value: 0,
       onChanged: (value) {
         setState(() {
           _value = value!;
-          if (value == 1) {
-            roleController.text = 'Customer';
+          if (value == 0) {
+            controller.text = 'Select a User Type';
+            _farmerOrgVisible = false;
+          } else if (value == 1) {
+            controller.text = 'Customer';
             _farmerOrgVisible = false;
           } else if (value == 2) {
-            roleController.text = 'Farmer';
+            controller.text = 'Farmer';
             _farmerOrgVisible = false;
           } else if (value == 3) {
-            roleController.text = 'Organization';
+            controller.text = 'Organization';
             _farmerOrgVisible = true;
           }
         });
@@ -80,6 +85,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
       items: const [
+        DropdownMenuItem<int>(
+          value: 0,
+          child: Text(
+            'Select a User Type',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
         DropdownMenuItem<int>(
           value: 1,
           child: Text(
@@ -438,7 +450,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                               // ignore: use_build_context_synchronously
                               Navigator.pushReplacementNamed(
-                                  context, '/login_user');
+                                  context, '/login-user');
                             } else {
                               // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -489,7 +501,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         onPressed: () {
                           Navigator.pushReplacementNamed(
-                              context, '/login_user');
+                              context, '/login-user');
                         },
                       ),
                     ),
