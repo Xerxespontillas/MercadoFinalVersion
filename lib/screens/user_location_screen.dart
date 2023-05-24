@@ -1,6 +1,7 @@
 //new
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,7 +22,9 @@ class UserLocationScreen extends StatefulWidget {
 class UserLocationScreenState extends State<UserLocationScreen> {
   late GoogleMapController _mapController;
   final Set<Marker> _markers = {};
-  LatLng _userLocation = const LatLng(10.298333, 123.893366);
+  final Set<Marker> _orgMarkers = {};
+  final Set<Marker> _farmerMarkers = {};
+  LatLng _userLocation = const LatLng(10.293992, 123.897498);
   StreamSubscription<Position>? _positionStreamSubscription;
 
   @override
@@ -29,6 +32,8 @@ class UserLocationScreenState extends State<UserLocationScreen> {
     super.initState();
     _requestLocationPermission();
     _subscribeToLocationUpdates();
+    _subscribeToOrgLocationUpdates();
+    _subscribeToFarmersLocationUpdates();
   }
 
   Future<void> _requestLocationPermission() async {
@@ -40,6 +45,108 @@ class UserLocationScreenState extends State<UserLocationScreen> {
       const ImageConfiguration(devicePixelRatio: 2.5),
       'assets/images/user_marker.png',
     );
+  }
+
+  Future<BitmapDescriptor> organizationMarker() async {
+    return await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(devicePixelRatio: 2.5),
+      'assets/images/farmers_org_marker.png',
+    );
+  }
+
+  Future<BitmapDescriptor> farmersMarker() async {
+    return await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(devicePixelRatio: 2.5),
+      'assets/images/farmers_marker.png',
+    );
+  }
+
+  void _subscribeToFarmersLocationUpdates() {
+    final FirebaseFirestore database = FirebaseFirestore.instance;
+    final farmerLocationRef = database.collection('farmersLocations');
+    farmerLocationRef.snapshots().listen((QuerySnapshot snapshot) async {
+      // Clear all previous farmeranization markers
+      _farmerMarkers.clear();
+
+      // Loop through each document in the snapshot
+      for (DocumentSnapshot doc in snapshot.docs) {
+        // Get farmeranization data from document
+        Map<String, dynamic> farmerData = doc.data() as Map<String, dynamic>;
+
+        // Extract latitude and longitude values from the 'location' field
+        double latitude = farmerData['latitude'];
+        double longitude = farmerData['longitude'];
+
+        // Create LatLng object from latitude and longitude
+        LatLng farmerLocation = LatLng(latitude, longitude);
+
+        // Fetch the farmeranization icon
+        final farmerIcon = await farmersMarker();
+
+        // Add a new Marker to the _orgMarkers Set for each organization
+        _orgMarkers.add(
+          Marker(
+            markerId: MarkerId(doc.id), // Use the document ID as the marker ID
+            position: farmerLocation,
+            icon: farmerIcon,
+            infoWindow: InfoWindow(
+              title: doc.id, // Use the document ID as the organization name
+            ),
+          ),
+        );
+      }
+
+      if (mounted) {
+        // Update the state to reflect the new markers
+        setState(() {
+          _markers.addAll(_farmerMarkers);
+        });
+      }
+    });
+  }
+
+  void _subscribeToOrgLocationUpdates() {
+    final FirebaseFirestore database = FirebaseFirestore.instance;
+    final orgLocationRef = database.collection('orgLocations');
+    orgLocationRef.snapshots().listen((QuerySnapshot snapshot) async {
+      // Clear all previous organization markers
+      _orgMarkers.clear();
+
+      // Loop through each document in the snapshot
+      for (DocumentSnapshot doc in snapshot.docs) {
+        // Get organization data from document
+        Map<String, dynamic> orgData = doc.data() as Map<String, dynamic>;
+
+        // Extract latitude and longitude values from the 'location' field
+        double latitude = orgData['latitude'];
+        double longitude = orgData['longitude'];
+
+        // Create LatLng object from latitude and longitude
+        LatLng orgLocation = LatLng(latitude, longitude);
+
+        // Fetch the organization icon
+        final orgIcon = await organizationMarker();
+
+        // Add a new Marker to the _orgMarkers Set for each organization
+        _orgMarkers.add(
+          Marker(
+            markerId: MarkerId(doc.id), // Use the document ID as the marker ID
+            position: orgLocation,
+            icon: orgIcon,
+            infoWindow: InfoWindow(
+              title: doc.id, // Use the document ID as the organization name
+            ),
+          ),
+        );
+      }
+
+      if (mounted) {
+        // Update the state to reflect the new markers
+        setState(() {
+          _markers.addAll(_orgMarkers);
+        });
+      }
+    });
   }
 
   void _subscribeToLocationUpdates() {
@@ -67,18 +174,20 @@ class UserLocationScreenState extends State<UserLocationScreen> {
           if (mounted) {
             setState(() {
               _userLocation = LatLng(position.latitude, position.longitude);
-              _markers.clear(); // Clear previous markers
-              _markers.add(
-                Marker(
-                  markerId: MarkerId(customer?.name ?? 'user'),
-                  position: _userLocation,
-                  icon: userIcon, // Use custom bus marker icon
-                  infoWindow: InfoWindow(
-                    title: customer?.name ?? 'User',
-                  ),
-                  consumeTapEvents: false,
+              Marker userMarker = Marker(
+                markerId: MarkerId(customer?.name ?? 'user'),
+                position: _userLocation,
+                icon: userIcon, // Use custom bus marker icon
+                infoWindow: InfoWindow(
+                  title: customer?.name ?? 'You',
                 ),
+                consumeTapEvents: false,
               );
+              _markers
+                ..clear()
+                ..add(userMarker)
+                ..addAll(_orgMarkers)
+                ..addAll(_farmerMarkers);
               _mapController.animateCamera(
                 CameraUpdate.newCameraPosition(
                   CameraPosition(target: _userLocation, zoom: 20),

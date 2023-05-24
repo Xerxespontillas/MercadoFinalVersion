@@ -1,5 +1,6 @@
 //new
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
@@ -26,7 +27,7 @@ class FarmerLocationScreen extends StatefulWidget {
 class FarmerLocationScreenState extends State<FarmerLocationScreen> {
   late GoogleMapController _mapController;
   final Set<Marker> _markers = {};
-  LatLng _farmersLocation = const LatLng(10.298333, 123.893366);
+  LatLng _farmersLocation = const LatLng(10.293992, 123.897498);
   StreamSubscription<Position>? _positionStreamSubscription;
 
   @override
@@ -80,7 +81,7 @@ class FarmerLocationScreenState extends State<FarmerLocationScreen> {
                   icon: farmersIcon, // Use custom bus marker icon
                   infoWindow: InfoWindow(
                     title: farmers?.fullName ?? 'Farmer',
-                    snippet: farmers?.address ?? 'Farmers Address',
+                    snippet: farmers?.address ?? 'Farmer\'s Address',
                   ),
                 ),
               );
@@ -89,6 +90,15 @@ class FarmerLocationScreenState extends State<FarmerLocationScreen> {
                   CameraPosition(target: _farmersLocation, zoom: 20),
                 ),
               );
+              if (farmers != null) {
+                FirebaseFirestore.instance
+                    .collection('farmersLocations')
+                    .doc(farmers.fullName)
+                    .set({
+                  'latitude': _farmersLocation.latitude,
+                  'longitude': _farmersLocation.longitude,
+                });
+              }
             });
           }
         });
