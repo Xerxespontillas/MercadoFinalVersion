@@ -1,6 +1,6 @@
 //new
 import 'dart:async';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
@@ -29,9 +29,8 @@ class OrganizationLocationScreenState
     extends State<OrganizationLocationScreen> {
   late GoogleMapController _mapController;
   final Set<Marker> _markers = {};
-  LatLng _organizationLocation = const LatLng(10.298333, 123.893366);
+  LatLng _organizationLocation = const LatLng(10.293992, 123.897498);
   StreamSubscription<Position>? _positionStreamSubscription;
-  final DatabaseReference _database = FirebaseDatabase.instance.ref();
 
   @override
   void initState() {
@@ -67,11 +66,12 @@ class OrganizationLocationScreenState
 
         final organization =
             await organizationProvider.getCurrentorganization();
+
         _positionStreamSubscription = Geolocator.getPositionStream(
             locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.best,
           distanceFilter: 5,
-          timeLimit: Duration(seconds: 1),
+          timeLimit: Duration(seconds: 5),
         )).listen((Position position) async {
           final organizationIcon = await organizationMarker();
           if (mounted) {
@@ -95,24 +95,16 @@ class OrganizationLocationScreenState
                   CameraPosition(target: _organizationLocation, zoom: 20),
                 ),
               );
-            });
-
-            // Save the organization's location to Firebase
-            if (organization != null) {
-              _database
-                  .child('merchantLocations')
-                  .child(organization.orgName)
-                  .set({
-                'location': {
+              if (organization != null) {
+                FirebaseFirestore.instance
+                    .collection('orgLocations')
+                    .doc(organization.orgName)
+                    .set({
                   'latitude': _organizationLocation.latitude,
                   'longitude': _organizationLocation.longitude,
-                },
-              }).catchError((error) {
-                // ignore: avoid_print
-                print(
-                    'Error updating organization location in Firebase: $error');
-              });
-            }
+                });
+              }
+            });
           }
         });
       });
