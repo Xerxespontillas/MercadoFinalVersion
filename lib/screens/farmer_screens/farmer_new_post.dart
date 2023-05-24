@@ -6,7 +6,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../../providers/auth_provider.dart';
 
 class NewProductPost extends StatefulWidget {
   const NewProductPost({Key? key}) : super(key: key);
@@ -72,11 +71,11 @@ class _NewProductPostState extends State<NewProductPost> {
   Future<void> addProductToFarmerProducts(
       String productId,
       Map<String, dynamic> productData,
-      FirebaseAuth _auth,
-      FirebaseFirestore _firestore) async {
-    User? user = _auth.currentUser;
+      FirebaseAuth auth,
+      FirebaseFirestore firestore) async {
+    User? user = auth.currentUser;
     if (user != null) {
-      String displayName = await getSellerName(_auth, _firestore);
+      String displayName = await getSellerName(auth, _firestore);
       await _firestore
           .collection('FarmerProducts')
           .doc(user.uid)
@@ -87,7 +86,7 @@ class _NewProductPostState extends State<NewProductPost> {
   }
 
   Future<String> getSellerName(
-      FirebaseAuth _auth, FirebaseFirestore _firestore) async {
+      FirebaseAuth auth, FirebaseFirestore firestore) async {
     User? user = _auth.currentUser;
     if (user != null) {
       DocumentSnapshot userDoc =
