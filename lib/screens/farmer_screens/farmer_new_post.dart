@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import '../../providers/auth_provider.dart';
 
 class NewProductPost extends StatefulWidget {
   const NewProductPost({Key? key}) : super(key: key);
@@ -22,6 +24,7 @@ class _NewProductPostState extends State<NewProductPost> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -39,6 +42,7 @@ class _NewProductPostState extends State<NewProductPost> {
       "productDetails": productDetails,
       "price": price,
       "quantity": quantity,
+      "sellerName": await getSellerName(_auth, _firestore),
     };
 
     if (_image != null) {
@@ -50,10 +54,48 @@ class _NewProductPostState extends State<NewProductPost> {
       data['image'] = downloadUrl;
     }
 
-    // Use the Firestore instance to add the data
-    await _firestore.collection('AllProducts').add(data);
+    // Generate a new document reference in 'products' collection to get a unique ID
+    DocumentReference newDocRef = _firestore.collection('AllProducts').doc();
+
+    // Use the unique ID from the new document reference as the productId
+    String productId = newDocRef.id;
+
+    // Add the product data to the 'AllProducts' collection with the productId
+    await _firestore.collection('AllProducts').doc(productId).set(data);
+
+    // Add the product data to the 'FarmerProducts' collection
+    await addProductToFarmerProducts(productId, data, _auth, _firestore);
 
     setState(() {});
+  }
+
+  Future<void> addProductToFarmerProducts(
+      String productId,
+      Map<String, dynamic> productData,
+      FirebaseAuth _auth,
+      FirebaseFirestore _firestore) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      String displayName = await getSellerName(_auth, _firestore);
+      await _firestore
+          .collection('FarmerProducts')
+          .doc(user.uid)
+          .collection(displayName)
+          .doc(productId)
+          .set(productData);
+    }
+  }
+
+  Future<String> getSellerName(
+      FirebaseAuth _auth, FirebaseFirestore _firestore) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('farmers').doc(user.uid).get();
+      return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
+    } else {
+      return '';
+    }
   }
 
   void increaseQuantity() {
