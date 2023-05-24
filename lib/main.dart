@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
+import 'package:merkado/providers/products_provider.dart';
+import 'package:merkado/screens/farmer_screens/farmer_new_post.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -12,6 +14,8 @@ import 'providers/organization_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/farmer_screens/farmer_location_screen.dart';
+import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_order.dart';
+import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
 import 'screens/user_location_screen.dart';
 import 'screens/organization_screens/organization_location_screen.dart';
 import 'screens/farmer_screens/farmer_screen_controller.dart';
@@ -65,6 +69,9 @@ class _MerkadoState extends State<Merkado> {
         ChangeNotifierProvider(
           create: (context) => CustomersProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => Products(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -85,6 +92,9 @@ class _MerkadoState extends State<Merkado> {
           FarmerScreenController.routeName: (ctx) =>
               const FarmerScreenController(),
           FarmerLocationScreen.routeName: (ctx) => const FarmerLocationScreen(),
+          FarmerMyOrder.routeName: (ctx) => const FarmerMyOrder(),
+          FarmerMyProducts.routeName: (ctx) => const FarmerMyProducts(),
+          FarmerNewProductPost.routeName: (ctx) => const FarmerNewProductPost(),
 
           //Organization Side Routes
           OrganizationHomeScreen.routeName: (ctx) =>

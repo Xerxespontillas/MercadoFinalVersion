@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:merkado/screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
 
 import '../../widgets/bottom_navigation_bar.dart';
 
 //screens
 import '../farmer_screens/farmer_homescreen.dart';
-import '../farmer_screens/farmer_new_post.dart';
 
 class FarmerScreenController extends StatefulWidget {
   static const routeName = '/farmer-home';
@@ -28,7 +28,7 @@ class _FarmerScreenControllerState extends State<FarmerScreenController> {
   Widget build(BuildContext context) {
     final List<Widget> children = [
       const HomePage(),
-      const NewProductPost(),
+      const FarmerMyProducts(),
       const Center(child: Text('Messaging Page')),
       const Center(child: Text('Settings Page')),
     ];

@@ -6,16 +6,23 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import '../../widgets/farmer_app_drawer.dart';
+import '../../widgets/bottom_navigation_bar.dart';
+import 'farmer_drawer_screens/farmer_my_products.dart';
+import 'farmer_homescreen.dart';
+import 'farmer_screen_controller.dart';
 
-class NewProductPost extends StatefulWidget {
-  const NewProductPost({Key? key}) : super(key: key);
+class FarmerNewProductPost extends StatefulWidget {
+  static const routeName = '/farmer-new-post';
+  const FarmerNewProductPost({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _NewProductPostState createState() => _NewProductPostState();
+  _FarmerNewProductPostState createState() => _FarmerNewProductPostState();
 }
 
-class _NewProductPostState extends State<NewProductPost> {
+class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
+  int _currentIndex = 0;
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   int quantity = 0;
@@ -27,6 +34,12 @@ class _NewProductPostState extends State<NewProductPost> {
 
   // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   Future<void> _addProductToDatabaseWithImage() async {
     setState(() {});
@@ -66,6 +79,9 @@ class _NewProductPostState extends State<NewProductPost> {
     await addProductToFarmerProducts(productId, data, _auth, _firestore);
 
     setState(() {});
+
+    Navigator.of(context)
+        .pushReplacementNamed(FarmerScreenController.routeName);
   }
 
   Future<void> addProductToFarmerProducts(
