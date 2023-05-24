@@ -134,7 +134,7 @@ class AuthProvider extends ChangeNotifier {
           if (collectionName == 'customers') {
             // Navigate to the customer screen
             // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, '/home_page',
+            Navigator.pushReplacementNamed(context, '/home-page',
                 arguments: userData);
           } else if (collectionName == 'farmers') {
             // Navigate to the farmer screen
