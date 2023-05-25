@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merkado/screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
-
+import 'package:merkado/screens/farmer_screens/farmer_chat_list.dart';
 import '../../widgets/bottom_navigation_bar.dart';
 
 //screens
@@ -29,7 +29,7 @@ class _FarmerScreenControllerState extends State<FarmerScreenController> {
     final List<Widget> children = [
       const HomePage(),
       const FarmerMyProducts(),
-      const Center(child: Text('Messaging Page')),
+      const FarmerListScreen(),
       const Center(child: Text('Settings Page')),
     ];
 
