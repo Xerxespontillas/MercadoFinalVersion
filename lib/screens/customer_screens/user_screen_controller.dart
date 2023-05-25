@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/user_bottom_navigation_bar.dart';
+import '../../widgets/user_bottom_navigation_bar.dart';
 
 //screens
-import '/screens/user_chat_list.dart';
+import 'user_chat_list.dart';
 import 'home_screen.dart';
 
 class UserScreenController extends StatefulWidget {
