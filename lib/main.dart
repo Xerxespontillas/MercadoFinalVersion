@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 
 import 'package:merkado/providers/products_provider.dart';
 import 'package:merkado/screens/farmer_screens/farmer_new_post.dart';
-import 'package:merkado/screens/marketplace_screen.dart';
+import 'package:merkado/screens/customer_screens/marketplace_screen.dart';
 import '/screens/farmer_screens/farmer_chat_screen.dart';
-import '/screens/user_screen_controller.dart';
+import 'screens/customer_screens/user_screen_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -15,13 +15,13 @@ import 'providers/customer_provider.dart';
 import 'providers/farmers_provider.dart';
 import 'providers/organization_provider.dart';
 
-import 'screens/splash_screen.dart';
+import 'screens/customer_screens/splash_screen.dart';
 import 'screens/farmer_screens/farmer_location_screen.dart';
 import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_order.dart';
 import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
 
-import 'screens/user_chat_screen.dart';
-import 'screens/user_location_screen.dart';
+import 'screens/customer_screens/user_chat_screen.dart';
+import 'screens/customer_screens/user_location_screen.dart';
 import 'screens/organization_screens/organization_location_screen.dart';
 import 'screens/farmer_screens/farmer_screen_controller.dart';
 import 'screens/organization_screens/organization_homescreen.dart';

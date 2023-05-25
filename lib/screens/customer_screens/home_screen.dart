@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'marketplace_screen.dart';
-import 'authentication/user/login_screen.dart';
+import '../authentication/user/login_screen.dart';
 import 'user_location_screen.dart';
 
 class HomePageScreen extends StatefulWidget {
