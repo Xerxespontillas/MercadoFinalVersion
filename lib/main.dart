@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:merkado/providers/products_provider.dart';
 import 'package:merkado/screens/farmer_screens/farmer_new_post.dart';
+import 'package:merkado/screens/marketplace_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -88,6 +89,8 @@ class _MerkadoState extends State<Merkado> {
           ForgotPasswordScreen.routeName: (ctx) => const ForgotPasswordScreen(),
           HomePageScreen.routeName: (ctx) => const HomePageScreen(),
           UserLocationScreen.routeName: (ctx) => const UserLocationScreen(),
+          MarketplaceScreen.routeName: (ctx) => const MarketplaceScreen(),
+
           //Farmer Side Routes
           FarmerScreenController.routeName: (ctx) =>
               const FarmerScreenController(),

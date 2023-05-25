@@ -9,10 +9,10 @@ class FarmerMyProducts extends StatefulWidget {
   const FarmerMyProducts({Key? key}) : super(key: key);
 
   @override
-  _FarmerMyProductsState createState() => _FarmerMyProductsState();
+  FarmerMyProductsState createState() => FarmerMyProductsState();
 }
 
-class _FarmerMyProductsState extends State<FarmerMyProducts> {
+class FarmerMyProductsState extends State<FarmerMyProducts> {
   var _isInit = true;
   var _isLoading = false;
 
@@ -38,17 +38,17 @@ class _FarmerMyProductsState extends State<FarmerMyProducts> {
     final products = productsData.items;
 
     return Scaffold(
-      endDrawer: FarmerAppDrawer(),
+      endDrawer: const FarmerAppDrawer(),
       appBar: AppBar(
-        title: Text("My Products"),
+        title: const Text("My Products"),
         centerTitle: true,
       ),
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : (products.isEmpty
-              ? Center(child: Text("No Products Added, Add A Product"))
+              ? const Center(child: Text("No Products Added, Add A Product"))
               : ListView.builder(
                   itemCount: products.length,
                   itemBuilder: (ctx, i) => Column(
@@ -57,9 +57,9 @@ class _FarmerMyProductsState extends State<FarmerMyProducts> {
                         leading: Image.network(products[i].image),
                         title: Text(products[i].productName),
                         subtitle: Text(products[i].productDetails),
-                        trailing: Text("\$${products[i].price.toString()}"),
+                        trailing: Text("Php.${products[i].price.toString()}"),
                       ),
-                      Divider(),
+                      const Divider(),
                     ],
                   ),
                 )),

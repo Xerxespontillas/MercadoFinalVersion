@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'marketplace_screen.dart';
 import 'authentication/user/login_screen.dart';
 import 'user_location_screen.dart';
 
@@ -38,6 +39,12 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 Navigator.pushNamed(context, UserLocationScreen.routeName);
               },
               child: const Text('User\'s Location'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, MarketplaceScreen.routeName);
+              },
+              child: const Text('Market Place'),
             ),
             Container(
               margin: const EdgeInsets.only(left: 30),
