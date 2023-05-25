@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
+
 import 'package:merkado/providers/products_provider.dart';
 import 'package:merkado/screens/farmer_screens/farmer_new_post.dart';
 import 'package:merkado/screens/marketplace_screen.dart';
+import '/screens/farmer_screens/farmer_chat_screen.dart';
+import '/screens/user_screen_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -12,11 +15,12 @@ import 'providers/customer_provider.dart';
 import 'providers/farmers_provider.dart';
 import 'providers/organization_provider.dart';
 
-import 'screens/home_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/farmer_screens/farmer_location_screen.dart';
 import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_order.dart';
 import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
+
+import 'screens/user_chat_screen.dart';
 import 'screens/user_location_screen.dart';
 import 'screens/organization_screens/organization_location_screen.dart';
 import 'screens/farmer_screens/farmer_screen_controller.dart';
@@ -87,9 +91,19 @@ class _MerkadoState extends State<Merkado> {
           RegisterScreen.routeName: (ctx) => const RegisterScreen(),
           LoginScreen.routeName: (ctx) => const LoginScreen(),
           ForgotPasswordScreen.routeName: (ctx) => const ForgotPasswordScreen(),
-          HomePageScreen.routeName: (ctx) => const HomePageScreen(),
           UserLocationScreen.routeName: (ctx) => const UserLocationScreen(),
           MarketplaceScreen.routeName: (ctx) => const MarketplaceScreen(),
+          UserScreenController.routeName: (ctx) => const UserScreenController(),
+          UserChatScreen.routeName: (ctx) {
+            final args =
+                ModalRoute.of(ctx)!.settings.arguments as UserChatArguments;
+            return UserChatScreen(
+              userId: FirebaseAuth.instance.currentUser!.uid,
+              userType: UserType.customers,
+              displayName: args.displayName,
+              farmerId: args.farmerId,
+            );
+          },
 
           //Farmer Side Routes
           FarmerScreenController.routeName: (ctx) =>
@@ -98,6 +112,16 @@ class _MerkadoState extends State<Merkado> {
           FarmerMyOrder.routeName: (ctx) => const FarmerMyOrder(),
           FarmerMyProducts.routeName: (ctx) => const FarmerMyProducts(),
           FarmerNewProductPost.routeName: (ctx) => const FarmerNewProductPost(),
+          FarmerChatScreen.routeName: (ctx) {
+            final args =
+                ModalRoute.of(ctx)!.settings.arguments as FarmerChatArguments;
+            return FarmerChatScreen(
+              userId: FirebaseAuth.instance.currentUser!.uid,
+              userType: FarmerType.customers,
+              displayName: args.displayName,
+              customerId: args.customerId,
+            );
+          },
 
           //Organization Side Routes
           OrganizationHomeScreen.routeName: (ctx) =>
