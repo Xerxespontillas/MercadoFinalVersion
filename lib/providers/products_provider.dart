@@ -56,6 +56,7 @@ class Products with ChangeNotifier {
           image: doc['image'],
           price: doc['price'],
           quantity: doc['quantity'],
+          maxQuantity: doc['quantity'],
           sellerName: doc['sellerName'],
         ));
       });

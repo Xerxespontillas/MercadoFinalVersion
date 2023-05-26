@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:merkado/providers/cart_provider.dart';
 
 import 'package:merkado/providers/products_provider.dart';
+import 'package:merkado/screens/customer_screens/cart_screen.dart';
 import 'package:merkado/screens/farmer_screens/farmer_new_post.dart';
 import 'package:merkado/screens/customer_screens/marketplace_screen.dart';
 import '/screens/farmer_screens/farmer_chat_screen.dart';
@@ -66,6 +68,9 @@ class _MerkadoState extends State<Merkado> {
           create: (context) => AuthProvider(),
         ),
         ChangeNotifierProvider(
+          create: (context) => CartProvider(),
+        ),
+        ChangeNotifierProvider(
           create: (context) => FarmersProvider(),
         ),
         ChangeNotifierProvider(
@@ -94,6 +99,7 @@ class _MerkadoState extends State<Merkado> {
           UserLocationScreen.routeName: (ctx) => const UserLocationScreen(),
           MarketplaceScreen.routeName: (ctx) => const MarketplaceScreen(),
           UserScreenController.routeName: (ctx) => const UserScreenController(),
+          CartScreen.routeName: (ctx) => CartScreen(),
           UserChatScreen.routeName: (ctx) {
             final args =
                 ModalRoute.of(ctx)!.settings.arguments as UserChatArguments;
