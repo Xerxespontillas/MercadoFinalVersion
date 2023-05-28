@@ -3,7 +3,7 @@ class Product {
   final String productName;
   final String productDetails;
   final double price;
-  final int quantity;
+  late final int quantity;
   final int maxQuantity;
 
   final String sellerName;

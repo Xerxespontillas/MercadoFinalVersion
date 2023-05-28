@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:merkado/providers/cart_provider.dart';
+import 'package:merkado/screens/farmer_screens/farmer_my_edit_products.dart';
 
 import 'package:merkado/screens/organization_screens/organization_screen_controller.dart';
 import 'package:merkado/screens/organization_screens/organization_settings_screen.dart';
@@ -139,6 +140,7 @@ class _MerkadoState extends State<Merkado> {
           FarmerMyProducts.routeName: (ctx) => const FarmerMyProducts(),
           FarmerNewProductPost.routeName: (ctx) => const FarmerNewProductPost(),
           FarmerSettingsScreen.routeName: (ctx) => const FarmerSettingsScreen(),
+          FarmerMyEditProducts.routeName: (ctx) => FarmerMyEditProducts(),
           FarmerChatScreen.routeName: (ctx) {
             final args =
                 ModalRoute.of(ctx)!.settings.arguments as FarmerChatArguments;
