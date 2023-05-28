@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/cart_provider.dart';
@@ -23,55 +24,90 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Marketplace'),
-        actions: [
-          Consumer<CartProvider>(
-            builder: (context, cartProvider, child) => Stack(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.shopping_cart),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(CartScreen.routeName);
-                  },
-                ),
-                Positioned(
-                  right: 0,
-                  child: CircleAvatar(
-                    radius: 10,
-                    backgroundColor: Colors.red,
-                    child: Text(
-                      cartProvider.itemCount.toString(),
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        title: const Text('Market Place',
+            style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Inter',
+                fontSize: 20,
+                fontWeight: FontWeight.w700)),
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: TextField(
-                onChanged: (value) {
-                  setState(() {
-                    search = value;
-                  });
-                },
-                decoration: const InputDecoration(
-                  hintText: 'Search...',
-                  prefixIcon: Icon(Icons.search, color: Colors.grey),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(10.0),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(30, 10, 0, 10),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: '   looking for something? ',
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Colors.black,
+                        size: 20, // Adjust the icon size as needed
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color:
+                              Colors.black, // Choose your desired border color
+                          width: 2.0, // Adjust the border width as needed
+                        ),
+                        borderRadius: BorderRadius.circular(
+                            12.0), // Adjust the border radius as needed
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 12.0), // Adjust padding as needed
+                    ),
+                  ),
                 ),
               ),
+              Consumer<CartProvider>(
+                builder: (context, cartProvider, child) => Stack(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(0, 0, 30, 10),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.shopping_cart,
+                          size: 40,
+                          color: Colors.black,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(CartScreen.routeName);
+                        },
+                      ),
+                    ),
+                    Positioned(
+                      right: 30,
+                      child: CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Colors.red,
+                        child: Text(
+                          cartProvider.itemCount.toString(),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Container(
+            padding: const EdgeInsets.all(10),
+            alignment: AlignmentDirectional
+                .centerStart, // Aligns the child to the start (left)
+            child: const Text(
+              'Top selling',
+              style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 30),
             ),
           ),
           Expanded(
@@ -90,44 +126,60 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
                     DocumentSnapshot productData = snapshot.data!.docs[index];
-                    return Card(
+                    return Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           children: [
-                            Image.network(
-                              productData['image'],
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    productData['productName'],
+                                    style: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                Image.network(
+                                  productData['image'],
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 5),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    productData['productName'],
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: 20),
                                   Text(productData['productDetails']),
-                                  const SizedBox(height: 4),
-                                  Text("Price: Php.${productData['price']}"),
                                   const SizedBox(height: 4),
                                   Text("Quantity: ${productData['quantity']}"),
                                   const SizedBox(height: 4),
                                   Text(
-                                      "Seller Name: ${productData['sellerName']}"),
+                                      "Price: ₱ ${NumberFormat('#,##0.00').format(productData['price'])}"),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                      "Seller Name:\n${productData['sellerName']}"),
                                 ],
                               ),
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.add_shopping_cart),
-                              onPressed: () {
+                            GestureDetector(
+                              onTap: () {
                                 Provider.of<CartProvider>(context,
                                         listen: false)
                                     .addItem(
@@ -145,6 +197,29 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                   context, // pass the context here
                                 );
                               },
+                              child: Container(
+                                margin: const EdgeInsets.fromLTRB(0, 0, 0, 90),
+                                child: Container(
+                                  height: 25,
+                                  width: 88,
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black),
+                                  ),
+                                  child: Row(
+                                    children: const [
+                                      Text('Add to cart',
+                                          style: TextStyle(fontSize: 10)),
+                                      SizedBox(width: 5),
+                                      Icon(
+                                        Icons.add_shopping_cart,
+                                        size: 18,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),

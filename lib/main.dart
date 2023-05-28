@@ -20,8 +20,9 @@ import 'screens/authentication/user/forgot_password.dart';
 import 'screens/authentication/user/login_screen.dart';
 import 'screens/authentication/user/register_screen.dart';
 
+import 'screens/customer_screens/user_org_chat_screen.dart';
 import 'screens/farmer_screens/farmer_settings_screen.dart';
-import 'screens/organization_screens/organization_homescreen.dart';
+import 'screens/organization_screens/organization_chat_screen.dart';
 import 'screens/organization_screens/organization_location_screen.dart';
 
 import 'screens/farmer_screens/farmer_location_screen.dart';
@@ -119,6 +120,16 @@ class _MerkadoState extends State<Merkado> {
               farmerId: args.farmerId,
             );
           },
+          OrgChatScreen.routeName: (ctx) {
+            final args =
+                ModalRoute.of(ctx)!.settings.arguments as OrgChatArguments;
+            return OrgChatScreen(
+              userId: FirebaseAuth.instance.currentUser!.uid,
+              orgType: OrgType.customers,
+              displayName: args.displayName,
+              orgId: args.orgId,
+            );
+          },
 
           //Farmer Side Routes
           FarmerScreenController.routeName: (ctx) =>
@@ -140,12 +151,21 @@ class _MerkadoState extends State<Merkado> {
           },
 
           //Organization Side Routes
-          OrganizationHomeScreen.routeName: (ctx) =>
-              const OrganizationHomeScreen(),
+
           OrganizationLocationScreen.routeName: (ctx) =>
               const OrganizationLocationScreen(),
           OrgScreenController.routeName: (ctx) => const OrgScreenController(),
           OrgSettingsScreen.routeName: (ctx) => const OrgSettingsScreen(),
+          OrganizationChatScreen.routeName: (ctx) {
+            final args = ModalRoute.of(ctx)!.settings.arguments
+                as OrganizationChatArguments;
+            return OrganizationChatScreen(
+              userId: FirebaseAuth.instance.currentUser!.uid,
+              userType: OrganizationType.customers,
+              displayName: args.displayName,
+              customerId: args.customerId,
+            );
+          },
         },
       ),
     );

@@ -2,13 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'farmer_chat_screen.dart';
+import 'organization_chat_screen.dart';
 
-class FarmerListScreen extends StatelessWidget {
-  static const routeName = '/farmer-list';
+class OrganizationListScreen extends StatelessWidget {
+  static const routeName = '/organization-list';
 
-  // ignore: use_key_in_widget_constructors
-  const FarmerListScreen({Key? key});
+  const OrganizationListScreen({super.key});
 
   Future<List<Map<String, dynamic>>> fetchRegisteredCustomers() async {
     final customersSnapshot =
@@ -85,10 +84,10 @@ class FarmerListScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.pushNamed(
                       context,
-                      FarmerChatScreen.routeName,
-                      arguments: FarmerChatArguments(
+                      OrganizationChatScreen.routeName,
+                      arguments: OrganizationChatArguments(
                         userId: FirebaseAuth.instance.currentUser!.uid,
-                        userType: FarmerType.customers,
+                        userType: OrganizationType.customers,
                         displayName: displayName,
                         customerId:
                             customer['id'], // Use the customer's ID here
