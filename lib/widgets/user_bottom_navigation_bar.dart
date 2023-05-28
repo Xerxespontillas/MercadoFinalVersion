@@ -20,16 +20,19 @@ class UserCustomBottomNavBar extends StatelessWidget {
       unselectedItemColor: Colors.grey[600],
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          label: 'Home',
+          icon: Icon(Icons.home_work, size: 40),
+          label: '',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.message_outlined),
-          label: 'Messages',
+          icon: Icon(
+            Icons.message,
+            size: 40,
+          ),
+          label: '',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings_outlined),
-          label: 'Settings',
+          icon: Icon(Icons.settings, size: 40),
+          label: '',
         ),
       ],
     );

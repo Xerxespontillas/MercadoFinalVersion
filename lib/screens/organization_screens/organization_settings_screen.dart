@@ -206,7 +206,18 @@ class _OrgSettingsScreenState extends State<OrgSettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.black, // Set the color of the back icon to black
+        ),
+        title: const Text('Settings',
+            style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Inter',
+                fontSize: 20,
+                fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
             onPressed: () async {
@@ -245,76 +256,144 @@ class _OrgSettingsScreenState extends State<OrgSettingsScreen> {
           ),
         ],
       ),
-      body: Center(
-          child: Column(
-        children: [
-          TextFormField(
-            controller: _displayNameController,
-            onChanged: (value) {
-              setState(() {
-                _displayName = value;
-              });
-            },
-          ),
-          TextFormField(
-            controller: _phoneNumberController,
-            onChanged: (value) {
-              setState(() {
-                _phoneNumber = value;
-              });
-            },
-          ),
-          TextFormField(
-            controller: _addressController,
-            onChanged: (value) {
-              setState(() {
-                _address = value;
-              });
-            },
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // Get the current user
-              User? currentUser = FirebaseAuth.instance.currentUser;
-
-              _showPasswordDialog().then((password) {
-                if (password != null) {
-                  AuthCredential credential = EmailAuthProvider.credential(
-                      email: currentUser?.email ?? '', password: password);
-                  currentUser
-                      ?.reauthenticateWithCredential(credential)
-                      .then((_) {
-                    // If the user entered the correct password, update the profile
-                    _updateProfile();
-                    updateData();
-
-                    // Show a snackbar message
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Profile updated')),
-                    );
-                  });
-                }
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(20), // Set the desired radius here
-              ),
+      body: Container(
+        margin: const EdgeInsets.fromLTRB(0, 80, 0, 10),
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                const Text(
+                  'Name:                  ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Inter',
+                  ),
+                ),
+                Expanded(
+                  child: TextFormField(
+                    controller: _displayNameController,
+                    onChanged: (value) {
+                      setState(() {
+                        _displayName = value;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      suffixIcon: Icon(
+                        Icons.edit,
+                        size: 20,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(60, 15, 60, 15),
-              child: Text(
-                "Save",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Inter',
+            Row(
+              children: [
+                const Text(
+                  'Address:             ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Inter',
+                  ),
+                ),
+                Expanded(
+                  child: TextFormField(
+                    controller: _addressController,
+                    onChanged: (value) {
+                      setState(() {
+                        _address = value;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      suffixIcon: Icon(
+                        Icons.edit,
+                        size: 20,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const Text(
+                  'Cell Number:    ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Inter',
+                  ),
+                ),
+                Expanded(
+                  child: TextFormField(
+                    controller: _phoneNumberController,
+                    onChanged: (value) {
+                      setState(() {
+                        _phoneNumber = value;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      suffixIcon: Icon(
+                        Icons.edit,
+                        size: 20,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Get the current user
+                User? currentUser = FirebaseAuth.instance.currentUser;
+
+                _showPasswordDialog().then((password) {
+                  if (password != null) {
+                    AuthCredential credential = EmailAuthProvider.credential(
+                        email: currentUser?.email ?? '', password: password);
+                    currentUser
+                        ?.reauthenticateWithCredential(credential)
+                        .then((_) {
+                      // If the user entered the correct password, update the profile
+                      _updateProfile();
+                      updateData();
+
+                      // Show a snackbar message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Profile updated')),
+                      );
+                    });
+                  }
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  side: const BorderSide(
+                    color: Colors.black,
+                    width: 5.0,
+                  ),
+                ),
+                backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(60, 15, 60, 15),
+                child: Text(
+                  "Save",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Inter',
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      )),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -5,46 +5,46 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UserChatArguments {
+class OrgChatArguments {
   final String userId;
-  final UserType userType;
+  final OrgType userType;
   final String displayName;
-  final String farmerId;
+  final String orgId;
 
-  UserChatArguments({
+  OrgChatArguments({
     required this.userId,
     required this.userType,
     required this.displayName,
-    required this.farmerId,
+    required this.orgId,
   });
 }
 
-enum UserType {
+enum OrgType {
   customers,
   farmer,
   organization,
 }
 
-class UserChatScreen extends StatefulWidget {
-  static const routeName = '/chat-screen';
+class OrgChatScreen extends StatefulWidget {
+  static const routeName = '/org-chat-screen';
 
   final String userId;
-  final UserType userType;
-  final String farmerId;
+  final OrgType orgType;
+  final String orgId;
   final String displayName;
 
-  const UserChatScreen({
+  const OrgChatScreen({
     required this.userId,
-    required this.userType,
-    required this.farmerId,
+    required this.orgType,
+    required this.orgId,
     required this.displayName,
   });
 
   @override
-  _UserChatScreenState createState() => _UserChatScreenState();
+  _OrgChatScreenState createState() => _OrgChatScreenState();
 }
 
-class _UserChatScreenState extends State<UserChatScreen> {
+class _OrgChatScreenState extends State<OrgChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -56,18 +56,18 @@ class _UserChatScreenState extends State<UserChatScreen> {
 
     _chatStream = _firestore
         .collection('chats')
-        .doc('customers')
+        .doc('organization')
         .collection('messages')
         .where('customerId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .where('farmerId',
+        .where('orgId',
             isEqualTo:
-                widget.farmerId) // Include messages from the specific farmer
+                widget.orgId) // Include messages from the specific farmer
         .orderBy('createdAt', descending: true)
         .snapshots();
   }
 
   String getChatCollection() {
-    return widget.userType == UserType.customers ? 'farmers' : 'customers';
+    return widget.orgType == OrgType.customers ? 'organizations' : 'customers';
   }
 
   void _sendMessage() async {
@@ -81,14 +81,14 @@ class _UserChatScreenState extends State<UserChatScreen> {
     if (messageText.isNotEmpty && userData.data() != null) {
       await _firestore
           .collection('chats')
-          .doc('customers')
+          .doc('organization')
           .collection('messages')
           .add({
         'customerId': user.uid,
         'displayName': userData.data()!['displayName'],
         'text': messageText,
         'createdAt': DateTime.now(),
-        'farmerId': widget.farmerId,
+        'orgId': widget.orgId,
         'role': userData.data()!['role'], // Set the recipient as the farmerId
       });
 

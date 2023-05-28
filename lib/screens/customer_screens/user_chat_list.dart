@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user_chat_screen.dart';
+import 'user_org_chat_screen.dart';
 
 class UserListScreen extends StatelessWidget {
   static const routeName = '/user-list';
@@ -13,7 +14,6 @@ class UserListScreen extends StatelessWidget {
     final farmersSnapshot =
         await FirebaseFirestore.instance.collection('farmers').get();
 
-    // Get the farmer documents along with their IDs
     final farmerList = farmersSnapshot.docs.map((doc) {
       final farmerData = doc.data();
       final displayName = farmerData['displayName'];
@@ -25,7 +25,6 @@ class UserListScreen extends StatelessWidget {
       };
     }).toList();
 
-    // Sort the farmerList by display name in alphabetical order
     farmerList.sort((a, b) =>
         a['displayName'].toString().compareTo(b['displayName'].toString()));
 
@@ -36,21 +35,18 @@ class UserListScreen extends StatelessWidget {
     final organizationsSnapshot =
         await FirebaseFirestore.instance.collection('organizations').get();
 
-    // Get the organization documents along with their IDs
     final organizationsList = organizationsSnapshot.docs.map((doc) {
       final orgData = doc.data();
       final organizationName = orgData['organizationName'];
       final orgId = doc.id;
       return {
         'id': orgId,
-        'displayName':
-            organizationName, // Use the "organizationName" field as display name
-        'organizationName': organizationName, // Add the organization name
+        'displayName': organizationName,
+        'organizationName': organizationName,
         ...orgData,
       };
     }).toList();
 
-    // Sort the organizationsList by organization name in alphabetical order
     organizationsList.sort((a, b) => a['organizationName']
         .toString()
         .compareTo(b['organizationName'].toString()));
@@ -78,7 +74,14 @@ class UserListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Farmers & Organizations'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: const Text('Messages',
+            style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700)),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _fetchData(),
@@ -102,30 +105,71 @@ class UserListScreen extends StatelessWidget {
                   : item['organizationName'];
 
               if (item.containsKey('role')) {
-                // Display farmer item
                 final role = item['role'];
-                return ListTile(
-                  title: Text(displayName),
-                  subtitle: Text('$role'),
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      UserChatScreen.routeName,
-                      arguments: UserChatArguments(
-                        userId: FirebaseAuth.instance.currentUser!.uid,
-                        userType: UserType.farmer,
-                        displayName: displayName,
-                        farmerId: item['id'],
+                return Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.black,
                       ),
-                    );
-                  },
+                    ),
+                  ),
+                  child: ListTile(
+                    leading: Image.asset(
+                      'assets/images/image.png', // Replace with your actual image path
+                      width: 50, // Adjust the width as needed
+                      height: 50, // Adjust the height as needed
+                    ),
+                    title: Text(displayName,
+                        style: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                        )),
+                    subtitle: Text('$role'),
+                    onTap: () {
+                      if (role == 'Farmer') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UserChatScreen(
+                              userId: FirebaseAuth.instance.currentUser!.uid,
+                              userType: UserType.farmer,
+                              displayName: displayName,
+                              farmerId: item['id'],
+                            ),
+                          ),
+                        );
+                      } else if (role == 'Organization') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OrgChatScreen(
+                              userId: FirebaseAuth.instance.currentUser!.uid,
+                              orgType: OrgType.organization,
+                              displayName: displayName,
+                              orgId: item['id'],
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 );
               } else {
-                // Display organization item
                 return ListTile(
                   title: Text(displayName),
                   onTap: () {
-                    // Handle organization list item tap
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OrgChatScreen(
+                          userId: FirebaseAuth.instance.currentUser!.uid,
+                          orgType: OrgType.organization,
+                          displayName: displayName,
+                          orgId: item['id'],
+                        ),
+                      ),
+                    );
                   },
                 );
               }
