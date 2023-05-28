@@ -53,11 +53,19 @@ class FarmerMyProductsState extends State<FarmerMyProducts> {
                   itemCount: products.length,
                   itemBuilder: (ctx, i) => Column(
                     children: [
-                      ListTile(
-                        leading: Image.network(products[i].image),
-                        title: Text(products[i].productName),
-                        subtitle: Text(products[i].productDetails),
-                        trailing: Text("Php.${products[i].price.toString()}"),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                            '/farmer-my-edit-products',
+                            arguments: products[i],
+                          );
+                        },
+                        child: ListTile(
+                          leading: Image.network(products[i].image),
+                          title: Text(products[i].productName),
+                          subtitle: Text(products[i].productDetails),
+                          trailing: Text("Php.${products[i].price.toString()}"),
+                        ),
                       ),
                       const Divider(),
                     ],

@@ -1,51 +1,77 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import '../../widgets/farmer_app_drawer.dart';
-import '../../widgets/bottom_navigation_bar.dart';
-import 'farmer_drawer_screens/farmer_my_products.dart';
-import 'farmer_homescreen.dart';
 import 'farmer_screen_controller.dart';
+import 'models/product.dart';
 
-class FarmerNewProductPost extends StatefulWidget {
-  static const routeName = '/farmer-new-post';
-  const FarmerNewProductPost({Key? key}) : super(key: key);
+class FarmerMyEditProducts extends StatefulWidget {
+  static const routeName = '/farmer-my-edit-products';
 
   @override
-  // ignore: library_private_types_in_public_api
-  _FarmerNewProductPostState createState() => _FarmerNewProductPostState();
+  _FarmerMyEditProductsState createState() => _FarmerMyEditProductsState();
 }
 
-class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
-  int _currentIndex = 0;
+class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
+  late Product product;
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  int quantity = 0;
-  final TextEditingController _textController = TextEditingController();
-  File? _image;
+  final TextEditingController _productDetailsController =
+      TextEditingController();
   final ImagePicker _picker = ImagePicker();
+  File? _image;
+  late int quantity = product.quantity;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  void _onTabTapped(int index) {
+  @override
+  void didChangeDependencies() {
+    product = ModalRoute.of(context)!.settings.arguments as Product;
+    _productNameController.text = product.productName;
+    _priceController.text = product.price.toString();
+    _productDetailsController.text = product.productDetails;
+    super.didChangeDependencies();
+  }
+
+  void increaseQuantity() {
     setState(() {
-      _currentIndex = index;
+      quantity += 1;
     });
   }
 
-  Future<void> _addProductToDatabaseWithImage() async {
+  void decreaseQuantity() {
+    if (quantity > 0) {
+      setState(() {
+        quantity -= 1;
+      });
+    }
+  }
+
+  Future<String> getSellerName(
+      FirebaseAuth auth, FirebaseFirestore firestore) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('farmers').doc(user.uid).get();
+      return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
+    } else {
+      return '';
+    }
+  }
+
+  Future<void> _updateProductInDatabaseWithImage(
+      Product productToUpdate) async {
     setState(() {});
 
     String productName = _productNameController.text;
-    String productDetails = _textController.text;
+    String productDetails = _productDetailsController.text;
     double price = double.parse(_priceController.text);
 
     // Create a map of the data we want to upload
@@ -66,25 +92,30 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
       data['image'] = downloadUrl;
     }
 
-    // Generate a new document reference in 'products' collection to get a unique ID
-    DocumentReference newDocRef = _firestore.collection('AllProducts').doc();
+    // Update the product document in the 'AllProducts' collection
+    await _firestore
+        .collection('AllProducts')
+        .doc(productToUpdate.id)
+        .update(data);
 
-    // Use the unique ID from the new document reference as the productId
-    String productId = newDocRef.id;
-
-    // Add the product data to the 'AllProducts' collection with the productId
-    await _firestore.collection('AllProducts').doc(productId).set(data);
-
-    // Add the product data to the 'FarmerProducts' collection
-    await addProductToFarmerProducts(productId, data, _auth, _firestore);
+    // Update the product document in the 'FarmerProducts' collection
+    await updateProductInFarmerProducts(
+        productToUpdate.id, data, _auth, _firestore);
 
     setState(() {});
 
-    Navigator.of(context)
-        .pushReplacementNamed(FarmerScreenController.routeName);
+    // Show a success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Product updated successfully!')),
+    );
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => FarmerScreenController()),
+      (Route<dynamic> route) => false,
+    );
   }
 
-  Future<void> addProductToFarmerProducts(
+  Future<void> updateProductInFarmerProducts(
       String productId,
       Map<String, dynamic> productData,
       FirebaseAuth auth,
@@ -97,33 +128,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
           .doc(user.uid)
           .collection(displayName)
           .doc(productId)
-          .set(productData);
-    }
-  }
-
-  Future<String> getSellerName(
-      FirebaseAuth auth, FirebaseFirestore firestore) async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      DocumentSnapshot userDoc =
-          await _firestore.collection('farmers').doc(user.uid).get();
-      return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
-    } else {
-      return '';
-    }
-  }
-
-  void increaseQuantity() {
-    setState(() {
-      quantity += 1;
-    });
-  }
-
-  void decreaseQuantity() {
-    if (quantity > 0) {
-      setState(() {
-        quantity -= 1;
-      });
+          .update(productData);
     }
   }
 
@@ -134,7 +139,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('New Post'),
+        title: const Text('Edit Product'),
       ),
       body: Padding(
         padding: EdgeInsets.all(screenSize.width * 0.02), // 2% of screen width
@@ -162,15 +167,18 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
                           border: Border.all(color: Colors.black),
                         ),
                         child: _image == null
-                            ? const Icon(
-                                Icons.cloud_upload,
-                                size: 80,
-                              )
+                            ? (product.image != null
+                                ? Image.network(product.image)
+                                : const Icon(
+                                    Icons.cloud_upload,
+                                    size: 80,
+                                  ))
                             : Image.file(_image!),
                       ),
                     ),
                   ),
                 ),
+
                 SizedBox(width: screenSize.width * 0.02), // 2% of screen width
                 Expanded(
                   child: Column(
@@ -286,11 +294,12 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
                                 width: screenSize.width *
                                     0.03), // 1% of screen width
                             Text(
-                              quantity.toString(),
+                              '${quantity}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
+
                             IconButton(
                               icon: const Icon(Icons.add),
                               onPressed: increaseQuantity,
@@ -312,7 +321,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
             // Product details text field
             Expanded(
               child: TextField(
-                controller: _textController,
+                controller: _productDetailsController,
                 maxLines: null,
                 decoration: const InputDecoration(
                   hintText: 'Enter Product details',
@@ -326,13 +335,15 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ElevatedButton(
-                  onPressed: _addProductToDatabaseWithImage,
+                  onPressed: () {
+                    _updateProductInDatabaseWithImage(product);
+                  },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('ADD ITEM NOW'),
+                  child: const Text('SAVE CHANGES'),
                 ),
                 SizedBox(
                     height: screenSize.height *
