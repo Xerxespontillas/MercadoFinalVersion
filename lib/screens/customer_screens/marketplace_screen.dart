@@ -29,7 +29,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             builder: (context, cartProvider, child) => Stack(
               children: [
                 IconButton(
-                  icon: Icon(Icons.shopping_cart),
+                  icon: const Icon(Icons.shopping_cart),
                   onPressed: () {
                     Navigator.of(context).pushNamed(CartScreen.routeName);
                   },
@@ -41,7 +41,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                     backgroundColor: Colors.red,
                     child: Text(
                       cartProvider.itemCount.toString(),
-                      style: TextStyle(color: Colors.white, fontSize: 14),
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
                     ),
                   ),
                 ),
@@ -65,11 +65,11 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                     search = value;
                   });
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Search...',
                   prefixIcon: Icon(Icons.search, color: Colors.grey),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.all(10.0),
+                  contentPadding: EdgeInsets.all(10.0),
                 ),
               ),
             ),
@@ -79,7 +79,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               stream: _firestore
                   .collection('AllProducts')
                   .where('productName', isGreaterThanOrEqualTo: search)
-                  .where('productName', isLessThan: search + 'z')
+                  .where('productName', isLessThan: '${search}z')
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -108,7 +108,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                 children: [
                                   Text(
                                     productData['productName'],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -126,7 +126,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                               ),
                             ),
                             IconButton(
-                              icon: Icon(Icons.add_shopping_cart),
+                              icon: const Icon(Icons.add_shopping_cart),
                               onPressed: () {
                                 Provider.of<CartProvider>(context,
                                         listen: false)

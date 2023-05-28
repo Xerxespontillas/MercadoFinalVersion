@@ -13,25 +13,6 @@ class OrganizationHomeScreen extends StatefulWidget {
 }
 
 class _OrganizationHomeScreenState extends State<OrganizationHomeScreen> {
-  // Future<void> _orgLocation() async {
-  //   final organizationProvider =
-  //       Provider.of<OrganizationProvider>(context, listen: false);
-  //   final org = organizationProvider.currentOrganization;
-
-  //   if (org != null) {
-  //     await FirebaseFirestore.instance
-  //         .collection('merchantLocations')
-  //         .doc(org.orgName)
-  //         .set({
-  //       'address': org.address,
-  //       'merchant': 'Farmer\'s Organization',
-  //       'status': 'onUserMap',
-  //     });
-  //   }
-  //   // ignore: use_build_context_synchronously
-  //   Navigator.pushNamed(context, OrganizationLocationScreen.routeName);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:merkado/providers/cart_provider.dart';
 
-import 'package:merkado/providers/products_provider.dart';
-import 'package:merkado/screens/customer_screens/cart_screen.dart';
-import 'package:merkado/screens/farmer_screens/farmer_new_post.dart';
-import 'package:merkado/screens/customer_screens/marketplace_screen.dart';
-import '/screens/farmer_screens/farmer_chat_screen.dart';
-import 'screens/customer_screens/user_screen_controller.dart';
+import 'package:merkado/screens/organization_screens/organization_screen_controller.dart';
+import 'package:merkado/screens/organization_screens/organization_settings_screen.dart';
+
+import 'providers/products_provider.dart';
+
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -17,19 +16,28 @@ import 'providers/customer_provider.dart';
 import 'providers/farmers_provider.dart';
 import 'providers/organization_provider.dart';
 
-import 'screens/customer_screens/splash_screen.dart';
-import 'screens/farmer_screens/farmer_location_screen.dart';
-import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_order.dart';
-import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
-
-import 'screens/customer_screens/user_chat_screen.dart';
-import 'screens/customer_screens/user_location_screen.dart';
-import 'screens/organization_screens/organization_location_screen.dart';
-import 'screens/farmer_screens/farmer_screen_controller.dart';
-import 'screens/organization_screens/organization_homescreen.dart';
 import 'screens/authentication/user/forgot_password.dart';
 import 'screens/authentication/user/login_screen.dart';
 import 'screens/authentication/user/register_screen.dart';
+
+import 'screens/farmer_screens/farmer_settings_screen.dart';
+import 'screens/organization_screens/organization_homescreen.dart';
+import 'screens/organization_screens/organization_location_screen.dart';
+
+import 'screens/farmer_screens/farmer_location_screen.dart';
+import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_order.dart';
+import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
+import 'screens/farmer_screens/farmer_screen_controller.dart';
+import 'screens/farmer_screens/farmer_new_post.dart';
+import 'screens/farmer_screens/farmer_chat_screen.dart';
+
+import 'screens/customer_screens/splash_screen.dart';
+import 'screens/customer_screens/user_chat_screen.dart';
+import 'screens/customer_screens/user_location_screen.dart';
+import 'screens/customer_screens/cart_screen.dart';
+import 'screens/customer_screens/user_settings_screen.dart';
+import 'screens/customer_screens/marketplace_screen.dart';
+import 'screens/customer_screens/user_screen_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -100,6 +108,7 @@ class _MerkadoState extends State<Merkado> {
           MarketplaceScreen.routeName: (ctx) => const MarketplaceScreen(),
           UserScreenController.routeName: (ctx) => const UserScreenController(),
           CartScreen.routeName: (ctx) => CartScreen(),
+          UserSettingsScreen.routeName: (ctx) => const UserSettingsScreen(),
           UserChatScreen.routeName: (ctx) {
             final args =
                 ModalRoute.of(ctx)!.settings.arguments as UserChatArguments;
@@ -118,6 +127,7 @@ class _MerkadoState extends State<Merkado> {
           FarmerMyOrder.routeName: (ctx) => const FarmerMyOrder(),
           FarmerMyProducts.routeName: (ctx) => const FarmerMyProducts(),
           FarmerNewProductPost.routeName: (ctx) => const FarmerNewProductPost(),
+          FarmerSettingsScreen.routeName: (ctx) => const FarmerSettingsScreen(),
           FarmerChatScreen.routeName: (ctx) {
             final args =
                 ModalRoute.of(ctx)!.settings.arguments as FarmerChatArguments;
@@ -134,6 +144,8 @@ class _MerkadoState extends State<Merkado> {
               const OrganizationHomeScreen(),
           OrganizationLocationScreen.routeName: (ctx) =>
               const OrganizationLocationScreen(),
+          OrgScreenController.routeName: (ctx) => const OrgScreenController(),
+          OrgSettingsScreen.routeName: (ctx) => const OrgSettingsScreen(),
         },
       ),
     );

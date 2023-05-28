@@ -13,25 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Future<void> _farmersLocation() async {
-  //   final farmersProvider =
-  //       Provider.of<FarmersProvider>(context, listen: false);
-  //   final farmers = farmersProvider.currentFarmers;
-
-  //   if (farmers != null) {
-  //     await FirebaseFirestore.instance
-  //         .collection('merchantLocations')
-  //         .doc(farmers.fullName)
-  //         .set({
-  //       'address': farmers.address,
-  //       'merchant': 'Farmer',
-  //       'status': 'onUserMap',
-  //     });
-  //   }
-  //   // ignore: use_build_context_synchronously
-  //   Navigator.pushNamed(context, FarmerLocationScreen.routeName);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

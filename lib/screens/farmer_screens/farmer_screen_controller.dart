@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:merkado/screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
-import 'package:merkado/screens/farmer_screens/farmer_chat_list.dart';
+
+import 'farmer_drawer_screens/farmer_my_products.dart';
+import 'farmer_chat_list.dart';
+
 import '../../widgets/bottom_navigation_bar.dart';
 
 //screens
 import '../farmer_screens/farmer_homescreen.dart';
+import 'farmer_settings_screen.dart';
 
 class FarmerScreenController extends StatefulWidget {
   static const routeName = '/farmer-home';
   const FarmerScreenController({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
-  _FarmerScreenControllerState createState() => _FarmerScreenControllerState();
+  FarmerScreenControllerState createState() => FarmerScreenControllerState();
 }
 
-class _FarmerScreenControllerState extends State<FarmerScreenController> {
+class FarmerScreenControllerState extends State<FarmerScreenController> {
   int _currentIndex = 0;
 
   void onTabTapped(int index) {
@@ -30,7 +32,7 @@ class _FarmerScreenControllerState extends State<FarmerScreenController> {
       const HomePage(),
       const FarmerMyProducts(),
       const FarmerListScreen(),
-      const Center(child: Text('Settings Page')),
+      const FarmerSettingsScreen(),
     ];
 
     return Scaffold(
