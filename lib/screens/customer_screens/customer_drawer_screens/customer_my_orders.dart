@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'customer_selected_order.dart';
+
 class CustomerMyOrders extends StatefulWidget {
   const CustomerMyOrders({super.key});
   static const routeName = '/customer-my-orders';
@@ -42,25 +44,39 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
               var items = order['items'];
               var deliveryFee = 50.0; // Assuming a fixed delivery fee
 
-              return Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Order ID: ${order.id}'),
-                      Text('Seller: ${order['sellerName']}'),
-                      ...items.map<Widget>((item) => ListTile(
-                            leading: Image.network(item['productImage']),
-                            title: Text(item['productName']),
-                            subtitle: Text('Price: ${item['productPrice']}'),
-                            trailing:
-                                Text('Quantity: ${item['productQuantity']}'),
-                          )),
-                      Text('Delivery Fee: $deliveryFee'),
-                      Text(
-                          'Total Payment: ${items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + deliveryFee}'),
-                    ],
+              return InkWell(
+                onTap: () {
+                  if (order.data() is Map) {
+                    var sellerId = order['sellerId'];
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => CustomerSelectedOrder(
+                            order: order.data() as Map,
+                            items: items,
+                            deliveryFee: deliveryFee,
+                            sellerId: sellerId,
+                            orderId: order.id)));
+                  }
+                },
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Order ID: ${order.id}'),
+                        Text('Seller: ${order['sellerName']}'),
+                        ...items.map<Widget>((item) => ListTile(
+                              leading: Image.network(item['productImage']),
+                              title: Text(item['productName']),
+                              subtitle: Text('Price: ${item['productPrice']}'),
+                              trailing:
+                                  Text('Quantity: ${item['productQuantity']}'),
+                            )),
+                        Text('Delivery Fee: $deliveryFee'),
+                        Text(
+                            'Total Payment: ${items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + deliveryFee}'),
+                      ],
+                    ),
                   ),
                 ),
               );

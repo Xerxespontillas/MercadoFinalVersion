@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:merkado/providers/cart_provider.dart';
 import 'package:merkado/providers/customer_ordered_products_provider.dart';
 import 'package:merkado/screens/customer_screens/customer_drawer_screens/customer_my_orders.dart';
+
 import 'package:merkado/screens/farmer_screens/farmer_my_edit_products.dart';
 
 import 'package:merkado/screens/organization_screens/organization_screen_controller.dart';
@@ -113,7 +114,7 @@ class _MerkadoState extends State<Merkado> {
           ForgotPasswordScreen.routeName: (ctx) => const ForgotPasswordScreen(),
           UserLocationScreen.routeName: (ctx) => const UserLocationScreen(),
           MarketplaceScreen.routeName: (ctx) => const MarketplaceScreen(),
-          CustomerMyOrders.routeName: (ctx) => const CustomerMyOrders(),
+          CustomerMyOrders.routeName: (ctx) => CustomerMyOrders(),
 
           UserScreenController.routeName: (ctx) => const UserScreenController(),
           CartScreen.routeName: (ctx) => const CartScreen(),
