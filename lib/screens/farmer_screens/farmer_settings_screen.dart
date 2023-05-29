@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,6 +26,18 @@ class _FarmerSettingsScreenState extends State<FarmerSettingsScreen> {
   String? _displayName;
   String? _phoneNumber;
   String? _address;
+  String? _profilePictureUrl;
+  File? _profilePicture;
+
+  Future<void> _pickImage() async {
+    final pickedImageFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 50,
+    );
+    setState(() {
+      _profilePicture = File(pickedImageFile!.path);
+    });
+  }
 
   Future<DocumentSnapshot> fetchUserData() async {
     User? currentUser = FirebaseAuth.instance.currentUser;
@@ -43,6 +58,7 @@ class _FarmerSettingsScreenState extends State<FarmerSettingsScreen> {
           _displayName = userData['displayName'];
           _phoneNumber = userData['phoneNumber'];
           _address = userData['address'];
+          _profilePictureUrl = userData['profilePicture'];
 
           // Set the text editing controllers to the current values
 
@@ -194,6 +210,45 @@ class _FarmerSettingsScreenState extends State<FarmerSettingsScreen> {
     );
   }
 
+  Future<void> _uploadImage() async {
+    if (_profilePicture == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select an image'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('farmer_image')
+        .child('${currentUser!.uid}.jpg');
+
+    await ref.putFile(_profilePicture!);
+
+    final url = await ref.getDownloadURL();
+
+    await FirebaseFirestore.instance
+        .collection('farmers')
+        .doc(currentUser.uid)
+        .update({
+      'profilePicture': url,
+    });
+
+    // Then call updateData() to reflect the updated profile data in the local state variables
+    updateData();
+
+    // Show a snackbar message
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Profile updated')),
+    );
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -256,142 +311,185 @@ class _FarmerSettingsScreenState extends State<FarmerSettingsScreen> {
           ),
         ],
       ),
-      body: Container(
-        margin: const EdgeInsets.fromLTRB(0, 80, 0, 10),
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                const Text(
-                  'Name:                  ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Inter',
-                  ),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    controller: _displayNameController,
-                    onChanged: (value) {
-                      setState(() {
-                        _displayName = value;
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      suffixIcon: Icon(
-                        Icons.edit,
-                        size: 20,
-                        color: Colors.black,
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(0, 80, 0, 10),
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 55,
+                backgroundColor: Colors.black,
+                child: _profilePictureUrl != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.network(
+                          _profilePictureUrl!,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.fill,
+                        ),
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        width: 100,
+                        height: 100,
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: Colors.grey[800],
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Text(
-                  'Address:             ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Inter',
-                  ),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    controller: _addressController,
-                    onChanged: (value) {
-                      setState(() {
-                        _address = value;
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      suffixIcon: Icon(
-                        Icons.edit,
-                        size: 20,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Text(
-                  'Cell Number:    ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Inter',
-                  ),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    controller: _phoneNumberController,
-                    onChanged: (value) {
-                      setState(() {
-                        _phoneNumber = value;
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      suffixIcon: Icon(
-                        Icons.edit,
-                        size: 20,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Get the current user
-                User? currentUser = FirebaseAuth.instance.currentUser;
-
-                _showPasswordDialog().then((password) {
-                  if (password != null) {
-                    AuthCredential credential = EmailAuthProvider.credential(
-                        email: currentUser?.email ?? '', password: password);
-                    currentUser
-                        ?.reauthenticateWithCredential(credential)
-                        .then((_) {
-                      // If the user entered the correct password, update the profile
-                      _updateProfile();
-                      updateData();
-
-                      // Show a snackbar message
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Profile updated')),
-                      );
-                    });
-                  }
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  side: const BorderSide(
-                    color: Colors.black,
-                    width: 5.0,
-                  ),
-                ),
-                backgroundColor: const Color.fromARGB(255, 0, 0, 0),
               ),
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(60, 15, 60, 15),
-                child: Text(
-                  "Save",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Inter',
+              ElevatedButton(
+                onPressed: _pickImage,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    side: const BorderSide(
+                      color: Colors.black,
+                      width: 5.0,
+                    ),
+                  ),
+                  backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+                ),
+                child: const Text('Choose profile picture'),
+              ),
+              Row(
+                children: [
+                  const Text(
+                    'Name:                  ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Inter',
+                    ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _displayNameController,
+                      onChanged: (value) {
+                        setState(() {
+                          _displayName = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        suffixIcon: Icon(
+                          Icons.edit,
+                          size: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  const Text(
+                    'Address:             ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Inter',
+                    ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _addressController,
+                      onChanged: (value) {
+                        setState(() {
+                          _address = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        suffixIcon: Icon(
+                          Icons.edit,
+                          size: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  const Text(
+                    'Cell Number:    ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Inter',
+                    ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _phoneNumberController,
+                      onChanged: (value) {
+                        setState(() {
+                          _phoneNumber = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        suffixIcon: Icon(
+                          Icons.edit,
+                          size: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Get the current user
+                  User? currentUser = FirebaseAuth.instance.currentUser;
+
+                  _showPasswordDialog().then((password) {
+                    if (password != null) {
+                      AuthCredential credential = EmailAuthProvider.credential(
+                          email: currentUser?.email ?? '', password: password);
+                      currentUser
+                          ?.reauthenticateWithCredential(credential)
+                          .then((_) {
+                        // If the user entered the correct password, update the profile
+                        _updateProfile();
+                        updateData();
+                        _uploadImage();
+
+                        // Show a snackbar message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Profile updated')),
+                        );
+                      });
+                    }
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    side: const BorderSide(
+                      color: Colors.black,
+                      width: 5.0,
+                    ),
+                  ),
+                  backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.fromLTRB(60, 15, 60, 15),
+                  child: Text(
+                    "Save",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Inter',
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
