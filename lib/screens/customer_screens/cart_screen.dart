@@ -3,6 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/cart_provider.dart';
+import '../farmer_screens/models/product.dart';
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart-screen';
@@ -17,17 +21,18 @@ class CartScreen extends StatelessWidget {
     var userId = FirebaseAuth.instance.currentUser?.uid;
 
     for (var seller in itemsBySeller.keys) {
-      var items = itemsBySeller[seller]!;
+      var sellerData = itemsBySeller[seller]!;
+      var items = sellerData['items'] as List<CartItem>;
+      var sellerId = sellerData['sellerId'] as String;
+
       var orderItems = items
           .map((item) => {
                 'productId': item.id,
                 'productName': item.productName,
                 'productPrice': item.price,
                 'productQuantity': item.quantity,
-                'productDetails': item
-                    .productDetails, // Assuming the item has a 'details' field
-                'productImage':
-                    item.image, // Assuming the item has an 'image' field
+                'productDetails': item.productDetails,
+                'productImage': item.image,
               })
           .toList();
 
@@ -42,6 +47,7 @@ class CartScreen extends StatelessWidget {
 
       await docRef.set({
         'sellerName': seller,
+        'sellerId': sellerId,
         'items': orderItems,
       });
 
@@ -49,8 +55,8 @@ class CartScreen extends StatelessWidget {
       for (var item in items) {
         var productRef = FirebaseFirestore.instance
             .collection('FarmerProducts')
-            .doc(item.sellerId)
-            .collection(item.sellerName)
+            .doc(sellerId)
+            .collection(seller)
             .doc(item.id);
         await productRef.update({
           'quantity': FieldValue.increment(-item.quantity),
@@ -65,10 +71,34 @@ class CartScreen extends StatelessWidget {
           'quantity': FieldValue.increment(-item.quantity),
         });
       }
-    }
 
+      // Send the order ID and the ordered items to the seller
+      for (var item in items) {
+        var sellerRef = FirebaseFirestore.instance
+            .collection('farmers')
+            .doc(sellerId)
+            .collection('customerOrders')
+            .doc(orderId);
+        await sellerRef.set({
+          'items': orderItems,
+          'buyerName': await getBuyerName(_auth, _firestore),
+        });
+      }
+    }
     // Clear the cart after placing the order
     cartProvider.clearCart();
+  }
+
+  Future<String> getBuyerName(
+      FirebaseAuth auth, FirebaseFirestore firestore) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('customers').doc(user.uid).get();
+      return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
+    } else {
+      return '';
+    }
   }
 
   @override
@@ -127,7 +157,9 @@ class CartScreen extends StatelessWidget {
           var itemsBySeller = cartProvider.itemsBySeller;
 
           // Calculate the total for all sellers
-          double grandTotal = itemsBySeller.values.fold(0.0, (total, items) {
+          double grandTotal =
+              itemsBySeller.values.fold(0.0, (total, sellerData) {
+            var items = sellerData['items'] as List<CartItem>;
             var subtotal = items.fold(0.0,
                 (itemTotal, item) => itemTotal + item.price * item.quantity);
             var deliveryFee = 50.0; // PHP 50 delivery fee per seller
@@ -228,7 +260,8 @@ class CartScreen extends StatelessWidget {
                         itemCount: itemsBySeller.keys.length,
                         itemBuilder: (ctx, i) {
                           var seller = itemsBySeller.keys.toList()[i];
-                          var items = itemsBySeller[seller]!;
+                          var sellerData = itemsBySeller[seller]!;
+                          var items = sellerData['items'] as List<CartItem>;
                           var subtotal = items.fold(
                               0.0,
                               (total, item) =>

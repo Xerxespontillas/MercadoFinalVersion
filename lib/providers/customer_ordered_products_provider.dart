@@ -4,26 +4,11 @@ import 'package:flutter/material.dart';
 import '../screens/farmer_screens/models/product.dart';
 import '../providers/auth_provider.dart';
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
-final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
 class CustomerOrderedProducts with ChangeNotifier {
   List<Product> _items = [];
 
   List<Product> get items {
     return [..._items];
-  }
-
-  Future<String> getSellerName(
-      FirebaseAuth auth, FirebaseFirestore firestore) async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      DocumentSnapshot userDoc =
-          await _firestore.collection('customers').doc(user.uid).get();
-      return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
-    } else {
-      return '';
-    }
   }
 
   Future<void> fetchProducts() async {
@@ -39,12 +24,10 @@ class CustomerOrderedProducts with ChangeNotifier {
     // Get the id of the logged in user
     String userId = user.uid;
 
-    String displayName = await getSellerName(_auth, _firestore);
-
     await FirebaseFirestore.instance
         .collection('customersOrders')
         .doc(userId)
-        .collection(displayName)
+        .collection('orders')
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {

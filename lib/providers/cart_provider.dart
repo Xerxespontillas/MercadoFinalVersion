@@ -22,14 +22,17 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Map<String, List<CartItem>> get itemsBySeller {
-    final Map<String, List<CartItem>> itemsBySeller = {};
+  Map<String, Map<String, dynamic>> get itemsBySeller {
+    final Map<String, Map<String, dynamic>> itemsBySeller = {};
 
     for (var cartItem in _cartItems.values) {
       if (itemsBySeller.containsKey(cartItem.sellerName)) {
-        itemsBySeller[cartItem.sellerName]!.add(cartItem);
+        itemsBySeller[cartItem.sellerName]!['items'].add(cartItem);
       } else {
-        itemsBySeller[cartItem.sellerName] = [cartItem];
+        itemsBySeller[cartItem.sellerName] = {
+          'sellerId': cartItem.sellerId,
+          'items': [cartItem],
+        };
       }
     }
 
