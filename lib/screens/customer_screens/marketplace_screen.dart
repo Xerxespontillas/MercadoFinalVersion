@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:merkado/screens/customer_screens/widgets/customer_app_drawer.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/cart_provider.dart';
@@ -23,16 +24,24 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: Container(
+        color: Colors.black, // Set the background color to black
+        child: const CustomerAppDrawer(),
+      ),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
         centerTitle: true,
-        title: const Text('Market Place',
-            style: TextStyle(
-                color: Colors.black,
-                fontFamily: 'Inter',
-                fontSize: 20,
-                fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Market Place',
+          style: TextStyle(
+            color: Colors.black,
+            fontFamily: 'Inter',
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Column(
         children: [
@@ -192,6 +201,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                     quantity: productData['quantity'],
                                     maxQuantity: productData['quantity'],
                                     sellerName: productData['sellerName'],
+                                    sellerId: productData['sellerUserId'],
                                     image: productData['image'],
                                   ),
                                   context, // pass the context here

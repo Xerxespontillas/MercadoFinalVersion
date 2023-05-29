@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/cart_provider.dart';
@@ -5,32 +7,96 @@ import '../../providers/cart_provider.dart';
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart-screen';
 
+  const CartScreen({super.key});
+
+  void placeOrder(BuildContext context) async {
+    var cartProvider = Provider.of<CartProvider>(context, listen: false);
+    var itemsBySeller = cartProvider.itemsBySeller;
+
+    // Get the logged-in user's ID
+    var userId = FirebaseAuth.instance.currentUser?.uid;
+
+    for (var seller in itemsBySeller.keys) {
+      var items = itemsBySeller[seller]!;
+      var orderItems = items
+          .map((item) => {
+                'productId': item.id,
+                'productName': item.productName,
+                'productPrice': item.price,
+                'productQuantity': item.quantity,
+                'productDetails': item
+                    .productDetails, // Assuming the item has a 'details' field
+                'productImage':
+                    item.image, // Assuming the item has an 'image' field
+              })
+          .toList();
+
+      // Generate a unique order ID
+      var orderId = FirebaseFirestore.instance.collection('dummy').doc().id;
+
+      var docRef = FirebaseFirestore.instance
+          .collection('customersOrders')
+          .doc(userId)
+          .collection('orders')
+          .doc(orderId);
+
+      await docRef.set({
+        'sellerName': seller,
+        'items': orderItems,
+      });
+
+      // Decrease the stock of each product
+      for (var item in items) {
+        var productRef = FirebaseFirestore.instance
+            .collection('FarmerProducts')
+            .doc(item.sellerId)
+            .collection(item.sellerName)
+            .doc(item.id);
+        await productRef.update({
+          'quantity': FieldValue.increment(-item.quantity),
+        });
+      }
+
+      // Decrease the stock of each product
+      for (var item in items) {
+        var productRef =
+            FirebaseFirestore.instance.collection('AllProducts').doc(item.id);
+        await productRef.update({
+          'quantity': FieldValue.increment(-item.quantity),
+        });
+      }
+    }
+
+    // Clear the cart after placing the order
+    cartProvider.clearCart();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Cart'),
+        title: const Text('Your Cart'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
               showDialog(
                 context: context,
                 barrierDismissible: false,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Clear Cart'),
-                    content:
-                        Text('Do you want to clear the items in your cart?'),
+                    title: const Text('Clear Cart'),
+                    content: const Text(
+                        'Do you want to clear the items in your cart?'),
                     actions: <Widget>[
                       ElevatedButton(
-                        child: Text('No'),
+                        child: const Text('No'),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
                       ),
                       ElevatedButton(
-                        child: Text('Yes'),
+                        child: const Text('Yes'),
                         onPressed: () {
                           Provider.of<CartProvider>(context, listen: false)
                               .clearCart();
@@ -48,7 +114,7 @@ class CartScreen extends StatelessWidget {
       body: Consumer<CartProvider>(
         builder: (ctx, cartProvider, _) {
           if (cartProvider.itemCount == 0) {
-            return Center(
+            return const Center(
               child: Text(
                 "No added products, Choose a product in the marketplace",
                 style: TextStyle(fontSize: 18),
@@ -59,11 +125,6 @@ class CartScreen extends StatelessWidget {
 
           var cartItems = cartProvider.cartItems;
           var itemsBySeller = cartProvider.itemsBySeller;
-
-          // Calculate total price for all cart items
-          double totalPrice = cartItems.values
-              .map((item) => item.price * item.quantity)
-              .reduce((value, element) => value + element);
 
           // Calculate the total for all sellers
           double grandTotal = itemsBySeller.values.fold(0.0, (total, items) {
@@ -84,7 +145,7 @@ class CartScreen extends StatelessWidget {
                     var cartItem = cartItems.values.toList()[i];
 
                     return Card(
-                      margin: EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(8),
                       child: ListTile(
                         leading: CircleAvatar(
                           backgroundImage: NetworkImage(cartItem.image),
@@ -97,7 +158,7 @@ class CartScreen extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             IconButton(
-                              icon: Icon(Icons.remove),
+                              icon: const Icon(Icons.remove),
                               onPressed: () {
                                 if (cartItem.quantity == 1) {
                                   showDialog(
@@ -105,18 +166,18 @@ class CartScreen extends StatelessWidget {
                                     barrierDismissible: false,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: Text('Remove Item'),
-                                        content: Text(
+                                        title: const Text('Remove Item'),
+                                        content: const Text(
                                             'Do you want to remove this item from the cart?'),
                                         actions: <Widget>[
                                           ElevatedButton(
-                                            child: Text('No'),
+                                            child: const Text('No'),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
                                           ),
                                           ElevatedButton(
-                                            child: Text('Yes'),
+                                            child: const Text('Yes'),
                                             onPressed: () {
                                               cartProvider.removeItemQuantity(
                                                   cartItem.id);
@@ -134,7 +195,7 @@ class CartScreen extends StatelessWidget {
                             ),
                             Text('${cartItem.quantity} x'),
                             IconButton(
-                              icon: Icon(Icons.add),
+                              icon: const Icon(Icons.add),
                               onPressed: () {
                                 cartProvider.addItemQuantity(
                                     cartItem.id, context);
@@ -153,7 +214,7 @@ class CartScreen extends StatelessWidget {
                 flex: 7,
                 child: Column(
                   children: [
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.symmetric(vertical: 10.0),
                       child: Text(
                         'Cart Summary',
@@ -176,33 +237,33 @@ class CartScreen extends StatelessWidget {
                               50.0; // PHP 50 delivery fee per seller
 
                           return Card(
-                            margin: EdgeInsets.all(5),
+                            margin: const EdgeInsets.all(5),
                             child: Padding(
-                              padding: EdgeInsets.all(5),
+                              padding: const EdgeInsets.all(5),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
                                     'Seller Name: $seller',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold),
                                   ),
 
                                   // Your item list here
-                                  Divider(),
+                                  const Divider(),
                                   Text(
                                     'Subtotal: Php.${subtotal.toStringAsFixed(2)}',
-                                    style: TextStyle(fontSize: 10),
+                                    style: const TextStyle(fontSize: 10),
                                   ),
                                   Text(
                                     'Delivery Fee: Php.$deliveryFee',
-                                    style: TextStyle(fontSize: 10),
+                                    style: const TextStyle(fontSize: 10),
                                   ),
-                                  Divider(),
+                                  const Divider(),
                                   Text(
                                     'Total: Php.${(subtotal + deliveryFee).toStringAsFixed(2)}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -214,24 +275,24 @@ class CartScreen extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 1.0),
+                      padding: const EdgeInsets.symmetric(vertical: 1.0),
                       child: Text(
                         'Grand Total: Php.${grandTotal.toStringAsFixed(2)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 1.0),
+                      padding: const EdgeInsets.symmetric(vertical: 1.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              // Implement your function here
+                              placeOrder(context);
                             },
-                            child: Text('Place Order'),
+                            child: const Text('Place Order'),
                           ),
                         ],
                       ),

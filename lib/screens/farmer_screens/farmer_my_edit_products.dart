@@ -13,16 +13,18 @@ import 'models/product.dart';
 class FarmerMyEditProducts extends StatefulWidget {
   static const routeName = '/farmer-my-edit-products';
 
+  const FarmerMyEditProducts({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _FarmerMyEditProductsState createState() => _FarmerMyEditProductsState();
 }
 
 class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
   late Product product;
-  final TextEditingController _productNameController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _productDetailsController =
-      TextEditingController();
+  late TextEditingController _productNameController;
+  late TextEditingController _priceController;
+  late TextEditingController _productDetailsController;
   final ImagePicker _picker = ImagePicker();
   File? _image;
   late int quantity = product.quantity;
@@ -33,11 +35,13 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
 
   @override
   void didChangeDependencies() {
-    product = ModalRoute.of(context)!.settings.arguments as Product;
-    _productNameController.text = product.productName;
-    _priceController.text = product.price.toString();
-    _productDetailsController.text = product.productDetails;
     super.didChangeDependencies();
+    product = ModalRoute.of(context)!.settings.arguments as Product;
+    quantity = product.quantity;
+    _productNameController = TextEditingController(text: product.productName);
+    _priceController = TextEditingController(text: product.price.toString());
+    _productDetailsController =
+        TextEditingController(text: product.productDetails);
   }
 
   void increaseQuantity() {
@@ -51,6 +55,43 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
       setState(() {
         quantity -= 1;
       });
+    }
+  }
+
+  Future<void> deleteProductFromFarmerProducts(
+      String productId, FirebaseAuth auth, FirebaseFirestore firestore) async {
+    User? user = auth.currentUser;
+    if (user != null) {
+      String displayName = await getSellerName(auth, _firestore);
+      await _firestore
+          .collection('FarmerProducts')
+          .doc(user.uid)
+          .collection(displayName)
+          .doc(productId)
+          .delete();
+    }
+  }
+
+  void _deleteProductFromDatabase(Product productToDelete) async {
+    // Get a reference to the Firestore database
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Delete the product document from the 'AllProducts' collection
+    await firestore.collection('AllProducts').doc(productToDelete.id).delete();
+
+    // Delete the product document from the 'FarmerProducts' collection
+    await deleteProductFromFarmerProducts(
+        productToDelete.id, _auth, _firestore);
+
+    // Check if the State object is still mounted before showing the SnackBar or navigating to a different screen
+    if (mounted) {
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Product deleted successfully!')),
+      );
+
+      // Navigate back to the previous screen
+      Navigator.of(context).pop();
     }
   }
 
@@ -105,12 +146,14 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
     setState(() {});
 
     // Show a success message
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Product updated successfully!')),
+      const SnackBar(content: Text('Product updated successfully!')),
     );
 
+    // ignore: use_build_context_synchronously
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => FarmerScreenController()),
+      MaterialPageRoute(builder: (context) => const FarmerScreenController()),
       (Route<dynamic> route) => false,
     );
   }
@@ -167,6 +210,7 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
                           border: Border.all(color: Colors.black),
                         ),
                         child: _image == null
+                            // ignore: unnecessary_null_comparison
                             ? (product.image != null
                                 ? Image.network(product.image)
                                 : const Icon(
@@ -294,7 +338,7 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
                                 width: screenSize.width *
                                     0.03), // 1% of screen width
                             Text(
-                              '${quantity}',
+                              '$quantity',
                               style: const TextStyle(
                                 fontWeight: FontWeight.normal,
                               ),
@@ -350,9 +394,10 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
                         0.02), // 2% of screen height spacing
                 ElevatedButton(
                   onPressed: () {
+                    _deleteProductFromDatabase(product);
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                          builder: (context) => FarmerScreenController()),
+                          builder: (context) => const FarmerScreenController()),
                       (Route<dynamic> route) => false,
                     );
                   },
@@ -361,7 +406,7 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('CANCEL'),
+                  child: const Text('DELETE PRODUCT'),
                 ),
               ],
             ),

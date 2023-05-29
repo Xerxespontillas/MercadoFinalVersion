@@ -2,12 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:merkado/providers/cart_provider.dart';
+import 'package:merkado/providers/customer_ordered_products_provider.dart';
+import 'package:merkado/screens/customer_screens/customer_drawer_screens/customer_my_orders.dart';
 import 'package:merkado/screens/farmer_screens/farmer_my_edit_products.dart';
 
 import 'package:merkado/screens/organization_screens/organization_screen_controller.dart';
 import 'package:merkado/screens/organization_screens/organization_settings_screen.dart';
 
-import 'providers/products_provider.dart';
+import 'providers/farmer_products_provider.dart';
 
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -90,7 +92,10 @@ class _MerkadoState extends State<Merkado> {
           create: (context) => CustomersProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => Products(),
+          create: (context) => FarmerProducts(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CustomerOrderedProducts(),
         ),
       ],
       child: MaterialApp(
@@ -108,8 +113,10 @@ class _MerkadoState extends State<Merkado> {
           ForgotPasswordScreen.routeName: (ctx) => const ForgotPasswordScreen(),
           UserLocationScreen.routeName: (ctx) => const UserLocationScreen(),
           MarketplaceScreen.routeName: (ctx) => const MarketplaceScreen(),
+          CustomerMyOrders.routeName: (ctx) => const CustomerMyOrders(),
+
           UserScreenController.routeName: (ctx) => const UserScreenController(),
-          CartScreen.routeName: (ctx) => CartScreen(),
+          CartScreen.routeName: (ctx) => const CartScreen(),
           UserSettingsScreen.routeName: (ctx) => const UserSettingsScreen(),
           UserChatScreen.routeName: (ctx) {
             final args =
@@ -140,7 +147,7 @@ class _MerkadoState extends State<Merkado> {
           FarmerMyProducts.routeName: (ctx) => const FarmerMyProducts(),
           FarmerNewProductPost.routeName: (ctx) => const FarmerNewProductPost(),
           FarmerSettingsScreen.routeName: (ctx) => const FarmerSettingsScreen(),
-          FarmerMyEditProducts.routeName: (ctx) => FarmerMyEditProducts(),
+          FarmerMyEditProducts.routeName: (ctx) => const FarmerMyEditProducts(),
           FarmerChatScreen.routeName: (ctx) {
             final args =
                 ModalRoute.of(ctx)!.settings.arguments as FarmerChatArguments;

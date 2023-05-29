@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/products_provider.dart';
+import '../../../providers/farmer_products_provider.dart';
 import '../../../widgets/farmer_app_drawer.dart';
-import '../models/product.dart';
 
 class FarmerMyProducts extends StatefulWidget {
   static const routeName = '/farmer-my-products';
@@ -22,7 +21,7 @@ class FarmerMyProductsState extends State<FarmerMyProducts> {
       setState(() {
         _isLoading = true;
       });
-      Provider.of<Products>(context).fetchProducts().then((_) {
+      Provider.of<FarmerProducts>(context).fetchProducts().then((_) {
         setState(() {
           _isLoading = false;
         });
@@ -34,7 +33,7 @@ class FarmerMyProductsState extends State<FarmerMyProducts> {
 
   @override
   Widget build(BuildContext context) {
-    final productsData = Provider.of<Products>(context);
+    final productsData = Provider.of<FarmerProducts>(context);
     final products = productsData.items;
 
     return Scaffold(

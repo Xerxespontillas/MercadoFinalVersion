@@ -6,10 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../../widgets/farmer_app_drawer.dart';
-import '../../widgets/bottom_navigation_bar.dart';
-import 'farmer_drawer_screens/farmer_my_products.dart';
-import 'farmer_homescreen.dart';
+
 import 'farmer_screen_controller.dart';
 
 class FarmerNewProductPost extends StatefulWidget {
@@ -22,7 +19,6 @@ class FarmerNewProductPost extends StatefulWidget {
 }
 
 class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
-  int _currentIndex = 0;
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   int quantity = 0;
@@ -34,12 +30,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
 
   // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
+  var farmerId = FirebaseAuth.instance.currentUser!.uid;
 
   Future<void> _addProductToDatabaseWithImage() async {
     setState(() {});
@@ -55,6 +46,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
       "price": price,
       "quantity": quantity,
       "sellerName": await getSellerName(_auth, _firestore),
+      "sellerUserId": farmerId,
     };
 
     if (_image != null) {
@@ -80,6 +72,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
 
     setState(() {});
 
+    // ignore: use_build_context_synchronously
     Navigator.of(context)
         .pushReplacementNamed(FarmerScreenController.routeName);
   }
@@ -341,7 +334,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
                   onPressed: () {
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                          builder: (context) => FarmerScreenController()),
+                          builder: (context) => const FarmerScreenController()),
                       (Route<dynamic> route) => false,
                     );
                   },

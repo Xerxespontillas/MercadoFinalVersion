@@ -7,7 +7,7 @@ import '../providers/auth_provider.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-class Products with ChangeNotifier {
+class FarmerProducts with ChangeNotifier {
   List<Product> _items = [];
 
   List<Product> get items {
@@ -33,7 +33,6 @@ class Products with ChangeNotifier {
     User? user = AuthProvider().getCurrentUser();
 
     if (user == null) {
-      print('No user is currently logged in.');
       return;
     }
 
@@ -48,7 +47,7 @@ class Products with ChangeNotifier {
         .collection(displayName)
         .get()
         .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
+      for (var doc in querySnapshot.docs) {
         loadedProducts.add(Product(
           id: doc.id,
           productName: doc['productName'],
@@ -58,8 +57,9 @@ class Products with ChangeNotifier {
           quantity: doc['quantity'],
           maxQuantity: doc['quantity'],
           sellerName: doc['sellerName'],
+          sellerId: doc['sellerUserId'],
         ));
-      });
+      }
     });
 
     _items = loadedProducts;

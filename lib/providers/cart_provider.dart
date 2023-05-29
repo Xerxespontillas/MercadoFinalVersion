@@ -56,7 +56,7 @@ class CartProvider with ChangeNotifier {
           content: const Text('There are no more stocks for this item.'),
           actions: <Widget>[
             ElevatedButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -90,6 +90,7 @@ class CartProvider with ChangeNotifier {
             quantity: existingCartItem.quantity + 1,
             maxQuantity: existingCartItem.maxQuantity,
             sellerName: existingCartItem.sellerName,
+            sellerId: existingCartItem.sellerId,
             image: existingCartItem.image,
           ),
         );
@@ -107,6 +108,7 @@ class CartProvider with ChangeNotifier {
           quantity: 1,
           maxQuantity: product.maxQuantity,
           sellerName: product.sellerName,
+          sellerId: product.sellerId,
           image: product.image,
         ),
       );

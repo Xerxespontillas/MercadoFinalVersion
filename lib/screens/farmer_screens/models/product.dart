@@ -7,6 +7,7 @@ class Product {
   final int maxQuantity;
 
   final String sellerName;
+  final String sellerId;
   final String image;
 
   Product({
@@ -17,6 +18,7 @@ class Product {
     required this.quantity,
     required this.maxQuantity,
     required this.sellerName,
+    required this.sellerId,
     required this.image,
   });
 }
@@ -34,6 +36,7 @@ class CartItem extends Product {
     required this.quantity,
     required int maxQuantity,
     required String sellerName,
+    required String sellerId,
     required String image,
   }) : super(
           id: id,
@@ -43,6 +46,7 @@ class CartItem extends Product {
           quantity: quantity,
           maxQuantity: maxQuantity,
           sellerName: sellerName,
+          sellerId: sellerId,
           image: image,
         );
 }
