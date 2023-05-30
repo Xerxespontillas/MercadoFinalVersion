@@ -163,6 +163,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                 ),
                                 Image.network(
                                   productData['image'],
+                                  errorBuilder: (BuildContext context,
+                                      Object exception,
+                                      StackTrace? stackTrace) {
+                                    // Return any widget you want to be displayed instead of the network image like an asset image or an icon
+                                    return const Icon(Icons.error);
+                                  },
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,

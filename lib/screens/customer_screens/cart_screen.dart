@@ -49,6 +49,7 @@ class CartScreen extends StatelessWidget {
         'sellerName': seller,
         'sellerId': sellerId,
         'items': orderItems,
+        'orderConfirmed': false,
       });
 
       // Decrease the stock of each product
@@ -73,6 +74,7 @@ class CartScreen extends StatelessWidget {
       }
 
       // Send the order ID and the ordered items to the seller
+      // ignore: unused_local_variable
       for (var item in items) {
         var sellerRef = FirebaseFirestore.instance
             .collection('farmers')
