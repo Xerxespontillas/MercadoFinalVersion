@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merkado/screens/organization_screens/organization_chat_list.dart';
+import 'package:merkado/screens/organization_screens/organization_market_screen.dart';
 
 import 'organization_settings_screen.dart';
 import '../../widgets/org_bottom_navigation_bar.dart';
@@ -27,8 +28,8 @@ class OrgScreenControllerState extends State<OrgScreenController> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> children = [
-      const Center(child: Text('Home Page')),
-      const Center(child: Text('Home Page')),
+      const OrgMarketScreen(),
+      const Center(child: Text('Add Product')),
       const OrganizationListScreen(),
       const OrgSettingsScreen(),
     ];

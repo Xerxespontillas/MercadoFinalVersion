@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-
-import 'farmer_drawer_screens/farmer_my_products.dart';
-import 'farmer_chat_list.dart';
+import 'package:merkado/screens/customer_screens/marketplace_screen.dart';
 
 import '../../widgets/bottom_navigation_bar.dart';
 
 //screens
-import '../farmer_screens/farmer_homescreen.dart';
 import 'farmer_settings_screen.dart';
+
+import 'farmer_drawer_screens/farmer_my_products.dart';
+import 'farmer_chat_list.dart';
 
 class FarmerScreenController extends StatefulWidget {
   static const routeName = '/farmer-home';
@@ -29,7 +29,7 @@ class FarmerScreenControllerState extends State<FarmerScreenController> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> children = [
-      const HomePage(),
+      const MarketplaceScreen(),
       const FarmerMyProducts(),
       const FarmerListScreen(),
       const FarmerSettingsScreen(),

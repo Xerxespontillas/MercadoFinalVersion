@@ -244,6 +244,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
                                             .doc(orderId)
                                             .update({'orderConfirmed': true});
 
+                                        // ignore: use_build_context_synchronously
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           const SnackBar(
