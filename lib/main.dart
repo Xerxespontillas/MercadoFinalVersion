@@ -144,7 +144,7 @@ class _MerkadoState extends State<Merkado> {
           FarmerScreenController.routeName: (ctx) =>
               const FarmerScreenController(),
           FarmerLocationScreen.routeName: (ctx) => const FarmerLocationScreen(),
-          FarmerMyOrder.routeName: (ctx) => const FarmerMyOrder(),
+          FarmerMyOrders.routeName: (ctx) => const FarmerMyOrders(),
           FarmerMyProducts.routeName: (ctx) => const FarmerMyProducts(),
           FarmerNewProductPost.routeName: (ctx) => const FarmerNewProductPost(),
           FarmerSettingsScreen.routeName: (ctx) => const FarmerSettingsScreen(),

@@ -29,7 +29,7 @@ class FarmerAppDrawer extends StatelessWidget {
             leading: const Icon(Icons.shopping_cart),
             title: const Text('My Orders'),
             onTap: () {
-              Navigator.of(context).pushNamed(FarmerMyOrder.routeName);
+              Navigator.of(context).pushNamed(FarmerMyOrders.routeName);
             },
           ),
           ListTile(
