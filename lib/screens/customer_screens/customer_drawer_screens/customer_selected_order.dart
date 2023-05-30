@@ -167,8 +167,10 @@ class CustomerSelectedOrder extends StatelessWidget {
                         return Center(
                           child: Column(
                             children: [
-                              const Icon(Icons.info_outline,
-                                  color: Colors.orange),
+                              orderConfirmed
+                                  ? const Icon(Icons.check, color: Colors.green)
+                                  : const Icon(Icons.info_outline,
+                                      color: Colors.orange),
                               Text(
                                 !orderConfirmed
                                     ? 'Order Status: Waiting for confirmation of Seller'
@@ -185,29 +187,32 @@ class CustomerSelectedOrder extends StatelessWidget {
                               if (!orderConfirmed)
                                 ElevatedButton(
                                   onPressed: () async {
-                                    try {
-                                      await FirebaseFirestore.instance
-                                          .collection('customersOrders')
-                                          .doc(userId)
-                                          .collection('orders')
-                                          .doc(orderId)
-                                          .delete();
-                                      // ignore: use_build_context_synchronously
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                              'Order Cancelled Successfully!'),
-                                          duration: Duration(seconds: 2),
-                                          backgroundColor: Colors.green,
-                                        ),
-                                      );
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.of(context).pushNamed(
-                                          CustomerMyOrders.routeName);
-                                    } catch (e) {
-                                      // You can handle any error here
-                                    }
+                                    await FirebaseFirestore.instance
+                                        .collection('customersOrders')
+                                        .doc(userId)
+                                        .collection('orders')
+                                        .doc(orderId)
+                                        .delete();
+
+                                    // Here is how to delete the orderId from farmers collection
+                                    await FirebaseFirestore.instance
+                                        .collection('farmers')
+                                        .doc(sellerId)
+                                        .collection('customerOrders')
+                                        .doc(orderId)
+                                        .delete();
+
+                                    // ignore: use_build_context_synchronously
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content:
+                                            Text('Order has been cancelled.'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                    // ignore: use_build_context_synchronously
+                                    Navigator.of(context).pushReplacementNamed(
+                                        CustomerMyOrders.routeName);
                                   },
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.red),

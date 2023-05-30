@@ -83,6 +83,8 @@ class CartScreen extends StatelessWidget {
             .doc(orderId);
         await sellerRef.set({
           'items': orderItems,
+          'orderConfirmed': false,
+          'buyerId': userId,
           'buyerName': await getBuyerName(_auth, _firestore),
         });
       }
