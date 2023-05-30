@@ -325,6 +325,11 @@ class _FarmerSettingsScreenState extends State<FarmerSettingsScreen> {
                         borderRadius: BorderRadius.circular(50),
                         child: Image.network(
                           _profilePictureUrl!,
+                          errorBuilder: (BuildContext context, Object exception,
+                              StackTrace? stackTrace) {
+                            // Return any widget you want to be displayed instead of the network image like an asset image or an icon
+                            return const Icon(Icons.person);
+                          },
                           width: 100,
                           height: 100,
                           fit: BoxFit.fill,

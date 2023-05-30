@@ -69,7 +69,14 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
                         Text('Order ID: ${order.id}'),
                         Text('Seller: ${order['sellerName']}'),
                         ...items.map<Widget>((item) => ListTile(
-                              leading: Image.network(item['productImage']),
+                              leading: Image.network(
+                                item['productImage'],
+                                errorBuilder: (BuildContext context,
+                                    Object exception, StackTrace? stackTrace) {
+                                  // Return any widget you want to be displayed instead of the network image like an asset image or an icon
+                                  return const Icon(Icons.error);
+                                },
+                              ),
                               title: Text(item['productName']),
                               subtitle: Text('Price: ${item['productPrice']}'),
                               trailing:

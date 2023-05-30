@@ -65,7 +65,7 @@ class FarmerMyProductsState extends State<FarmerMyProducts> {
                             errorBuilder: (BuildContext context,
                                 Object exception, StackTrace? stackTrace) {
                               // Return any widget you want to be displayed instead of the network image like an asset image or an icon
-                              return const Icon(Icons.error);
+                              return const Icon(Icons.shopping_bag);
                             },
                           ),
                           title: Text(products[i].productName),
