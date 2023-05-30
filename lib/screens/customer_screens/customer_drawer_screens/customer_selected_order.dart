@@ -79,7 +79,6 @@ class CustomerSelectedOrder extends StatelessWidget {
                             radius: 60,
                           ),
                         ),
-
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -98,18 +97,19 @@ class CustomerSelectedOrder extends StatelessWidget {
                                   context, UserLocationScreen.routeName);
                             },
                           ),
-                        InkWell(
-                          child: const Icon(Icons.message),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => UserChatScreen(
-                                  userId:
-                                      FirebaseAuth.instance.currentUser!.uid,
-                                  userType: UserType.customers,
-                                  displayName: order['sellerName'],
-                                  farmerId: order['sellerId'],
+                          InkWell(
+                            child: const Icon(Icons.message),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserChatScreen(
+                                    userId:
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                    userType: UserType.customers,
+                                    displayName: order['sellerName'],
+                                    farmerId: order['sellerId'],
+                                  ),
                                 ),
                               );
                             },
