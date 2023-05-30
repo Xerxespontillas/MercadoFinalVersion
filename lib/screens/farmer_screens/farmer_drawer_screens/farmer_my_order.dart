@@ -28,11 +28,11 @@ class _FarmerMyOrderState extends State<FarmerMyOrder> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No orders found.'));
+            return const Center(child: Text('No orders found.'));
           }
 
           return ListView.builder(
@@ -43,7 +43,7 @@ class _FarmerMyOrderState extends State<FarmerMyOrder> {
 
               return Card(
                 child: Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding:  const EdgeInsets.all(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

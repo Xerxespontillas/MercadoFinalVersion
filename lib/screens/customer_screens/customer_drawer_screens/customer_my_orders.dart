@@ -42,18 +42,21 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
             itemBuilder: (context, index) {
               var order = snapshot.data!.docs[index];
               var items = order['items'];
+
               var deliveryFee = 50.0; // Assuming a fixed delivery fee
 
               return InkWell(
                 onTap: () {
                   if (order.data() is Map) {
                     var sellerId = order['sellerId'];
+                    bool orderConfirmed = order['orderConfirmed'];
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => CustomerSelectedOrder(
                             order: order.data() as Map,
                             items: items,
                             deliveryFee: deliveryFee,
                             sellerId: sellerId,
+                            orderConfirmed: orderConfirmed,
                             orderId: order.id)));
                   }
                 },

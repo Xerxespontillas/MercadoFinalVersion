@@ -114,7 +114,7 @@ class _MerkadoState extends State<Merkado> {
           ForgotPasswordScreen.routeName: (ctx) => const ForgotPasswordScreen(),
           UserLocationScreen.routeName: (ctx) => const UserLocationScreen(),
           MarketplaceScreen.routeName: (ctx) => const MarketplaceScreen(),
-          CustomerMyOrders.routeName: (ctx) => CustomerMyOrders(),
+          CustomerMyOrders.routeName: (ctx) => const CustomerMyOrders(),
 
           UserScreenController.routeName: (ctx) => const UserScreenController(),
           CartScreen.routeName: (ctx) => const CartScreen(),
