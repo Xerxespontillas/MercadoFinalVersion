@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../user_chat_screen.dart';
 import 'customer_my_orders.dart';
 
 class CustomerSelectedOrder extends StatelessWidget {
@@ -43,10 +44,20 @@ class CustomerSelectedOrder extends StatelessWidget {
         final imageUrl = snapshot.data;
         return Scaffold(
           appBar: AppBar(
+            iconTheme: const IconThemeData(
+              color: Colors.black, // Set the color of the back icon to black
+            ),
             centerTitle: true,
-            title: const Text('Your Orders',
-                style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.green,
+            title: const Text(
+              'Your Orders',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: 'Inter',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700),
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
           ),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -67,12 +78,34 @@ class CustomerSelectedOrder extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(height: 10),
-                    Text(
-                      'Seller: ${order['sellerName']}',
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Seller: ${order['sellerName']}',
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                        InkWell(
+                          child: Icon(Icons.message),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UserChatScreen(
+                                  userId:
+                                      FirebaseAuth.instance.currentUser!.uid,
+                                  userType: UserType.customers,
+                                  displayName: order['sellerName'],
+                                  farmerId: order['sellerId'],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 10),
                     const Divider(),
@@ -113,7 +146,7 @@ class CustomerSelectedOrder extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.green,
+                        color: Colors.black,
                       ),
                     ),
                     const SizedBox(height: 20),

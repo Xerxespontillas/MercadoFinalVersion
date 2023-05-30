@@ -59,9 +59,7 @@ class _OrgChatScreenState extends State<OrgChatScreen> {
         .doc('organization')
         .collection('messages')
         .where('customerId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .where('orgId',
-            isEqualTo:
-                widget.orgId) // Include messages from the specific farmer
+        .where('orgId', isEqualTo: widget.orgId)
         .orderBy('createdAt', descending: true)
         .snapshots();
   }
