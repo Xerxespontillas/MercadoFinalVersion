@@ -20,7 +20,17 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Orders'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.black, // Set the color of the back icon to black
+        ),
+        title: const Text('My Orders',
+            style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700)),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance

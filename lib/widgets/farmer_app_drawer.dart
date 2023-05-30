@@ -15,7 +15,7 @@ class FarmerAppDrawer extends StatelessWidget {
         children: <Widget>[
           const DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.green,
+              color: Colors.black45,
             ),
             child: Text(
               'Menu',

@@ -37,11 +37,11 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           style: TextStyle(
             color: Colors.black,
             fontFamily: 'Inter',
-            fontSize: 20,
+            fontSize: 30,
             fontWeight: FontWeight.w700,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black, size: 30),
       ),
       body: Column(
         children: [
@@ -116,7 +116,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               style: TextStyle(
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w700,
-                  fontSize: 30),
+                  fontSize: 25),
             ),
           ),
           Expanded(
@@ -150,28 +150,34 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    productData['productName'],
-                                    style: const TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 20,
+                                SizedBox(
+                                  width: 110,
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      productData['productName'],
+                                      style: const TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 20,
+                                      ),
                                     ),
                                   ),
                                 ),
-                                Image.network(
-                                  productData['image'],
-                                  errorBuilder: (BuildContext context,
-                                      Object exception,
-                                      StackTrace? stackTrace) {
-                                    // Return any widget you want to be displayed instead of the network image like an asset image or an icon
-                                    return const Icon(Icons.error);
-                                  },
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.cover,
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Image.network(
+                                    productData['image'],
+                                    errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace? stackTrace) {
+                                      // Return any widget you want to be displayed instead of the network image like an asset image or an icon
+                                      return const Icon(Icons.image, size: 100);
+                                    },
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ],
                             ),
