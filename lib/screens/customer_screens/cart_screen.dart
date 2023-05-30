@@ -109,7 +109,17 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Cart'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.black, // Set the color of the back icon to black
+        ),
+        title: const Text('Your Cart',
+            style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700)),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.delete),
@@ -326,6 +336,17 @@ class CartScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                side: const BorderSide(
+                                  color: Colors.black,
+                                  width: 5.0,
+                                ),
+                              ),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 0, 0, 0),
+                            ),
                             onPressed: () {
                               placeOrder(context);
                             },

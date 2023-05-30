@@ -39,8 +39,17 @@ class FarmerMyProductsState extends State<FarmerMyProducts> {
     return Scaffold(
       endDrawer: const FarmerAppDrawer(),
       appBar: AppBar(
-        title: const Text("My Products"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.black, // Set the color of the back icon to black
+        ),
+        title: const Text("My Products",
+            style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700)),
       ),
       body: _isLoading
           ? const Center(
