@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:merkado/screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
 
+import '../farmer_chat_screen.dart';
+
 class FarmerMySelectedOrder extends StatelessWidget {
   static const routeName = '/farmer-my-selected-order';
   final Map order;
@@ -42,10 +44,17 @@ class FarmerMySelectedOrder extends StatelessWidget {
         final imageUrl = snapshot.data;
         return Scaffold(
           appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
             centerTitle: true,
+            iconTheme: const IconThemeData(
+              color: Colors.black, // Set the color of the back icon to black
+            ),
             title: const Text('Your Orders',
-                style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.green,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w700)),
           ),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -66,12 +75,34 @@ class FarmerMySelectedOrder extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(height: 10),
-                    Text(
-                      'Buyer: ${order['buyerName']}',
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Buyer: ${order['buyerName']}',
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                        InkWell(
+                          child: Icon(Icons.message),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FarmerChatScreen(
+                                  userId:
+                                      FirebaseAuth.instance.currentUser!.uid,
+                                  userType: FarmerType.customers,
+                                  displayName: order['buyerName'],
+                                  customerId: order['buyerId'],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 10),
                     const Divider(),
