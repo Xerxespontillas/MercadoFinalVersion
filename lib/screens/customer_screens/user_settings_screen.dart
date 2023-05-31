@@ -265,7 +265,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
         backgroundColor: Colors.transparent,
         centerTitle: true,
         iconTheme: const IconThemeData(
-          color: Colors.black, // Set the color of the back icon to black
+          color: Colors.black,
+          size: 50, // Set the color of the back icon to black
         ),
         title: const Text('Settings',
             style: TextStyle(

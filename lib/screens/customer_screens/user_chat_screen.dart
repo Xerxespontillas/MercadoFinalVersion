@@ -267,7 +267,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
                 IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: _sendMessage,
-                  color: Colors.blue,
+                  color: Colors.black,
                 ),
               ],
             ),

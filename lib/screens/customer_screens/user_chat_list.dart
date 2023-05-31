@@ -58,7 +58,45 @@ class UserListScreen extends StatelessWidget {
     final farmers = await fetchRegisteredFarmers();
     final organizations = await fetchRegisteredOrganizations();
 
+    final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+
+    final farmerMessagesSnapshot = await FirebaseFirestore.instance
+        .collection('chats')
+        .doc('customers')
+        .collection('messages')
+        .where('customerId', isEqualTo: currentUserUid)
+        .where('role', isEqualTo: 'Customer')
+        .where('farmerId',
+            whereIn: farmers.map((farmer) => farmer['id']).toList())
+        .get();
+
+    final organizationMessagesSnapshot = await FirebaseFirestore.instance
+        .collection('chats')
+        .doc('customers')
+        .collection('messages')
+        .where('customerId', isEqualTo: currentUserUid)
+        .where('role', isEqualTo: 'Customer')
+        .where('organizationId',
+            whereIn: organizations.map((org) => org['id']).toList())
+        .get();
+
+    final farmerMessages =
+        farmerMessagesSnapshot.docs.map((doc) => doc.data()).toList();
+    final organizationMessages =
+        organizationMessagesSnapshot.docs.map((doc) => doc.data()).toList();
+
     final combinedList = [...farmers, ...organizations];
+    combinedList.removeWhere((item) {
+      final itemId = item['id'];
+      final itemRole = item.containsKey('role') ? item['role'] : 'organization';
+      if (itemRole == 'Farmer') {
+        return !farmerMessages.any((message) => message['farmerId'] == itemId);
+      } else {
+        return !organizationMessages
+            .any((message) => message['organizationId'] == itemId);
+      }
+    });
+
     combinedList.sort((a, b) {
       final aDisplayName =
           a.containsKey('role') ? a['displayName'] : a['organizationName'];
@@ -95,6 +133,10 @@ class UserListScreen extends StatelessWidget {
           }
 
           final combinedList = snapshot.data!;
+
+          if (combinedList.isEmpty) {
+            return const Center(child: Text('No conversations yet.'));
+          }
 
           return ListView.builder(
             itemCount: combinedList.length,
