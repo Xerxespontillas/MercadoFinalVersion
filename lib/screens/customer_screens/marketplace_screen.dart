@@ -20,6 +20,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String search = '';
   int cartCount = 0;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +58,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                 child: Container(
                   margin: const EdgeInsets.fromLTRB(30, 10, 0, 10),
                   child: TextField(
+                    controller: _searchController,
+                    onChanged: (value) {
+                      setState(() {
+                        search = value;
+                      });
+                    },
                     decoration: InputDecoration(
                       hintText: '   looking for something? ',
                       prefixIcon: const Icon(
@@ -121,20 +134,19 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection('AllProducts')
-                  .where('productName', isGreaterThanOrEqualTo: search)
-                  .where('productName', isLessThan: '${search}z')
-                  .snapshots(),
+              stream: _firestore.collection('AllProducts').snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
+                final List<DocumentSnapshot> allProducts = snapshot.data!.docs;
+                final filteredProducts = _filterProducts(allProducts, search);
+
                 return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
+                  itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
-                    DocumentSnapshot productData = snapshot.data!.docs[index];
+                    DocumentSnapshot productData = filteredProducts[index];
                     return Container(
                       decoration: const BoxDecoration(
                         border: Border(
@@ -256,4 +268,27 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       ),
     );
   }
+}
+
+// Filtering function
+List<DocumentSnapshot> _filterProducts(
+    List<DocumentSnapshot> products, String searchText) {
+  // ignore: unnecessary_null_comparison
+  if (searchText == null || searchText.trim().isEmpty) {
+    return products;
+  }
+
+  final searchTextLower = searchText.toLowerCase();
+
+  return products.where((product) {
+    final data = product.data() as Map<String, dynamic>;
+    final String productName = data['productName'] ?? '';
+    final String sellerName = data['sellerName'] ?? '';
+
+    final productNameLower = productName.toLowerCase();
+    final sellerNameLower = sellerName.toLowerCase();
+
+    return productNameLower.contains(searchTextLower) ||
+        sellerNameLower.contains(searchTextLower);
+  }).toList();
 }

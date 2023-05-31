@@ -86,7 +86,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
                               color: Colors.black),
                         ),
                         InkWell(
-                          child: Icon(Icons.message),
+                          child: const Icon(Icons.message),
                           onTap: () {
                             Navigator.push(
                               context,

@@ -265,7 +265,7 @@ class _OrgChatScreenState extends State<OrgChatScreen> {
                 IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: _sendMessage,
-                  color: Colors.blue,
+                  color: Colors.black,
                 ),
               ],
             ),
