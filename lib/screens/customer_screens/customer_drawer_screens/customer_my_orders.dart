@@ -26,7 +26,7 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
         iconTheme: const IconThemeData(
           color: Colors.black, // Set the color of the back icon to black
         ),
-        title: const Text('My Orders',
+        title: const Text('My Purchase',
             style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'Inter',

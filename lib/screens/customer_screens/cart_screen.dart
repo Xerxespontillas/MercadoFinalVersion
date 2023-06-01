@@ -97,12 +97,19 @@ class CartScreen extends StatelessWidget {
       FirebaseAuth auth, FirebaseFirestore firestore) async {
     User? user = _auth.currentUser;
     if (user != null) {
-      DocumentSnapshot userDoc =
-          await _firestore.collection('customers').doc(user.uid).get();
-      return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
-    } else {
-      return '';
+      DocumentSnapshot userDoc;
+      // Check if the user is a customer
+      userDoc = await _firestore.collection('customers').doc(user.uid).get();
+      if (userDoc.exists) {
+        return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
+      }
+      // Check if the user is a farmer
+      userDoc = await _firestore.collection('farmers').doc(user.uid).get();
+      if (userDoc.exists) {
+        return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
+      }
     }
+    return '';
   }
 
   @override

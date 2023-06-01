@@ -14,7 +14,6 @@ class FarmerListScreen extends StatelessWidget {
     final customersSnapshot =
         await FirebaseFirestore.instance.collection('customers').get();
 
-    // Get the customer documents along with their IDs
     final customerList = customersSnapshot.docs.map((doc) {
       final customerData = doc.data();
       final displayName = customerData['displayName'];
@@ -26,7 +25,26 @@ class FarmerListScreen extends StatelessWidget {
       };
     }).toList();
 
-    return customerList;
+    final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+
+    // Filter out customers who don't have any messages
+    List<Map<String, dynamic>> filteredCustomerList =
+        []; // <-- Explicitly declare the type here
+    for (var customer in customerList) {
+      final messagesSnapshot = await FirebaseFirestore.instance
+          .collection('chats')
+          .doc('customers')
+          .collection('messages')
+          .where('farmerId', isEqualTo: currentUserUid)
+          .where('customerId', isEqualTo: customer['id'])
+          .get();
+
+      if (messagesSnapshot.docs.isNotEmpty) {
+        filteredCustomerList.add(customer);
+      }
+    }
+
+    return filteredCustomerList;
   }
 
   @override
@@ -54,6 +72,10 @@ class FarmerListScreen extends StatelessWidget {
           }
 
           final customerList = snapshot.data!;
+
+          if (customerList.isEmpty) {
+            return const Center(child: Text('No messages from customers'));
+          }
 
           return ListView.builder(
             itemCount: customerList.length,
