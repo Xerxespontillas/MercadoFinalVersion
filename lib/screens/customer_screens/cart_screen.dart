@@ -25,6 +25,42 @@ class CartScreen extends StatelessWidget {
       var items = sellerData['items'] as List<CartItem>;
       var sellerId = sellerData['sellerId'] as String;
 
+      for (var item in items) {
+        // Check if the product exists in the Firestore database
+        var productRef =
+            FirebaseFirestore.instance.collection('AllProducts').doc(item.id);
+        var productSnapshot = await productRef.get();
+
+        if (!productSnapshot.exists) {
+          // If the product does not exist, show a dialog and clear the cart
+          // ignore: use_build_context_synchronously
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Product Unavailable'),
+                content: const Text(
+                    'There were recent changes of your selected products. Your cart will now be cleared and please add products to the cart again.'),
+                actions: <Widget>[
+                  ElevatedButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+
+          // Clear the cart
+          cartProvider.clearCart();
+
+          // Stop the function execution
+          return;
+        }
+      }
+
       var orderItems = items
           .map((item) => {
                 'productId': item.id,
@@ -59,6 +95,7 @@ class CartScreen extends StatelessWidget {
             .doc(sellerId)
             .collection(seller)
             .doc(item.id);
+
         await productRef.update({
           'quantity': FieldValue.increment(-item.quantity),
         });
@@ -68,19 +105,20 @@ class CartScreen extends StatelessWidget {
       for (var item in items) {
         var productRef =
             FirebaseFirestore.instance.collection('AllProducts').doc(item.id);
+
         await productRef.update({
           'quantity': FieldValue.increment(-item.quantity),
         });
       }
 
       // Send the order ID and the ordered items to the seller
-      // ignore: unused_local_variable
       for (var item in items) {
         var sellerRef = FirebaseFirestore.instance
             .collection('farmers')
             .doc(sellerId)
             .collection('customerOrders')
             .doc(orderId);
+
         await sellerRef.set({
           'items': orderItems,
           'orderConfirmed': false,
@@ -89,6 +127,7 @@ class CartScreen extends StatelessWidget {
         });
       }
     }
+
     // Clear the cart after placing the order
     cartProvider.clearCart();
   }
