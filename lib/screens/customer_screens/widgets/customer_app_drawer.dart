@@ -25,7 +25,7 @@ class CustomerAppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.shopping_cart),
-            title: const Text('My Orders'),
+            title: const Text('My Purchase'),
             onTap: () {
               Navigator.of(context).pushNamed(CustomerMyOrders.routeName);
             },

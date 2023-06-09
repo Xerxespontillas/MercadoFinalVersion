@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
+import '../organization_screens/organization_screen_controller.dart';
 import 'farmer_screen_controller.dart';
 
 class FarmerNewProductPost extends StatefulWidget {
@@ -25,14 +25,23 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
   final TextEditingController _textController = TextEditingController();
   File? _image;
   final ImagePicker _picker = ImagePicker();
-  final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _formKey = GlobalKey<FormState>();
 
   // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   var farmerId = FirebaseAuth.instance.currentUser!.uid;
 
   Future<void> _addProductToDatabaseWithImage() async {
+    if (_image == null) {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     content: Text('Please upload an image.'),
+      //   ),
+      // );
+      // return;
+    }
+
     setState(() {});
 
     String productName = _productNameController.text;
@@ -49,14 +58,12 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
       "sellerUserId": farmerId,
     };
 
-    if (_image != null) {
-      var snapshot = await _storage
-          .ref('AllProducts/${_image!.path.split('/').last}')
-          .putFile(_image!);
-      var downloadUrl = await snapshot.ref.getDownloadURL();
+    // var snapshot = await _storage
+    //     .ref('AllProducts/${_image!.path.split('/').last}')
+    //     .putFile(_image!);
+    // var downloadUrl = await snapshot.ref.getDownloadURL();
 
-      data['image'] = downloadUrl;
-    }
+    // data['image'] = downloadUrl;
 
     // Generate a new document reference in 'products' collection to get a unique ID
     DocumentReference newDocRef = _firestore.collection('AllProducts').doc();
@@ -68,25 +75,78 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
     await _firestore.collection('AllProducts').doc(productId).set(data);
 
     // Add the product data to the 'FarmerProducts' collection
-    await addProductToFarmerProducts(productId, data, _auth, _firestore);
+    await addProductToDatabase(productId, data, _auth, _firestore);
 
     setState(() {});
 
     // ignore: use_build_context_synchronously
-    Navigator.of(context)
-        .pushReplacementNamed(FarmerScreenController.routeName);
+    await navigateBasedOnUserType(context, _auth, _firestore);
   }
 
-  Future<void> addProductToFarmerProducts(
+  Future<void> navigateBasedOnUserType(BuildContext context, FirebaseAuth auth,
+      FirebaseFirestore firestore) async {
+    User? user = auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc;
+      String userType;
+      try {
+        userDoc = await _firestore.collection('farmers').doc(user.uid).get();
+        if (!userDoc.exists) {
+          userDoc =
+              await _firestore.collection('organizations').doc(user.uid).get();
+          userType = 'organization';
+        } else {
+          userType = 'farmer';
+        }
+      } catch (e) {
+        return;
+      }
+
+      if (userType == 'farmer') {
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) =>
+                  const FarmerScreenController()), // replace with your FarmerScreenController
+          (Route<dynamic> route) => false,
+        );
+      } else if (userType == 'organization') {
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) =>
+                  const OrgScreenController()), // replace with your OrgScreenController
+          (Route<dynamic> route) => false,
+        );
+      }
+    }
+  }
+
+  Future<void> addProductToDatabase(
       String productId,
       Map<String, dynamic> productData,
       FirebaseAuth auth,
       FirebaseFirestore firestore) async {
     User? user = auth.currentUser;
     if (user != null) {
-      String displayName = await getSellerName(auth, _firestore);
+      DocumentSnapshot userDoc;
+      String collectionPath;
+      try {
+        userDoc = await _firestore.collection('farmers').doc(user.uid).get();
+        if (!userDoc.exists) {
+          userDoc =
+              await _firestore.collection('organizations').doc(user.uid).get();
+          collectionPath = 'OrgProducts';
+        } else {
+          collectionPath = 'FarmerProducts';
+        }
+      } catch (e) {
+        return;
+      }
+      String displayName =
+          (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
       await _firestore
-          .collection('FarmerProducts')
+          .collection(collectionPath)
           .doc(user.uid)
           .collection(displayName)
           .doc(productId)
@@ -98,8 +158,16 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
       FirebaseAuth auth, FirebaseFirestore firestore) async {
     User? user = _auth.currentUser;
     if (user != null) {
-      DocumentSnapshot userDoc =
-          await _firestore.collection('farmers').doc(user.uid).get();
+      DocumentSnapshot userDoc;
+      try {
+        userDoc = await _firestore.collection('farmers').doc(user.uid).get();
+        if (!userDoc.exists) {
+          userDoc =
+              await _firestore.collection('organizations').doc(user.uid).get();
+        }
+      } catch (e) {
+        return '';
+      }
       return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
     } else {
       return '';
@@ -127,227 +195,238 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('New Post'),
+        title: const Text('New Product'),
       ),
       body: Padding(
         padding: EdgeInsets.all(screenSize.width * 0.02), // 2% of screen width
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: GestureDetector(
-                      onTap: () async {
-                        final XFile? selectedImage = await _picker.pickImage(
-                            source: ImageSource.gallery);
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final XFile? selectedImage = await _picker.pickImage(
+                              source: ImageSource.gallery);
 
-                        if (selectedImage != null) {
-                          _image = File(selectedImage.path);
-                          setState(() {});
-                        }
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
+                          if (selectedImage != null) {
+                            _image = File(selectedImage.path);
+                            setState(() {});
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                          ),
+                          child: _image == null
+                              ? const Icon(
+                                  Icons.cloud_upload,
+                                  size: 80,
+                                )
+                              : Image.file(_image!),
                         ),
-                        child: _image == null
-                            ? const Icon(
-                                Icons.cloud_upload,
-                                size: 80,
-                              )
-                            : Image.file(_image!),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(width: screenSize.width * 0.02), // 2% of screen width
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(
-                              4.0), // Add border radius if desired
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(
-                                  8.0), // Add padding for icon spacing
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  // Add border only on the right side of the icon container
-                                  right: BorderSide(color: Colors.black),
+                  SizedBox(
+                      width: screenSize.width * 0.02), // 2% of screen width
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(
+                                4.0), // Add border radius if desired
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(
+                                    8.0), // Add padding for icon spacing
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    // Add border only on the right side of the icon container
+                                    right: BorderSide(color: Colors.black),
+                                  ),
+                                ),
+                                child: const Icon(
+                                  FontAwesomeIcons.penToSquare,
+                                  color: Colors.black, // Set desired icon color
                                 ),
                               ),
-                              child: const Icon(
-                                FontAwesomeIcons.penToSquare,
-                                color: Colors.black, // Set desired icon color
-                              ),
-                            ),
-                            SizedBox(
-                                width: screenSize.width *
-                                    0.01), // 1% of screen width
-                            Expanded(
-                              child: TextFormField(
-                                controller: _productNameController,
-                                decoration: const InputDecoration(
-                                  hintText: 'Product Name',
-                                  border: InputBorder
-                                      .none, // Remove the default border
-                                  contentPadding: EdgeInsets.symmetric(
-                                      horizontal:
-                                          8.0), // Adjust padding as needed
+                              SizedBox(
+                                  width: screenSize.width *
+                                      0.01), // 1% of screen width
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _productNameController,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Product Name',
+                                    border: InputBorder
+                                        .none, // Remove the default border
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            8.0), // Adjust padding as needed
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a product name';
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(
-                              4.0), // Add border radius if desired
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(
-                                  8.0), // Add padding for icon spacing
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  // Add border only on the right side of the icon container
-                                  right: BorderSide(color: Colors.black),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(
+                                4.0), // Add border radius if desired
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(
+                                    8.0), // Add padding for icon spacing
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    // Add border only on the right side of the icon container
+                                    right: BorderSide(color: Colors.black),
+                                  ),
+                                ),
+                                child: const Icon(
+                                  FontAwesomeIcons.dollarSign,
+                                  color: Colors.black, // Set desired icon color
                                 ),
                               ),
-                              child: const Icon(
-                                FontAwesomeIcons.dollarSign,
-                                color: Colors.black, // Set desired icon color
-                              ),
-                            ),
-                            SizedBox(
-                                width: screenSize.width *
-                                    0.01), // 1% of screen width
-                            Expanded(
-                              child: TextFormField(
-                                controller: _priceController,
-                                keyboardType: TextInputType
-                                    .number, // Set the keyboard type to number
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter
-                                      .digitsOnly, // Allow only digits (numbers)
-                                ],
-                                decoration: const InputDecoration(
-                                  hintText: 'Price',
+                              SizedBox(
+                                  width: screenSize.width *
+                                      0.01), // 1% of screen width
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _priceController,
+                                  keyboardType: TextInputType
+                                      .number, // Set the keyboard type to number
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter
+                                        .digitsOnly, // Allow only digits (numbers)
+                                  ],
+                                  decoration: const InputDecoration(
+                                    hintText: 'Price',
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(
-                              4.0), // Add border radius if desired
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(
-                                  8.0), // Add padding for icon spacing
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  // Add border only on the right side of the icon container
-                                  right: BorderSide(color: Colors.black),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(
+                                4.0), // Add border radius if desired
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(
+                                    8.0), // Add padding for icon spacing
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    // Add border only on the right side of the icon container
+                                    right: BorderSide(color: Colors.black),
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons
+                                      .shopping_cart, // Replace with the desired icon
+                                  color: Colors.black, // Set desired icon color
                                 ),
                               ),
-                              child: const Icon(
-                                Icons
-                                    .shopping_cart, // Replace with the desired icon
-                                color: Colors.black, // Set desired icon color
+                              SizedBox(
+                                  width: screenSize.width *
+                                      0.03), // 1% of screen width
+                              Text(
+                                quantity.toString(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                                width: screenSize.width *
-                                    0.03), // 1% of screen width
-                            Text(
-                              quantity.toString(),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.normal,
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                onPressed: increaseQuantity,
                               ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              onPressed: increaseQuantity,
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.remove),
-                              onPressed: decreaseQuantity,
-                            ),
-                          ],
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                onPressed: decreaseQuantity,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            SizedBox(height: screenSize.height * 0.02), // 2%
-            // Product details text field
-            Expanded(
-              child: TextField(
-                controller: _textController,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  hintText: 'Enter Product details',
+              SizedBox(height: screenSize.height * 0.02), // 2%
+              // Product details text field
+              Expanded(
+                child: TextField(
+                  controller: _textController,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter Product details',
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: screenSize.height * 0.02), // 2% of screen height
+              SizedBox(height: screenSize.height * 0.02), // 2% of screen height
 
-            // ADD ITEM NOW and CANCEL buttons
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ElevatedButton(
-                  onPressed: _addProductToDatabaseWithImage,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
+              // ADD ITEM NOW and CANCEL buttons
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed: _addProductToDatabaseWithImage,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('ADD ITEM NOW'),
                   ),
-                  child: const Text('ADD ITEM NOW'),
-                ),
-                SizedBox(
-                    height: screenSize.height *
-                        0.02), // 2% of screen height spacing
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => const FarmerScreenController()),
-                      (Route<dynamic> route) => false,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
+                  SizedBox(
+                      height: screenSize.height *
+                          0.02), // 2% of screen height spacing
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const FarmerScreenController()),
+                        (Route<dynamic> route) => false,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('CANCEL'),
                   ),
-                  child: const Text('CANCEL'),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

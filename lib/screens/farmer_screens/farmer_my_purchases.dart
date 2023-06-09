@@ -2,18 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'customer_selected_order.dart';
+import 'farmer_selected_purchase.dart';
 
-class CustomerMyOrders extends StatefulWidget {
-  const CustomerMyOrders({super.key});
-  static const routeName = '/customer-my-orders';
+class FarmerMyPurchases extends StatefulWidget {
+  const FarmerMyPurchases({super.key});
+  static const routeName = '/farmer-my-purchases';
 
   @override
   // ignore: library_private_types_in_public_api
-  _CustomerMyOrdersState createState() => _CustomerMyOrdersState();
+  _FarmerMyPurchasesState createState() => _FarmerMyPurchasesState();
 }
 
-class _CustomerMyOrdersState extends State<CustomerMyOrders> {
+class _FarmerMyPurchasesState extends State<FarmerMyPurchases> {
   @override
   Widget build(BuildContext context) {
     var userId = FirebaseAuth.instance.currentUser!.uid;
@@ -61,7 +61,7 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
                     var sellerId = order['sellerId'];
                     bool orderConfirmed = order['orderConfirmed'];
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => CustomerSelectedOrder(
+                        builder: (context) => FarmerSelectedPurchase(
                             order: order.data() as Map,
                             items: items,
                             deliveryFee: deliveryFee,

@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:merkado/screens/customer_screens/widgets/customer_app_drawer.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/cart_provider.dart';
+import '../../widgets/farmer_app_drawer.dart';
 import '../farmer_screens/models/product.dart';
 import 'cart_screen.dart';
 
@@ -28,12 +30,49 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     super.dispose();
   }
 
+  Future<bool> isUserFarmer(String userId) async {
+    final DocumentSnapshot farmerDoc = await FirebaseFirestore.instance
+        .collection('farmers')
+        .doc(userId)
+        .get();
+
+    final DocumentSnapshot organizationDoc = await FirebaseFirestore.instance
+        .collection('organizations')
+        .doc(userId)
+        .get();
+
+    if (farmerDoc.exists || organizationDoc.exists) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: Container(
-        color: Colors.black, // Set the background color to black
-        child: const CustomerAppDrawer(),
+      endDrawer: FutureBuilder<bool>(
+        future: isUserFarmer(FirebaseAuth.instance.currentUser!.uid),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox
+                .shrink(); // return an empty widget while loading
+          } else {
+            if (snapshot.data == true) {
+              // Render FarmerAppDrawer for farmer users
+              return Container(
+                color: Colors.black, // Set the background color to black
+                child: const FarmerAppDrawer(),
+              );
+            } else {
+              // Render CustomerAppDrawer for customer users
+              return Container(
+                color: Colors.black, // Set the background color to black
+                child: const CustomerAppDrawer(),
+              );
+            }
+          }
+        },
       ),
       appBar: AppBar(
         elevation: 0,
@@ -141,7 +180,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                 }
 
                 final List<DocumentSnapshot> allProducts = snapshot.data!.docs;
-                final filteredProducts = _filterProducts(allProducts, search);
+                final filteredProducts = _filterProducts(allProducts, search,
+                    FirebaseAuth.instance.currentUser!.uid);
 
                 return ListView.builder(
                   itemCount: filteredProducts.length,
@@ -272,10 +312,15 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
 
 // Filtering function
 List<DocumentSnapshot> _filterProducts(
-    List<DocumentSnapshot> products, String searchText) {
+    List<DocumentSnapshot> products, String searchText, String userId) {
   // ignore: unnecessary_null_comparison
   if (searchText == null || searchText.trim().isEmpty) {
-    return products;
+    return products.where((product) {
+      final data = product.data() as Map<String, dynamic>;
+      final int quantity = (data['quantity'] ?? 0) as int;
+      final String sellerUserId = data['sellerUserId'] ?? '';
+      return quantity > 0 && sellerUserId != userId;
+    }).toList();
   }
 
   final searchTextLower = searchText.toLowerCase();
@@ -284,11 +329,15 @@ List<DocumentSnapshot> _filterProducts(
     final data = product.data() as Map<String, dynamic>;
     final String productName = data['productName'] ?? '';
     final String sellerName = data['sellerName'] ?? '';
+    final int quantity = (data['quantity'] ?? 0) as int;
+    final String sellerUserId = data['sellerUserId'] ?? '';
 
     final productNameLower = productName.toLowerCase();
     final sellerNameLower = sellerName.toLowerCase();
 
-    return productNameLower.contains(searchTextLower) ||
-        sellerNameLower.contains(searchTextLower);
+    return (productNameLower.contains(searchTextLower) ||
+            sellerNameLower.contains(searchTextLower)) &&
+        quantity > 0 &&
+        sellerUserId != userId;
   }).toList();
 }

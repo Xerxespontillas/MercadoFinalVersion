@@ -25,6 +25,42 @@ class CartScreen extends StatelessWidget {
       var items = sellerData['items'] as List<CartItem>;
       var sellerId = sellerData['sellerId'] as String;
 
+      for (var item in items) {
+        // Check if the product exists in the Firestore database
+        var productRef =
+            FirebaseFirestore.instance.collection('AllProducts').doc(item.id);
+        var productSnapshot = await productRef.get();
+
+        if (!productSnapshot.exists) {
+          // If the product does not exist, show a dialog and clear the cart
+          // ignore: use_build_context_synchronously
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Product Unavailable'),
+                content: const Text(
+                    'There were recent changes of your selected products. Your cart will now be cleared and please add products to the cart again.'),
+                actions: <Widget>[
+                  ElevatedButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+
+          // Clear the cart
+          cartProvider.clearCart();
+
+          // Stop the function execution
+          return;
+        }
+      }
+
       var orderItems = items
           .map((item) => {
                 'productId': item.id,
@@ -52,13 +88,28 @@ class CartScreen extends StatelessWidget {
         'orderConfirmed': false,
       });
 
-      // Decrease the stock of each product
+// Decrease the stock of each product
       for (var item in items) {
-        var productRef = FirebaseFirestore.instance
+        DocumentReference productRef;
+        DocumentSnapshot productSnapshot;
+
+        // Try to get the product from the 'FarmerProducts' collection
+        productRef = FirebaseFirestore.instance
             .collection('FarmerProducts')
             .doc(sellerId)
             .collection(seller)
             .doc(item.id);
+        productSnapshot = await productRef.get();
+
+        // If the product doesn't exist in 'FarmerProducts', get it from 'OrgProducts'
+        if (!productSnapshot.exists) {
+          productRef = FirebaseFirestore.instance
+              .collection('OrgProducts')
+              .doc(sellerId)
+              .collection(seller)
+              .doc(item.id);
+        }
+
         await productRef.update({
           'quantity': FieldValue.increment(-item.quantity),
         });
@@ -68,19 +119,33 @@ class CartScreen extends StatelessWidget {
       for (var item in items) {
         var productRef =
             FirebaseFirestore.instance.collection('AllProducts').doc(item.id);
+
         await productRef.update({
           'quantity': FieldValue.increment(-item.quantity),
         });
       }
 
       // Send the order ID and the ordered items to the seller
-      // ignore: unused_local_variable
       for (var item in items) {
-        var sellerRef = FirebaseFirestore.instance
+        DocumentReference sellerRef;
+        final farmerDoc = await FirebaseFirestore.instance
             .collection('farmers')
             .doc(sellerId)
-            .collection('customerOrders')
-            .doc(orderId);
+            .get();
+        if (farmerDoc.exists) {
+          sellerRef = FirebaseFirestore.instance
+              .collection('farmers')
+              .doc(sellerId)
+              .collection('customerOrders')
+              .doc(orderId);
+        } else {
+          sellerRef = FirebaseFirestore.instance
+              .collection('organizations')
+              .doc(sellerId)
+              .collection('customerOrders')
+              .doc(orderId);
+        }
+
         await sellerRef.set({
           'items': orderItems,
           'orderConfirmed': false,
@@ -89,6 +154,7 @@ class CartScreen extends StatelessWidget {
         });
       }
     }
+
     // Clear the cart after placing the order
     cartProvider.clearCart();
   }
@@ -97,12 +163,25 @@ class CartScreen extends StatelessWidget {
       FirebaseAuth auth, FirebaseFirestore firestore) async {
     User? user = _auth.currentUser;
     if (user != null) {
-      DocumentSnapshot userDoc =
-          await _firestore.collection('customers').doc(user.uid).get();
-      return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
-    } else {
-      return '';
+      DocumentSnapshot userDoc;
+      // Check if the user is a customer
+      userDoc = await _firestore.collection('customers').doc(user.uid).get();
+      if (userDoc.exists) {
+        return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
+      }
+      // Check if the user is a farmer
+      userDoc = await _firestore.collection('farmers').doc(user.uid).get();
+      if (userDoc.exists) {
+        return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
+      }
+      // Check if the user is a organization
+      userDoc =
+          await _firestore.collection('organizations').doc(user.uid).get();
+      if (userDoc.exists) {
+        return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
+      }
     }
+    return '';
   }
 
   @override

@@ -2,18 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'customer_selected_order.dart';
+import 'organization_my_selected_order.dart';
 
-class CustomerMyOrders extends StatefulWidget {
-  const CustomerMyOrders({super.key});
-  static const routeName = '/customer-my-orders';
+class OrgMyOrders extends StatefulWidget {
+  const OrgMyOrders({super.key});
+  static const routeName = '/org-my-order';
 
   @override
   // ignore: library_private_types_in_public_api
-  _CustomerMyOrdersState createState() => _CustomerMyOrdersState();
+  _OrgMyOrdersState createState() => _OrgMyOrdersState();
 }
 
-class _CustomerMyOrdersState extends State<CustomerMyOrders> {
+class _OrgMyOrdersState extends State<OrgMyOrders> {
   @override
   Widget build(BuildContext context) {
     var userId = FirebaseAuth.instance.currentUser!.uid;
@@ -26,7 +26,7 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
         iconTheme: const IconThemeData(
           color: Colors.black, // Set the color of the back icon to black
         ),
-        title: const Text('My Purchase',
+        title: const Text('My Orders',
             style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'Inter',
@@ -34,9 +34,9 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('customersOrders')
+            .collection('organizations')
             .doc(userId)
-            .collection('orders')
+            .collection('customerOrders')
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -58,14 +58,14 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
               return InkWell(
                 onTap: () {
                   if (order.data() is Map) {
-                    var sellerId = order['sellerId'];
+                    var buyerId = order['buyerId'];
                     bool orderConfirmed = order['orderConfirmed'];
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => CustomerSelectedOrder(
+                        builder: (context) => OrgMySelectedOrder(
                             order: order.data() as Map,
                             items: items,
                             deliveryFee: deliveryFee,
-                            sellerId: sellerId,
+                            buyerId: buyerId,
                             orderConfirmed: orderConfirmed,
                             orderId: order.id)));
                   }
@@ -77,7 +77,7 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Order ID: ${order.id}'),
-                        Text('Seller: ${order['sellerName']}'),
+                        Text('Buyer: ${order['buyerName']}'),
                         ...items.map<Widget>((item) => ListTile(
                               leading: Image.network(
                                 item['productImage'],
