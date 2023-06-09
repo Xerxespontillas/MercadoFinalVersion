@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:photo_view/photo_view.dart';
 
 import '../farmer_screens/models/product.dart';
@@ -25,7 +25,7 @@ class _SelectedProductMarketplaceState
   late TextEditingController _productNameController;
   late TextEditingController _priceController;
   late TextEditingController _productDetailsController;
-  final ImagePicker _picker = ImagePicker();
+
   File? _image;
   late int quantity = product.quantity;
 
@@ -64,6 +64,7 @@ class _SelectedProductMarketplaceState
                     aspectRatio: 1,
                     child: GestureDetector(
                       onTap: () {
+                        // ignore: unnecessary_null_comparison
                         if (_image != null || product.image != null) {
                           showDialog(
                             context: context,
@@ -71,8 +72,7 @@ class _SelectedProductMarketplaceState
                               child: PhotoView(
                                 imageProvider: _image != null
                                     ? FileImage(_image!)
-                                        as ImageProvider<Object>?
-                                    : NetworkImage(product.image!)
+                                    : NetworkImage(product.image)
                                         as ImageProvider<Object>?,
                               ),
                             ),
@@ -80,8 +80,8 @@ class _SelectedProductMarketplaceState
                         } else {
                           showDialog(
                             context: context,
-                            builder: (context) => Dialog(
-                              child: const Icon(
+                            builder: (context) => const Dialog(
+                              child: Icon(
                                 Icons.cloud_upload,
                                 size: 80,
                               ),
@@ -94,8 +94,9 @@ class _SelectedProductMarketplaceState
                           border: Border.all(color: Colors.black),
                         ),
                         child: _image == null
+                            // ignore: unnecessary_null_comparison
                             ? (product.image != null
-                                ? Image.network(product.image!)
+                                ? Image.network(product.image)
                                 : const Icon(
                                     Icons.cloud_upload,
                                     size: 80,
