@@ -75,6 +75,23 @@ class CartScreen extends StatelessWidget {
       // Generate a unique order ID
       var orderId = FirebaseFirestore.instance.collection('dummy').doc().id;
 
+      var farmersRef =
+          FirebaseFirestore.instance.collection('farmers').doc(sellerId);
+      var orgsRef =
+          FirebaseFirestore.instance.collection('organizations').doc(sellerId);
+
+      DocumentSnapshot farmerDoc = await farmersRef.get();
+      DocumentSnapshot orgDoc = await orgsRef.get();
+
+      String sellerType;
+      if (farmerDoc.exists) {
+        sellerType = 'Farmer';
+      } else if (orgDoc.exists) {
+        sellerType = 'Organization';
+      } else {
+        throw 'Seller ID not found in either farmers or organizations collections';
+      }
+
       var docRef = FirebaseFirestore.instance
           .collection('customersOrders')
           .doc(userId)
@@ -86,6 +103,7 @@ class CartScreen extends StatelessWidget {
         'sellerId': sellerId,
         'items': orderItems,
         'orderConfirmed': false,
+        'sellerType': sellerType, // Add this line
       });
 
 // Decrease the stock of each product
