@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Product {
   final String id;
   final String productName;
@@ -21,6 +23,18 @@ class Product {
     required this.sellerId,
     required this.image,
   });
+
+  // Add this method
+  Product.fromDocumentSnapshot(DocumentSnapshot doc)
+      : id = doc.id,
+        productName = doc['productName'],
+        productDetails = doc['productDetails'],
+        price = doc['price'],
+        quantity = doc['quantity'],
+        maxQuantity = doc['quantity'],
+        sellerName = doc['sellerName'],
+        sellerId = doc['sellerUserId'],
+        image = doc['image'];
 }
 
 class CartItem extends Product {
@@ -49,4 +63,8 @@ class CartItem extends Product {
           sellerId: sellerId,
           image: image,
         );
+  // Add this method
+  CartItem.fromDocumentSnapshot(DocumentSnapshot doc)
+      : quantity = doc['quantity'],
+        super.fromDocumentSnapshot(doc);
 }

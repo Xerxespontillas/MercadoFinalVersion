@@ -5,6 +5,7 @@ import 'package:merkado/providers/cart_provider.dart';
 import 'package:merkado/providers/customer_ordered_products_provider.dart';
 import 'package:merkado/providers/organization_products_provider.dart';
 import 'package:merkado/screens/customer_screens/customer_drawer_screens/customer_my_orders.dart';
+import 'package:merkado/screens/customer_screens/selected_product_marketplace.dart';
 import 'package:merkado/screens/farmer_screens/farmer_my_purchases.dart';
 import 'package:merkado/screens/organization_screens/organization_market_screen.dart';
 
@@ -133,6 +134,8 @@ class _MerkadoState extends State<Merkado> {
           ForgotPasswordScreen.routeName: (ctx) => const ForgotPasswordScreen(),
           UserLocationScreen.routeName: (ctx) => const UserLocationScreen(),
           MarketplaceScreen.routeName: (ctx) => const MarketplaceScreen(),
+          SelectedProductMarketplace.routeName: (ctx) =>
+              const SelectedProductMarketplace(),
           CustomerMyOrders.routeName: (ctx) => const CustomerMyOrders(),
 
           UserScreenController.routeName: (ctx) => const UserScreenController(),
