@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
+import '../organization_screens/organization_screen_controller.dart';
 import 'farmer_screen_controller.dart';
 
 class FarmerNewProductPost extends StatefulWidget {
@@ -25,7 +25,6 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
   final TextEditingController _textController = TextEditingController();
   File? _image;
   final ImagePicker _picker = ImagePicker();
-  final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
 
@@ -35,12 +34,12 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
 
   Future<void> _addProductToDatabaseWithImage() async {
     if (_image == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please upload an image.'),
-        ),
-      );
-      return;
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     content: Text('Please upload an image.'),
+      //   ),
+      // );
+      // return;
     }
 
     setState(() {});
@@ -59,12 +58,12 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
       "sellerUserId": farmerId,
     };
 
-    var snapshot = await _storage
-        .ref('AllProducts/${_image!.path.split('/').last}')
-        .putFile(_image!);
-    var downloadUrl = await snapshot.ref.getDownloadURL();
+    // var snapshot = await _storage
+    //     .ref('AllProducts/${_image!.path.split('/').last}')
+    //     .putFile(_image!);
+    // var downloadUrl = await snapshot.ref.getDownloadURL();
 
-    data['image'] = downloadUrl;
+    // data['image'] = downloadUrl;
 
     // Generate a new document reference in 'products' collection to get a unique ID
     DocumentReference newDocRef = _firestore.collection('AllProducts').doc();
@@ -76,25 +75,78 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
     await _firestore.collection('AllProducts').doc(productId).set(data);
 
     // Add the product data to the 'FarmerProducts' collection
-    await addProductToFarmerProducts(productId, data, _auth, _firestore);
+    await addProductToDatabase(productId, data, _auth, _firestore);
 
     setState(() {});
 
     // ignore: use_build_context_synchronously
-    Navigator.of(context)
-        .pushReplacementNamed(FarmerScreenController.routeName);
+    await navigateBasedOnUserType(context, _auth, _firestore);
   }
 
-  Future<void> addProductToFarmerProducts(
+  Future<void> navigateBasedOnUserType(BuildContext context, FirebaseAuth auth,
+      FirebaseFirestore firestore) async {
+    User? user = auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc;
+      String userType;
+      try {
+        userDoc = await _firestore.collection('farmers').doc(user.uid).get();
+        if (!userDoc.exists) {
+          userDoc =
+              await _firestore.collection('organizations').doc(user.uid).get();
+          userType = 'organization';
+        } else {
+          userType = 'farmer';
+        }
+      } catch (e) {
+        return;
+      }
+
+      if (userType == 'farmer') {
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) =>
+                  const FarmerScreenController()), // replace with your FarmerScreenController
+          (Route<dynamic> route) => false,
+        );
+      } else if (userType == 'organization') {
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) =>
+                  const OrgScreenController()), // replace with your OrgScreenController
+          (Route<dynamic> route) => false,
+        );
+      }
+    }
+  }
+
+  Future<void> addProductToDatabase(
       String productId,
       Map<String, dynamic> productData,
       FirebaseAuth auth,
       FirebaseFirestore firestore) async {
     User? user = auth.currentUser;
     if (user != null) {
-      String displayName = await getSellerName(auth, _firestore);
+      DocumentSnapshot userDoc;
+      String collectionPath;
+      try {
+        userDoc = await _firestore.collection('farmers').doc(user.uid).get();
+        if (!userDoc.exists) {
+          userDoc =
+              await _firestore.collection('organizations').doc(user.uid).get();
+          collectionPath = 'OrgProducts';
+        } else {
+          collectionPath = 'FarmerProducts';
+        }
+      } catch (e) {
+        return;
+      }
+      String displayName =
+          (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
       await _firestore
-          .collection('FarmerProducts')
+          .collection(collectionPath)
           .doc(user.uid)
           .collection(displayName)
           .doc(productId)
@@ -106,8 +158,16 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
       FirebaseAuth auth, FirebaseFirestore firestore) async {
     User? user = _auth.currentUser;
     if (user != null) {
-      DocumentSnapshot userDoc =
-          await _firestore.collection('farmers').doc(user.uid).get();
+      DocumentSnapshot userDoc;
+      try {
+        userDoc = await _firestore.collection('farmers').doc(user.uid).get();
+        if (!userDoc.exists) {
+          userDoc =
+              await _firestore.collection('organizations').doc(user.uid).get();
+        }
+      } catch (e) {
+        return '';
+      }
       return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
     } else {
       return '';

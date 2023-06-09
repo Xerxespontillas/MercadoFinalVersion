@@ -25,7 +25,7 @@ class CustomBottomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.add_box_outlined),
-          label: 'Add Product',
+          label: 'My Products',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.message_outlined),

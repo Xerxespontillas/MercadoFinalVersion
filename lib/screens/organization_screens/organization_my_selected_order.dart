@@ -1,12 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:merkado/screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
 
-import '../farmer_chat_screen.dart';
+import 'organization_my_products.dart';
 
-class FarmerMySelectedOrder extends StatelessWidget {
-  static const routeName = '/farmer-my-selected-order';
+class OrgMySelectedOrder extends StatelessWidget {
+  static const routeName = '/organization-my-selected-order';
   final Map order;
   final List items;
   final double deliveryFee;
@@ -14,7 +13,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
   final String buyerId;
   final bool orderConfirmed;
 
-  const FarmerMySelectedOrder({
+  const OrgMySelectedOrder({
     Key? key,
     required this.order,
     required this.items,
@@ -24,30 +23,18 @@ class FarmerMySelectedOrder extends StatelessWidget {
     required this.orderConfirmed,
   }) : super(key: key);
 
-  Future<String?> getBuyerImageUrl() async {
+  Future<String> getBuyerImageUrl() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('customers')
         .doc(buyerId)
         .get();
-    if (snapshot.exists) {
-      return snapshot.data()?['profilePicture'];
-    } else {
-      final farmerSnapshot = await FirebaseFirestore.instance
-          .collection('farmers')
-          .doc(buyerId)
-          .get();
-      if (farmerSnapshot.exists && farmerSnapshot.data() != null) {
-        return farmerSnapshot.data()?['profilePicture'];
-      } else {
-        return null;
-      }
-    }
+    return snapshot['profilePicture'];
   }
 
   @override
   Widget build(BuildContext context) {
     var userId = FirebaseAuth.instance.currentUser!.uid;
-    return StreamBuilder<String?>(
+    return StreamBuilder<String>(
       stream: getBuyerImageUrl().asStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -97,23 +84,23 @@ class FarmerMySelectedOrder extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               color: Colors.black),
                         ),
-                        InkWell(
-                          child: const Icon(Icons.message),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FarmerChatScreen(
-                                  userId:
-                                      FirebaseAuth.instance.currentUser!.uid,
-                                  userType: FarmerType.customers,
-                                  displayName: order['buyerName'],
-                                  customerId: order['buyerId'],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                        // InkWell(
+                        //   child: const Icon(Icons.message),
+                        //   onTap: () {
+                        //     Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => FarmerChatScreen(
+                        //           userId:
+                        //               FirebaseAuth.instance.currentUser!.uid,
+                        //           userType: FarmerType.customers,
+                        //           displayName: order['buyerName'],
+                        //           customerId: order['buyerId'],
+                        //         ),
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -168,7 +155,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
                     const SizedBox(height: 20),
                     StreamBuilder<bool>(
                       stream: FirebaseFirestore.instance
-                          .collection('farmers')
+                          .collection('organizations')
                           .doc(userId)
                           .collection('customerOrders')
                           .doc(orderId)
@@ -216,7 +203,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
 
                                         // Here is how to delete the orderId from farmers collection
                                         await FirebaseFirestore.instance
-                                            .collection('farmers')
+                                            .collection('organizations')
                                             .doc(userId)
                                             .collection('customerOrders')
                                             .doc(orderId)
@@ -234,7 +221,8 @@ class FarmerMySelectedOrder extends StatelessWidget {
                                         // ignore: use_build_context_synchronously
                                         Navigator.of(context)
                                             .pushReplacementNamed(
-                                                FarmerMyProducts.routeName);
+                                                OrganizationMyProducts
+                                                    .routeName);
                                       },
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.red),
@@ -243,7 +231,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
                                     ElevatedButton(
                                       onPressed: () async {
                                         await FirebaseFirestore.instance
-                                            .collection('farmers')
+                                            .collection('organizations')
                                             .doc(userId)
                                             .collection('customerOrders')
                                             .doc(orderId)

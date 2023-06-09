@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:merkado/providers/cart_provider.dart';
 import 'package:merkado/providers/customer_ordered_products_provider.dart';
+import 'package:merkado/providers/organization_products_provider.dart';
 import 'package:merkado/screens/customer_screens/customer_drawer_screens/customer_my_orders.dart';
+import 'package:merkado/screens/farmer_screens/farmer_my_purchases.dart';
 import 'package:merkado/screens/organization_screens/organization_market_screen.dart';
 
 import 'package:merkado/screens/farmer_screens/farmer_my_edit_products.dart';
+import 'package:merkado/screens/organization_screens/organization_my_edit_products.dart';
+import 'package:merkado/screens/organization_screens/organization_my_order.dart';
 
 import 'package:merkado/screens/organization_screens/organization_screen_controller.dart';
 import 'package:merkado/screens/organization_screens/organization_settings_screen.dart';
@@ -97,6 +101,9 @@ class _MerkadoState extends State<Merkado> {
           create: (context) => FarmerProducts(),
         ),
         ChangeNotifierProvider(
+          create: (context) => OrganizationProducts(),
+        ),
+        ChangeNotifierProvider(
           create: (context) => CustomerOrderedProducts(),
         ),
       ],
@@ -161,6 +168,7 @@ class _MerkadoState extends State<Merkado> {
           FarmerNewProductPost.routeName: (ctx) => const FarmerNewProductPost(),
           FarmerSettingsScreen.routeName: (ctx) => const FarmerSettingsScreen(),
           FarmerMyEditProducts.routeName: (ctx) => const FarmerMyEditProducts(),
+          FarmerMyPurchases.routeName: (ctx) => const FarmerMyPurchases(),
           FarmerChatScreen.routeName: (ctx) {
             final args =
                 ModalRoute.of(ctx)!.settings.arguments as FarmerChatArguments;
@@ -179,6 +187,8 @@ class _MerkadoState extends State<Merkado> {
           OrgScreenController.routeName: (ctx) => const OrgScreenController(),
           OrgMarketScreen.routeName: (ctx) => const OrgMarketScreen(),
           OrgSettingsScreen.routeName: (ctx) => const OrgSettingsScreen(),
+          OrgMyEditProducts.routeName: (ctx) => const OrgMyEditProducts(),
+          OrgMyOrders.routeName: (ctx) => const OrgMyOrders(),
           OrganizationChatScreen.routeName: (ctx) {
             final args = ModalRoute.of(ctx)!.settings.arguments
                 as OrganizationChatArguments;

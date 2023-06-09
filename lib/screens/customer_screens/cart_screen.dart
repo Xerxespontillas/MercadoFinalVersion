@@ -88,13 +88,27 @@ class CartScreen extends StatelessWidget {
         'orderConfirmed': false,
       });
 
-      // Decrease the stock of each product
+// Decrease the stock of each product
       for (var item in items) {
-        var productRef = FirebaseFirestore.instance
+        DocumentReference productRef;
+        DocumentSnapshot productSnapshot;
+
+        // Try to get the product from the 'FarmerProducts' collection
+        productRef = FirebaseFirestore.instance
             .collection('FarmerProducts')
             .doc(sellerId)
             .collection(seller)
             .doc(item.id);
+        productSnapshot = await productRef.get();
+
+        // If the product doesn't exist in 'FarmerProducts', get it from 'OrgProducts'
+        if (!productSnapshot.exists) {
+          productRef = FirebaseFirestore.instance
+              .collection('OrgProducts')
+              .doc(sellerId)
+              .collection(seller)
+              .doc(item.id);
+        }
 
         await productRef.update({
           'quantity': FieldValue.increment(-item.quantity),
@@ -113,11 +127,24 @@ class CartScreen extends StatelessWidget {
 
       // Send the order ID and the ordered items to the seller
       for (var item in items) {
-        var sellerRef = FirebaseFirestore.instance
+        DocumentReference sellerRef;
+        final farmerDoc = await FirebaseFirestore.instance
             .collection('farmers')
             .doc(sellerId)
-            .collection('customerOrders')
-            .doc(orderId);
+            .get();
+        if (farmerDoc.exists) {
+          sellerRef = FirebaseFirestore.instance
+              .collection('farmers')
+              .doc(sellerId)
+              .collection('customerOrders')
+              .doc(orderId);
+        } else {
+          sellerRef = FirebaseFirestore.instance
+              .collection('organizations')
+              .doc(sellerId)
+              .collection('customerOrders')
+              .doc(orderId);
+        }
 
         await sellerRef.set({
           'items': orderItems,
@@ -144,6 +171,12 @@ class CartScreen extends StatelessWidget {
       }
       // Check if the user is a farmer
       userDoc = await _firestore.collection('farmers').doc(user.uid).get();
+      if (userDoc.exists) {
+        return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
+      }
+      // Check if the user is a organization
+      userDoc =
+          await _firestore.collection('organizations').doc(user.uid).get();
       if (userDoc.exists) {
         return (userDoc.data() as Map<String, dynamic>)['displayName'] ?? '';
       }
