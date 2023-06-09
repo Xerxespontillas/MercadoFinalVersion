@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:merkado/screens/farmer_screens/farmer_location_screen.dart';
+import 'package:merkado/screens/organization_screens/organization_location_screen.dart';
 
 import '../screens/farmer_screens/farmer_drawer_screens/farmer_my_order.dart';
 
@@ -38,16 +40,53 @@ class FarmerAppDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(
+          DrawerHeader(
+            decoration: const BoxDecoration(
               color: Colors.black45,
             ),
-            child: Text(
-              'Menu',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Menu',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    String userType = await _getUserType();
+                    if (userType == 'farmer') {
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context)
+                          .pushNamed(FarmerLocationScreen.routeName);
+                      // ignore: avoid_print
+                      print("NI SUD SA Farmer");
+                    } else if (userType == 'organization') {
+                      // ignore: avoid_print
+                      print("NI SUD SA ORGANIZATION");
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context)
+                          .pushNamed(OrganizationLocationScreen.routeName);
+                    } else {
+                      // Handle unknown user type...
+                    }
+                  },
+                  child: const Text(
+                    'Tap to Initialize Location.',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           ListTile(

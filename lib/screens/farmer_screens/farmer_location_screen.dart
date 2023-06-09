@@ -134,7 +134,7 @@ class FarmerLocationScreenState extends State<FarmerLocationScreen> {
         ),
         child: const Icon(
           Icons.center_focus_strong,
-          color: Colors.black,
+          color: Colors.white,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,

@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:merkado/screens/customer_screens/user_location_screen.dart';
-
 import '../customer_screens/user_chat_screen.dart';
+import '../organization_screens/organization_all_location_screen.dart';
+import 'farmer_all_location_screen.dart';
 import 'farmer_my_purchases.dart';
 
 class FarmerSelectedPurchase extends StatelessWidget {
@@ -31,6 +31,27 @@ class FarmerSelectedPurchase extends StatelessWidget {
         .doc(sellerId)
         .get();
     return snapshot['profilePicture'];
+  }
+
+  Future<String> _getUserType() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final farmersSnapshot = await FirebaseFirestore.instance
+        .collection('farmers')
+        .doc(user!.uid)
+        .get();
+    if (farmersSnapshot.exists) {
+      return 'farmer';
+    } else {
+      final orgSnapshot = await FirebaseFirestore.instance
+          .collection('organizations')
+          .doc(user.uid)
+          .get();
+      if (orgSnapshot.exists) {
+        return 'organization';
+      } else {
+        return 'unknown';
+      }
+    }
   }
 
   @override
@@ -92,9 +113,24 @@ class FarmerSelectedPurchase extends StatelessWidget {
                           ),
                           InkWell(
                             child: const Icon(Icons.pin_drop_outlined),
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, UserLocationScreen.routeName);
+                            onTap: () async {
+                              String userType = await _getUserType();
+                              if (userType == 'farmer') {
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushNamed(
+                                    context, FarmerAllLocationScreen.routeName);
+                                // ignore: avoid_print
+                                print("NI SUD SA Farmer");
+                              } else if (userType == 'organization') {
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushNamed(
+                                    context, OrgAllLocationScreen.routeName);
+                                // ignore: avoid_print
+                                print("NI SUD SA ORGANIZATION");
+                                // ignore: use_build_context_synchronously
+                              } else {
+                                // Handle unknown user type...
+                              }
                             },
                           ),
                           InkWell(

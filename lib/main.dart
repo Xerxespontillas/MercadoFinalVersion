@@ -6,7 +6,9 @@ import 'package:merkado/providers/customer_ordered_products_provider.dart';
 import 'package:merkado/providers/organization_products_provider.dart';
 import 'package:merkado/screens/customer_screens/customer_drawer_screens/customer_my_orders.dart';
 import 'package:merkado/screens/customer_screens/selected_product_marketplace.dart';
+import 'package:merkado/screens/farmer_screens/farmer_all_location_screen.dart';
 import 'package:merkado/screens/farmer_screens/farmer_my_purchases.dart';
+import 'package:merkado/screens/organization_screens/organization_all_location_screen.dart';
 import 'package:merkado/screens/organization_screens/organization_market_screen.dart';
 
 import 'package:merkado/screens/farmer_screens/farmer_my_edit_products.dart';
@@ -172,6 +174,8 @@ class _MerkadoState extends State<Merkado> {
           FarmerSettingsScreen.routeName: (ctx) => const FarmerSettingsScreen(),
           FarmerMyEditProducts.routeName: (ctx) => const FarmerMyEditProducts(),
           FarmerMyPurchases.routeName: (ctx) => const FarmerMyPurchases(),
+          FarmerAllLocationScreen.routeName: (ctx) =>
+              const FarmerAllLocationScreen(),
           FarmerChatScreen.routeName: (ctx) {
             final args =
                 ModalRoute.of(ctx)!.settings.arguments as FarmerChatArguments;
@@ -191,6 +195,7 @@ class _MerkadoState extends State<Merkado> {
           OrgMarketScreen.routeName: (ctx) => const OrgMarketScreen(),
           OrgSettingsScreen.routeName: (ctx) => const OrgSettingsScreen(),
           OrgMyEditProducts.routeName: (ctx) => const OrgMyEditProducts(),
+          OrgAllLocationScreen.routeName: (ctx) => const OrgAllLocationScreen(),
           OrgMyOrders.routeName: (ctx) => const OrgMyOrders(),
           OrganizationChatScreen.routeName: (ctx) {
             final args = ModalRoute.of(ctx)!.settings.arguments
