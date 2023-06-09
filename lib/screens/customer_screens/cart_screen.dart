@@ -126,6 +126,7 @@ class CartScreen extends StatelessWidget {
       }
 
       // Send the order ID and the ordered items to the seller
+      // ignore: unused_local_variable
       for (var item in items) {
         DocumentReference sellerRef;
         final farmerDoc = await FirebaseFirestore.instance

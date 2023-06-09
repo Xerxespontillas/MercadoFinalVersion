@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import '../organization_screens/organization_screen_controller.dart';
 import 'farmer_screen_controller.dart';
 
@@ -28,6 +28,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   final _formKey = GlobalKey<FormState>();
 
   @override
