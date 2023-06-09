@@ -19,6 +19,8 @@ class FarmerNewProductPost extends StatefulWidget {
 }
 
 class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
+  final TextEditingController _quantityController = TextEditingController();
+
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   int quantity = 0;
@@ -28,18 +30,24 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
 
+  @override
+  void initState() {
+    super.initState();
+    _quantityController.text = '0'; // Initialize with 0 quantity
+  }
+
   // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   var farmerId = FirebaseAuth.instance.currentUser!.uid;
 
   Future<void> _addProductToDatabaseWithImage() async {
     if (_image == null) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(
-      //     content: Text('Please upload an image.'),
-      //   ),
-      // );
-      // return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please upload an image.'),
+        ),
+      );
+      return;
     }
 
     setState(() {});
@@ -58,12 +66,12 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
       "sellerUserId": farmerId,
     };
 
-    // var snapshot = await _storage
-    //     .ref('AllProducts/${_image!.path.split('/').last}')
-    //     .putFile(_image!);
-    // var downloadUrl = await snapshot.ref.getDownloadURL();
+    var snapshot = await _storage
+        .ref('AllProducts/${_image!.path.split('/').last}')
+        .putFile(_image!);
+    var downloadUrl = await snapshot.ref.getDownloadURL();
 
-    // data['image'] = downloadUrl;
+    data['image'] = downloadUrl;
 
     // Generate a new document reference in 'products' collection to get a unique ID
     DocumentReference newDocRef = _firestore.collection('AllProducts').doc();
@@ -175,16 +183,14 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
   }
 
   void increaseQuantity() {
-    setState(() {
-      quantity += 1;
-    });
+    int currentQuantity = int.parse(_quantityController.text);
+    _quantityController.text = (currentQuantity + 1).toString();
   }
 
   void decreaseQuantity() {
-    if (quantity > 0) {
-      setState(() {
-        quantity -= 1;
-      });
+    int currentQuantity = int.parse(_quantityController.text);
+    if (currentQuantity > 0) {
+      _quantityController.text = (currentQuantity - 1).toString();
     }
   }
 
@@ -235,7 +241,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
                     ),
                   ),
                   SizedBox(
-                      width: screenSize.width * 0.02), // 2% of screen width
+                      width: screenSize.width * 0.01), // 2% of screen width
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,11 +321,13 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
                               Expanded(
                                 child: TextFormField(
                                   controller: _priceController,
-                                  keyboardType: TextInputType
-                                      .number, // Set the keyboard type to number
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          decimal:
+                                              true), // Allow decimal numbers
                                   inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter
-                                        .digitsOnly, // Allow only digits (numbers)
+                                    FilteringTextInputFormatter.allow(RegExp(
+                                        r'^\d+\.?\d{0,5}')), // Allow numbers with up to two decimal places
                                   ],
                                   decoration: const InputDecoration(
                                     hintText: 'Price',
@@ -354,19 +362,34 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
                               ),
                               SizedBox(
                                   width: screenSize.width *
-                                      0.03), // 1% of screen width
-                              Text(
-                                quantity.toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.normal,
+                                      0.01), // 1% of screen width
+                              SizedBox(
+                                width: 28,
+                                child: TextField(
+                                  controller: _quantityController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter
+                                        .digitsOnly, // Allow only digits (numbers)
+                                  ],
                                 ),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.add),
-                                onPressed: increaseQuantity,
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.add,
+                                      size: 10,
+                                    ),
+                                    onPressed: increaseQuantity,
+                                  ),
+                                ],
                               ),
                               IconButton(
-                                icon: const Icon(Icons.remove),
+                                icon: const Icon(
+                                  Icons.remove,
+                                  size: 10,
+                                ),
                                 onPressed: decreaseQuantity,
                               ),
                             ],

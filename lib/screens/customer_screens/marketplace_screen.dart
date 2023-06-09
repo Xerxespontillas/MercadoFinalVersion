@@ -163,12 +163,14 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             padding: const EdgeInsets.all(10),
             alignment: AlignmentDirectional
                 .centerStart, // Aligns the child to the start (left)
-            child: const Text(
-              'Top selling',
-              style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 25),
+            child: const Center(
+              child: Text(
+                'All Products',
+                style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 25),
+              ),
             ),
           ),
           Expanded(
