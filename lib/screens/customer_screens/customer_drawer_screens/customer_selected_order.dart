@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:merkado/screens/customer_screens/user_location_screen.dart';
 
 import '../user_chat_screen.dart';
+import '../user_org_chat_screen.dart';
 import 'customer_my_orders.dart';
 
 class CustomerSelectedOrder extends StatelessWidget {
@@ -100,18 +101,34 @@ class CustomerSelectedOrder extends StatelessWidget {
                           InkWell(
                             child: const Icon(Icons.message),
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => UserChatScreen(
-                                    userId:
-                                        FirebaseAuth.instance.currentUser!.uid,
-                                    userType: UserType.customers,
-                                    displayName: order['sellerName'],
-                                    farmerId: order['sellerId'],
+                              if (order['sellerType'] == 'Farmer') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UserChatScreen(
+                                      userId: FirebaseAuth
+                                          .instance.currentUser!.uid,
+                                      userType: UserType.customers,
+                                      displayName: order['sellerName'],
+                                      farmerId: order['sellerId'],
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              } else if (order['sellerType'] ==
+                                  'Organization') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => OrgChatScreen(
+                                      userId: FirebaseAuth
+                                          .instance.currentUser!.uid,
+                                      orgType: OrgType.customers,
+                                      displayName: order['sellerName'],
+                                      orgId: order['sellerId'],
+                                    ),
+                                  ),
+                                );
+                              }
                             },
                           ),
                         ],

@@ -33,8 +33,11 @@ import 'screens/authentication/user/login_screen.dart';
 import 'screens/authentication/user/register_screen.dart';
 
 import 'screens/customer_screens/user_org_chat_screen.dart';
+import 'screens/farmer_screens/farmer_org_chat_screen.dart';
 import 'screens/farmer_screens/farmer_settings_screen.dart';
+import 'screens/farmer_screens/receiver_farmer_farmer_chat_screen.dart';
 import 'screens/organization_screens/organization_chat_screen.dart';
+import 'screens/organization_screens/organization_farmer_chat_screen.dart';
 import 'screens/organization_screens/organization_location_screen.dart';
 
 import 'screens/farmer_screens/farmer_location_screen.dart';
@@ -43,6 +46,7 @@ import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
 import 'screens/farmer_screens/farmer_screen_controller.dart';
 import 'screens/farmer_screens/farmer_new_post.dart';
 import 'screens/farmer_screens/farmer_chat_screen.dart';
+import 'screens/farmer_screens/farmer_farmer_chat_screen.dart';
 
 import 'screens/customer_screens/splash_screen.dart';
 import 'screens/customer_screens/user_chat_screen.dart';
@@ -186,6 +190,36 @@ class _MerkadoState extends State<Merkado> {
               customerId: args.customerId,
             );
           },
+          FarmerToFarmerChatScreen.routeName: (ctx) {
+            final args =
+                ModalRoute.of(ctx)!.settings.arguments as FarmersChatArguments;
+            return FarmerToFarmerChatScreen(
+              userId: FirebaseAuth.instance.currentUser!.uid,
+              userType: FarmersType.farmer,
+              displayName: args.displayName,
+              customerId: args.farmerId,
+            );
+          },
+          ReceiverFarmerToFarmerChatScreen.routeName: (ctx) {
+            final args =
+                ModalRoute.of(ctx)!.settings.arguments as FarmersChatArguments;
+            return ReceiverFarmerToFarmerChatScreen(
+              userId: FirebaseAuth.instance.currentUser!.uid,
+              userType: ReceiverFarmersType.customers,
+              displayName: args.displayName,
+              customerId: args.farmerId,
+            );
+          },
+          FarmerToOrgChatScreen.routeName: (ctx) {
+            final args = ModalRoute.of(ctx)!.settings.arguments
+                as FarmerToOrgChatArguments;
+            return FarmerToOrgChatScreen(
+              userId: FirebaseAuth.instance.currentUser!.uid,
+              userType: FarmerToOrgType.farmer,
+              displayName: args.displayName,
+              orgId: args.orgId,
+            );
+          },
 
           //Organization Side Routes
 
@@ -205,6 +239,16 @@ class _MerkadoState extends State<Merkado> {
               userType: OrganizationType.customers,
               displayName: args.displayName,
               customerId: args.customerId,
+            );
+          },
+          OrgToFarmerChatScreen.routeName: (ctx) {
+            final args = ModalRoute.of(ctx)!.settings.arguments
+                as OrgToFarmerChatArguments;
+            return OrgToFarmerChatScreen(
+              userId: FirebaseAuth.instance.currentUser!.uid,
+              userType: OrgToFarmerType.organization,
+              displayName: args.displayName,
+              farmerId: args.farmerId,
             );
           },
         },
