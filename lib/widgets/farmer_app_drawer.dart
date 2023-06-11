@@ -9,6 +9,7 @@ import '../screens/farmer_screens/farmer_drawer_screens/farmer_my_order.dart';
 import '../screens/farmer_screens/farmer_my_purchases.dart';
 import '../screens/farmer_screens/farmer_new_post.dart';
 import '../screens/organization_screens/organization_my_order.dart';
+import '../screens/organization_screens/organization_my_purchases.dart';
 
 class FarmerAppDrawer extends StatelessWidget {
   const FarmerAppDrawer({Key? key}) : super(key: key);
@@ -123,7 +124,8 @@ class FarmerAppDrawer extends StatelessWidget {
                 // ignore: avoid_print
                 print("NI SUD SA ORGANIZATION");
                 // ignore: use_build_context_synchronously
-                Navigator.of(context).pushNamed(FarmerMyPurchases.routeName);
+                Navigator.of(context)
+                    .pushNamed(OrganizationMyPurchases.routeName);
               } else {
                 // Handle unknown user type...
               }

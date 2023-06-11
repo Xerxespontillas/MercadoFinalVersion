@@ -14,8 +14,10 @@ import 'package:merkado/screens/organization_screens/organization_market_screen.
 import 'package:merkado/screens/farmer_screens/farmer_my_edit_products.dart';
 import 'package:merkado/screens/organization_screens/organization_my_edit_products.dart';
 import 'package:merkado/screens/organization_screens/organization_my_order.dart';
+import 'package:merkado/screens/organization_screens/organization_my_purchases.dart';
 
 import 'package:merkado/screens/organization_screens/organization_screen_controller.dart';
+import 'package:merkado/screens/organization_screens/organization_selected_purchase.dart';
 import 'package:merkado/screens/organization_screens/organization_settings_screen.dart';
 
 import 'providers/farmer_products_provider.dart';
@@ -231,6 +233,9 @@ class _MerkadoState extends State<Merkado> {
           OrgMyEditProducts.routeName: (ctx) => const OrgMyEditProducts(),
           OrgAllLocationScreen.routeName: (ctx) => const OrgAllLocationScreen(),
           OrgMyOrders.routeName: (ctx) => const OrgMyOrders(),
+          OrganizationMyPurchases.routeName: (ctx) =>
+              const OrganizationMyPurchases(),
+
           OrganizationChatScreen.routeName: (ctx) {
             final args = ModalRoute.of(ctx)!.settings.arguments
                 as OrganizationChatArguments;
