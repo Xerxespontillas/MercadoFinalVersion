@@ -17,7 +17,6 @@ import 'package:merkado/screens/organization_screens/organization_my_order.dart'
 import 'package:merkado/screens/organization_screens/organization_my_purchases.dart';
 
 import 'package:merkado/screens/organization_screens/organization_screen_controller.dart';
-import 'package:merkado/screens/organization_screens/organization_selected_purchase.dart';
 import 'package:merkado/screens/organization_screens/organization_settings_screen.dart';
 
 import 'providers/farmer_products_provider.dart';
@@ -38,6 +37,7 @@ import 'screens/customer_screens/user_org_chat_screen.dart';
 import 'screens/farmer_screens/farmer_org_chat_screen.dart';
 import 'screens/farmer_screens/farmer_settings_screen.dart';
 import 'screens/farmer_screens/receiver_farmer_farmer_chat_screen.dart';
+import 'screens/organization_screens/org_org_chat_screen.dart';
 import 'screens/organization_screens/organization_chat_screen.dart';
 import 'screens/organization_screens/organization_farmer_chat_screen.dart';
 import 'screens/organization_screens/organization_location_screen.dart';
@@ -57,6 +57,7 @@ import 'screens/customer_screens/cart_screen.dart';
 import 'screens/customer_screens/user_settings_screen.dart';
 import 'screens/customer_screens/marketplace_screen.dart';
 import 'screens/customer_screens/user_screen_controller.dart';
+import 'screens/organization_screens/receiver_org_org_chat_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -254,6 +255,26 @@ class _MerkadoState extends State<Merkado> {
               userType: OrgToFarmerType.organization,
               displayName: args.displayName,
               farmerId: args.farmerId,
+            );
+          },
+          OrgToOrgChatScreen.routeName: (ctx) {
+            final args =
+                ModalRoute.of(ctx)!.settings.arguments as OrgToOrgChatArguments;
+            return OrgToOrgChatScreen(
+              userId: FirebaseAuth.instance.currentUser!.uid,
+              userType: OrgToOrgType.organization,
+              displayName: args.displayName,
+              customerId: args.orgId,
+            );
+          },
+          ReceiverOrgToOrgChatScreen.routeName: (ctx) {
+            final args = ModalRoute.of(ctx)!.settings.arguments
+                as ReceiverOrgToOrgChatArguments;
+            return ReceiverOrgToOrgChatScreen(
+              userId: FirebaseAuth.instance.currentUser!.uid,
+              userType: ReceiverOrgToOrgType.customers,
+              displayName: args.displayName,
+              customerId: args.orgId,
             );
           },
         },

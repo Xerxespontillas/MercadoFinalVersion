@@ -83,43 +83,59 @@ class FarmerListScreen extends StatelessWidget {
     final customers = await fetchRegisteredCustomers();
     final organizations = await fetchRegisteredOrganizations();
 
-    // final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+    final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
 
-    // final customerMessagesSnapshot = await FirebaseFirestore.instance
-    //     .collection('chats')
-    //     .doc('customers')
-    //     .collection('messages')
-    //     .where('farmerId', isEqualTo: currentUserUid)
-    //     .where('customerId',
-    //         whereIn: farmers.map((farmer) => farmer['id']).toList())
-    //     .get();
+    final customerMessagesSnapshot = await FirebaseFirestore.instance
+        .collection('chats')
+        .doc('customers')
+        .collection('messages')
+        .where('farmerId', isEqualTo: currentUserUid)
+        .where('customerId',
+            whereIn: customers.map((customers) => customers['id']).toList())
+        .get();
 
-    // final farmerMessagesSnapshot = await FirebaseFirestore.instance
-    //     .collection('chats')
-    //     .doc('farmers')
-    //     .collection('messages')
-    //     .where('farmerId', isEqualTo: currentUserUid)
-    //     .where('customerId',
-    //         whereIn: customers.map((customer) => customer['id']).toList())
-    //     .get();
+    final organizationMessagesSnapshot = await FirebaseFirestore.instance
+        .collection('chats')
+        .doc('farmerstoorgs')
+        .collection('messages')
+        .where('farmerId', isEqualTo: currentUserUid)
+        .where('orgId',
+            whereIn: organizations
+                .map((organizations) => organizations['id'])
+                .toList())
+        .get();
 
-    // final customerMessages =
-    //     customerMessagesSnapshot.docs.map((doc) => doc.data()).toList();
-    // final farmerMessages =
-    //     farmerMessagesSnapshot.docs.map((doc) => doc.data()).toList();
+    final farmerMessagesSnapshot = await FirebaseFirestore.instance
+        .collection('chats')
+        .doc('farmers')
+        .collection('messages')
+        .where('customerId', isEqualTo: currentUserUid)
+        .where('farmerId',
+            whereIn: farmers.map((farmers) => farmers['id']).toList())
+        .get();
+
+    final customerMessages =
+        customerMessagesSnapshot.docs.map((doc) => doc.data()).toList();
+    final farmerMessages =
+        farmerMessagesSnapshot.docs.map((doc) => doc.data()).toList();
+    final organizationMessages =
+        organizationMessagesSnapshot.docs.map((doc) => doc.data()).toList();
 
     final combinedList = [...farmers, ...customers, ...organizations];
 
-    // combinedList.removeWhere((item) {
-    //   final itemId = item['id'];
-    //   final itemRole = item.containsKey('role') ? item['role'] : 'Customer';
-    //   if (itemRole == 'Customer') {
-    //     return !customerMessages
-    //         .any((message) => message['customerId'] == itemId);
-    //   } else {
-    //     return !farmerMessages.any((message) => message['farmerId'] == itemId);
-    //   }
-    // });
+    combinedList.removeWhere((item) {
+      final itemId = item['id'];
+      final itemRole = item.containsKey('role') ? item['role'] : 'Customer';
+      if (itemRole == 'Customer') {
+        return !customerMessages
+            .any((message) => message['customerId'] == itemId);
+      } else if (itemRole == 'Farmer') {
+        return !farmerMessages.any((message) => message['farmerId'] == itemId);
+      } else {
+        return !organizationMessages
+            .any((message) => message['orgId'] == itemId);
+      }
+    });
 
     combinedList.sort((a, b) {
       final aDisplayName =
