@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../customer_screens/user_chat_screen.dart';
 import '../organization_screens/organization_all_location_screen.dart';
 import 'farmer_all_location_screen.dart';
 import 'farmer_my_purchases.dart';
+import 'receiver_farmer_farmer_chat_screen.dart';
 
 class FarmerSelectedPurchase extends StatelessWidget {
   static const routeName = '/farmer-my-selected-purchase';
@@ -136,18 +136,21 @@ class FarmerSelectedPurchase extends StatelessWidget {
                           InkWell(
                             child: const Icon(Icons.message),
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => UserChatScreen(
-                                    userId:
-                                        FirebaseAuth.instance.currentUser!.uid,
-                                    userType: UserType.farmer,
-                                    displayName: order['sellerName'],
-                                    farmerId: order['sellerId'],
+                              if (order['sellerType'] == 'Farmer') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ReceiverFarmerToFarmerChatScreen(
+                                      userId: FirebaseAuth
+                                          .instance.currentUser!.uid,
+                                      userType: ReceiverFarmersType.farmer,
+                                      displayName: order['sellerName'],
+                                      customerId: order['sellerId'],
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              }
                             },
                           ),
                         ],

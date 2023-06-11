@@ -65,19 +65,16 @@ class UserListScreen extends StatelessWidget {
         .doc('customers')
         .collection('messages')
         .where('customerId', isEqualTo: currentUserUid)
-        .where('role', isEqualTo: 'Customer')
         .where('farmerId',
             whereIn: farmers.map((farmer) => farmer['id']).toList())
         .get();
 
     final organizationMessagesSnapshot = await FirebaseFirestore.instance
         .collection('chats')
-        .doc('customers')
+        .doc('organization')
         .collection('messages')
         .where('customerId', isEqualTo: currentUserUid)
-        .where('role', isEqualTo: 'Customer')
-        .where('organizationId',
-            whereIn: organizations.map((org) => org['id']).toList())
+        .where('orgId', whereIn: organizations.map((org) => org['id']).toList())
         .get();
 
     final farmerMessages =
@@ -86,14 +83,15 @@ class UserListScreen extends StatelessWidget {
         organizationMessagesSnapshot.docs.map((doc) => doc.data()).toList();
 
     final combinedList = [...farmers, ...organizations];
+
     combinedList.removeWhere((item) {
       final itemId = item['id'];
-      final itemRole = item.containsKey('role') ? item['role'] : 'organization';
+      final itemRole = item.containsKey('role') ? item['role'] : 'Farmer';
       if (itemRole == 'Farmer') {
         return !farmerMessages.any((message) => message['farmerId'] == itemId);
       } else {
         return !organizationMessages
-            .any((message) => message['organizationId'] == itemId);
+            .any((message) => message['orgId'] == itemId);
       }
     });
 
