@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:merkado/screens/organization_screens/receiver_org_org_chat_screen.dart';
 
 import 'organization_chat_screen.dart';
 import 'organization_farmer_chat_screen.dart';
@@ -101,21 +102,37 @@ class OrganizationListScreen extends StatelessWidget {
             whereIn: farmers.map((farmers) => farmers['id']).toList())
         .get();
 
+    final organizationMessagesSnapshot = await FirebaseFirestore.instance
+        .collection('chats')
+        .doc('orgtoorg')
+        .collection('messages')
+        .where('orgId', isEqualTo: currentUserUid)
+        .where('customerId',
+            whereIn: organizations
+                .map((organizations) => organizations['id'])
+                .toList())
+        .get();
+
     final customerMessages =
         customerMessagesSnapshot.docs.map((doc) => doc.data()).toList();
     final farmerMessages =
         farmerMessagesSnapshot.docs.map((doc) => doc.data()).toList();
+    final organizationMessages =
+        organizationMessagesSnapshot.docs.map((doc) => doc.data()).toList();
 
     final combinedList = [...farmers, ...customers, ...organizations];
 
     combinedList.removeWhere((item) {
       final itemId = item['id'];
-      final itemRole = item.containsKey('role') ? item['role'] : 'Farmer';
-      if (itemRole == 'Farmer') {
-        return !farmerMessages.any((message) => message['farmerId'] == itemId);
-      } else {
+      final itemRole = item.containsKey('role') ? item['role'] : 'Customer';
+      if (itemRole == 'Customer') {
         return !customerMessages
             .any((message) => message['customerId'] == itemId);
+      } else if (itemRole == 'Organization') {
+        return !organizationMessages
+            .any((message) => message['customerId'] == itemId);
+      } else {
+        return !farmerMessages.any((message) => message['farmerId'] == itemId);
       }
     });
 
@@ -206,7 +223,18 @@ class OrganizationListScreen extends StatelessWidget {
                           farmerId: entity['id'], // Use the entity's ID here
                         ),
                       );
-                    } else if (role == 'Organization') {}
+                    } else if (role == 'Organization') {
+                      Navigator.pushNamed(
+                        context,
+                        ReceiverOrgToOrgChatScreen.routeName,
+                        arguments: ReceiverOrgToOrgChatArguments(
+                          userId: FirebaseAuth.instance.currentUser!.uid,
+                          userType: ReceiverOrgToOrgType.organization,
+                          displayName: displayName,
+                          orgId: entity['id'], // Use the entity's ID here
+                        ),
+                      );
+                    }
                   },
                 ),
               );

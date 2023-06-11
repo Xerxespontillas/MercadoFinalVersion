@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:merkado/screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
+import 'package:merkado/screens/farmer_screens/farmer_farmer_chat_screen.dart';
 
 import '../farmer_chat_screen.dart';
+import '../farmer_org_chat_screen.dart';
 
 class FarmerMySelectedOrder extends StatelessWidget {
   static const routeName = '/farmer-my-selected-order';
@@ -100,18 +102,47 @@ class FarmerMySelectedOrder extends StatelessWidget {
                         InkWell(
                           child: const Icon(Icons.message),
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FarmerChatScreen(
-                                  userId:
-                                      FirebaseAuth.instance.currentUser!.uid,
-                                  userType: FarmerType.customers,
-                                  displayName: order['buyerName'],
-                                  customerId: order['buyerId'],
+                            if (order['buyerType'] == 'Customer') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FarmerChatScreen(
+                                    userId:
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                    userType: FarmerType.customers,
+                                    displayName: order['buyerName'],
+                                    customerId: order['buyerId'],
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            } else if (order['buyerType'] == 'Farmer') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      FarmerToFarmerChatScreen(
+                                    userId:
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                    userType: FarmersType.farmer,
+                                    displayName: order['buyerName'],
+                                    customerId: order['buyerId'],
+                                  ),
+                                ),
+                              );
+                            } else if (order['buyerType'] == 'Organization') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FarmerToOrgChatScreen(
+                                    userId:
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                    userType: FarmerToOrgType.farmer,
+                                    displayName: order['buyerName'],
+                                    orgId: order['buyerId'],
+                                  ),
+                                ),
+                              );
+                            }
                           },
                         ),
                       ],

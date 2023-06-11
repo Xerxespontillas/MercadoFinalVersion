@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:merkado/screens/organization_screens/organization_farmer_chat_screen.dart';
+import 'package:merkado/screens/organization_screens/receiver_org_org_chat_screen.dart';
 import '../farmer_screens/farmer_all_location_screen.dart';
 import '../farmer_screens/farmer_my_purchases.dart';
-import '../farmer_screens/receiver_farmer_farmer_chat_screen.dart';
 import '../organization_screens/organization_all_location_screen.dart';
 
 class OrganizationSelectedPurchase extends StatelessWidget {
@@ -140,11 +141,25 @@ class OrganizationSelectedPurchase extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        ReceiverFarmerToFarmerChatScreen(
+                                    builder: (context) => OrgToFarmerChatScreen(
                                       userId: FirebaseAuth
                                           .instance.currentUser!.uid,
-                                      userType: ReceiverFarmersType.farmer,
+                                      userType: OrgToFarmerType.farmer,
+                                      displayName: order['sellerName'],
+                                      farmerId: order['sellerId'],
+                                    ),
+                                  ),
+                                );
+                              } else if (order['sellerType'] ==
+                                  'Organization') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ReceiverOrgToOrgChatScreen(
+                                      userId: FirebaseAuth
+                                          .instance.currentUser!.uid,
+                                      userType: ReceiverOrgToOrgType.farmer,
                                       displayName: order['sellerName'],
                                       customerId: order['sellerId'],
                                     ),

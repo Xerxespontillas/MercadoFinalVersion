@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'org_org_chat_screen.dart';
+import 'organization_chat_screen.dart';
+import 'organization_farmer_chat_screen.dart';
 import 'organization_my_products.dart';
 
 class OrgMySelectedOrder extends StatelessWidget {
@@ -84,23 +87,51 @@ class OrgMySelectedOrder extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               color: Colors.black),
                         ),
-                        // InkWell(
-                        //   child: const Icon(Icons.message),
-                        //   onTap: () {
-                        //     Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //         builder: (context) => FarmerChatScreen(
-                        //           userId:
-                        //               FirebaseAuth.instance.currentUser!.uid,
-                        //           userType: FarmerType.customers,
-                        //           displayName: order['buyerName'],
-                        //           customerId: order['buyerId'],
-                        //         ),
-                        //       ),
-                        //     );
-                        //   },
-                        // ),
+                        InkWell(
+                          child: const Icon(Icons.message),
+                          onTap: () {
+                            if (order['buyerType'] == 'Farmer') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OrgToFarmerChatScreen(
+                                    userId:
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                    userType: OrgToFarmerType.farmer,
+                                    displayName: order['buyerName'],
+                                    farmerId: order['buyerId'],
+                                  ),
+                                ),
+                              );
+                            } else if (order['buyerType'] == 'Customer') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OrganizationChatScreen(
+                                    userId:
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                    userType: OrganizationType.customers,
+                                    displayName: order['buyerName'],
+                                    customerId: order['buyerId'],
+                                  ),
+                                ),
+                              );
+                            } else if (order['buyerType'] == 'Organization') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OrgToOrgChatScreen(
+                                    userId:
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                    userType: OrgToOrgType.customers,
+                                    displayName: order['buyerName'],
+                                    customerId: order['buyerId'],
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        ),
                       ],
                     ),
                     const SizedBox(height: 10),

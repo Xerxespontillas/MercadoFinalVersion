@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:merkado/screens/farmer_screens/farmer_org_chat_screen.dart';
 import '../organization_screens/organization_all_location_screen.dart';
 import 'farmer_all_location_screen.dart';
 import 'farmer_my_purchases.dart';
@@ -147,6 +148,20 @@ class FarmerSelectedPurchase extends StatelessWidget {
                                       userType: ReceiverFarmersType.farmer,
                                       displayName: order['sellerName'],
                                       customerId: order['sellerId'],
+                                    ),
+                                  ),
+                                );
+                              } else if (order['sellerType'] ==
+                                  'Organization') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FarmerToOrgChatScreen(
+                                      userId: FirebaseAuth
+                                          .instance.currentUser!.uid,
+                                      userType: FarmerToOrgType.organization,
+                                      displayName: order['sellerName'],
+                                      orgId: order['sellerId'],
                                     ),
                                   ),
                                 );
