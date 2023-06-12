@@ -84,6 +84,8 @@ class CartScreen extends StatelessWidget {
       DocumentSnapshot orgDoc = await orgsRef.get();
 
       String sellerType;
+      String buyerType;
+
       if (farmerDoc.exists) {
         sellerType = 'Farmer';
       } else if (orgDoc.exists) {
@@ -170,12 +172,38 @@ class CartScreen extends StatelessWidget {
           'orderConfirmed': false,
           'buyerId': userId,
           'buyerName': await getBuyerName(_auth, _firestore),
+          'buyerType': await getBuyerType(_auth, _firestore),
         });
       }
     }
 
     // Clear the cart after placing the order
     cartProvider.clearCart();
+  }
+
+  Future<String> getBuyerType(
+      FirebaseAuth auth, FirebaseFirestore firestore) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc;
+      // Check if the user is a customer
+      userDoc = await _firestore.collection('customers').doc(user.uid).get();
+      if (userDoc.exists) {
+        return (userDoc.data() as Map<String, dynamic>)['role'] ?? '';
+      }
+      // Check if the user is a farmer
+      userDoc = await _firestore.collection('farmers').doc(user.uid).get();
+      if (userDoc.exists) {
+        return (userDoc.data() as Map<String, dynamic>)['role'] ?? '';
+      }
+      // Check if the user is a organization
+      userDoc =
+          await _firestore.collection('organizations').doc(user.uid).get();
+      if (userDoc.exists) {
+        return (userDoc.data() as Map<String, dynamic>)['role'] ?? '';
+      }
+    }
+    return '';
   }
 
   Future<String> getBuyerName(
