@@ -113,7 +113,23 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
 
     String productName = _productNameController.text;
     String productDetails = _productDetailsController.text;
-    double price = double.parse(_priceController.text);
+    String priceText = _priceController.text;
+
+    // Check if any of the fields are empty
+    if (productName.isEmpty ||
+        productDetails.isEmpty ||
+        priceText.isEmpty ||
+        quantity == 0) {
+      // Show a SnackBar with a message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'Some of the fields are empty. Cannot proceed to save changes.')),
+      );
+      return;
+    }
+
+    double price = double.parse(priceText);
 
     // Create a map of the data we want to upload
     Map<String, dynamic> data = {
@@ -146,12 +162,10 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
     setState(() {});
 
     // Show a success message
-    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Product updated successfully!')),
     );
 
-    // ignore: use_build_context_synchronously
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const FarmerScreenController()),
       (Route<dynamic> route) => false,
@@ -164,6 +178,7 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
       FirebaseAuth auth,
       FirebaseFirestore firestore) async {
     User? user = auth.currentUser;
+
     if (user != null) {
       String displayName = await getSellerName(auth, _firestore);
       await _firestore

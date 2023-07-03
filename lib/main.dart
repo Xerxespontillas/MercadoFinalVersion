@@ -78,8 +78,6 @@ Future<void> main() async {
   );
 }
 
-final navigatorKey = GlobalKey<NavigatorState>();
-
 class Merkado extends StatefulWidget {
   const Merkado({Key? key}) : super(key: key);
 

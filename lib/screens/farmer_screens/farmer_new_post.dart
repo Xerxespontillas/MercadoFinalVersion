@@ -42,6 +42,30 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
   var farmerId = FirebaseAuth.instance.currentUser!.uid;
 
   Future<void> _addProductToDatabaseWithImage() async {
+    // Check if any of the fields are empty
+    if (_productNameController.text.isEmpty ||
+        _priceController.text.isEmpty ||
+        _quantityController.text.isEmpty ||
+        _textController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content:
+              Text('Some of the fields are empty. Please fill all the fields.'),
+        ),
+      );
+      return;
+    }
+
+    // Check if the quantity is 0
+    if (int.tryParse(_quantityController.text) == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Quantity should not be 0.'),
+        ),
+      );
+      return;
+    }
+
     if (_image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -62,7 +86,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
       "productName": productName,
       "productDetails": productDetails,
       "price": price,
-      "quantity": quantity,
+      "quantity": int.tryParse(_quantityController.text),
       "sellerName": await getSellerName(_auth, _firestore),
       "sellerUserId": farmerId,
     };
