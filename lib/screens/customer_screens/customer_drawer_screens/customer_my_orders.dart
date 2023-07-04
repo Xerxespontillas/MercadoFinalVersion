@@ -20,13 +20,14 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(
           color: Colors.black, // Set the color of the back icon to black
         ),
-        title: const Text('My Purchase',
+        title: const Text('Pending Orders',
             style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'Inter',
@@ -59,14 +60,18 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
                 onTap: () {
                   if (order.data() is Map) {
                     var sellerId = order['sellerId'];
+                    var orderDate = order['date'];
                     bool orderConfirmed = order['orderConfirmed'];
+                    //bool orderCancelled = order['orderCancelled'];
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => CustomerSelectedOrder(
                             order: order.data() as Map,
                             items: items,
                             deliveryFee: deliveryFee,
                             sellerId: sellerId,
+                            orderDate: orderDate,
                             orderConfirmed: orderConfirmed,
+                            //orderCancelled: orderCancelled,
                             orderId: order.id)));
                   }
                 },
@@ -76,6 +81,7 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text('Order date: ${order['date']}'),
                         Text('Order ID: ${order.id}'),
                         Text('Seller: ${order['sellerName']}'),
                         ...items.map<Widget>((item) => ListTile(

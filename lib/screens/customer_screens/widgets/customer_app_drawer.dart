@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:merkado/screens/customer_screens/cart_screen.dart';
 import 'package:merkado/screens/customer_screens/customer_drawer_screens/customer_my_orders.dart';
+import 'package:merkado/screens/customer_screens/tab_controllers.dart';
 
 class CustomerAppDrawer extends StatelessWidget {
   const CustomerAppDrawer({Key? key}) : super(key: key);
@@ -27,7 +28,7 @@ class CustomerAppDrawer extends StatelessWidget {
             leading: const Icon(Icons.shopping_cart),
             title: const Text('My Purchase'),
             onTap: () {
-              Navigator.of(context).pushNamed(CustomerMyOrders.routeName);
+              Navigator.of(context).pushNamed(TabControllers.routeName);
             },
           ),
           ListTile(

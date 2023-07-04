@@ -1,19 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'farmer_my_selected_order.dart';
 
-import 'farmer_selected_purchase.dart';
-
-class FarmerMyPurchases extends StatefulWidget {
-  const FarmerMyPurchases({super.key});
-  static const routeName = '/farmer-my-purchases';
+class FarmerCustomerOrders extends StatefulWidget {
+  const FarmerCustomerOrders({super.key});
+  static const routeName = '/farmer-customer-order';
 
   @override
   // ignore: library_private_types_in_public_api
-  _FarmerMyPurchasesState createState() => _FarmerMyPurchasesState();
+  _FarmerCustomerOrdersState createState() => _FarmerCustomerOrdersState();
 }
 
-class _FarmerMyPurchasesState extends State<FarmerMyPurchases> {
+class _FarmerCustomerOrdersState extends State<FarmerCustomerOrders> {
   @override
   Widget build(BuildContext context) {
     var userId = FirebaseAuth.instance.currentUser!.uid;
@@ -24,9 +23,10 @@ class _FarmerMyPurchasesState extends State<FarmerMyPurchases> {
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(
-          color: Colors.black, // Set the color of the back icon to black
+          color: Color.fromARGB(
+              255, 0, 0, 0), // Set the color of the back icon to black
         ),
-        title: const Text('My Purchase',
+        title: const Text('Customer Orders',
             style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'Inter',
@@ -34,9 +34,9 @@ class _FarmerMyPurchasesState extends State<FarmerMyPurchases> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('customersOrders')
+            .collection('farmers')
             .doc(userId)
-            .collection('orders')
+            .collection('customerOrders')
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -52,23 +52,24 @@ class _FarmerMyPurchasesState extends State<FarmerMyPurchases> {
             itemBuilder: (context, index) {
               var order = snapshot.data!.docs[index];
               var items = order['items'];
-
               var deliveryFee = 50.0; // Assuming a fixed delivery fee
 
               return InkWell(
                 onTap: () {
                   if (order.data() is Map) {
-                    var sellerId = order['sellerId'];
+                    var buyerId = order['buyerId'];
                     var orderDate = order['date'];
                     bool orderConfirmed = order['orderConfirmed'];
+                    //bool orderCancelled = order['orderCancelled'];
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => FarmerSelectedPurchase(
+                        builder: (context) => FarmerMySelectedOrder(
                             order: order.data() as Map,
                             items: items,
                             deliveryFee: deliveryFee,
                             orderDate: orderDate,
-                            sellerId: sellerId,
+                            buyerId: buyerId,
                             orderConfirmed: orderConfirmed,
+                            //orderCancelled: orderCancelled,
                             orderId: order.id)));
                   }
                 },
@@ -80,7 +81,7 @@ class _FarmerMyPurchasesState extends State<FarmerMyPurchases> {
                       children: [
                         Text('Order Date: ${order['date']}'),
                         Text('Order ID: ${order.id}'),
-                        Text('Seller: ${order['sellerName']}'),
+                        Text('Buyer: ${order['buyerName']}'),
                         ...items.map<Widget>((item) => ListTile(
                               leading: Image.network(
                                 item['productImage'],

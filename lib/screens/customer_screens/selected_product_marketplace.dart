@@ -172,7 +172,7 @@ class _SelectedProductMarketplaceState
                                 ),
                               ),
                               child: const Icon(
-                                FontAwesomeIcons.dollarSign,
+                                FontAwesomeIcons.pesoSign,
                                 color: Colors.black, // Set desired icon color
                               ),
                             ),

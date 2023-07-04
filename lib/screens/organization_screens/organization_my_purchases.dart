@@ -60,6 +60,7 @@ class _OrganizationMyPurchasesState extends State<OrganizationMyPurchases> {
                 onTap: () {
                   if (order.data() is Map) {
                     var sellerId = order['sellerId'];
+                    var orderDate = order['date'];
                     bool orderConfirmed = order['orderConfirmed'];
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => OrganizationSelectedPurchase(
@@ -67,6 +68,7 @@ class _OrganizationMyPurchasesState extends State<OrganizationMyPurchases> {
                             items: items,
                             deliveryFee: deliveryFee,
                             sellerId: sellerId,
+                            orderDate: orderDate,
                             orderConfirmed: orderConfirmed,
                             orderId: order.id)));
                   }
@@ -77,6 +79,7 @@ class _OrganizationMyPurchasesState extends State<OrganizationMyPurchases> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text('Order Date: ${order['date']}'),
                         Text('Order ID: ${order.id}'),
                         Text('Seller: ${order['sellerName']}'),
                         ...items.map<Widget>((item) => ListTile(

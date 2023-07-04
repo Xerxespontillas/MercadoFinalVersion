@@ -1,31 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'farmer_my_selected_order.dart';
 
-class FarmerMyOrders extends StatefulWidget {
-  const FarmerMyOrders({super.key});
-  static const routeName = '/farmer-my-order';
+class CustomerHistory extends StatefulWidget {
+  const CustomerHistory({super.key});
+  static const routeName = '/customer-my-orders';
 
   @override
   // ignore: library_private_types_in_public_api
-  _FarmerMyOrdersState createState() => _FarmerMyOrdersState();
+  _CustomerHistoryState createState() => _CustomerHistoryState();
 }
 
-class _FarmerMyOrdersState extends State<FarmerMyOrders> {
+class _CustomerHistoryState extends State<CustomerHistory> {
   @override
   Widget build(BuildContext context) {
     var userId = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(
           color: Colors.black, // Set the color of the back icon to black
         ),
-        title: const Text('My Orders',
+        title: const Text('Order History',
             style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'Inter',
@@ -33,9 +33,9 @@ class _FarmerMyOrdersState extends State<FarmerMyOrders> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('farmers')
+            .collection('customersOrders')
             .doc(userId)
-            .collection('customerOrders')
+            .collection('orders')
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -55,28 +55,21 @@ class _FarmerMyOrdersState extends State<FarmerMyOrders> {
               var deliveryFee = 50.0; // Assuming a fixed delivery fee
 
               return InkWell(
-                onTap: () {
-                  if (order.data() is Map) {
-                    var buyerId = order['buyerId'];
-                    bool orderConfirmed = order['orderConfirmed'];
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => FarmerMySelectedOrder(
-                            order: order.data() as Map,
-                            items: items,
-                            deliveryFee: deliveryFee,
-                            buyerId: buyerId,
-                            orderConfirmed: orderConfirmed,
-                            orderId: order.id)));
-                  }
-                },
                 child: Card(
+                  shape: const RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: Colors.red,
+                      width: 5,
+                    ),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text('Order date: ${order['date']}'),
                         Text('Order ID: ${order.id}'),
-                        Text('Buyer: ${order['buyerName']}'),
+                        Text('Seller: ${order['sellerName']}'),
                         ...items.map<Widget>((item) => ListTile(
                               leading: Image.network(
                                 item['productImage'],

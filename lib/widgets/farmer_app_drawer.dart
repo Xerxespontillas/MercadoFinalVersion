@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:merkado/screens/farmer_screens/farmer_location_screen.dart';
 import 'package:merkado/screens/organization_screens/organization_location_screen.dart';
 
-import '../screens/farmer_screens/farmer_drawer_screens/farmer_my_order.dart';
+import '../screens/farmer_screens/farmer_drawer_screens/farmer_customer_order.dart';
 
 import '../screens/farmer_screens/farmer_my_purchases.dart';
 import '../screens/farmer_screens/farmer_new_post.dart';
-import '../screens/organization_screens/organization_my_order.dart';
+import '../screens/organization_screens/organization_customer_orders.dart';
 import '../screens/organization_screens/organization_my_purchases.dart';
 
 class FarmerAppDrawer extends StatelessWidget {
@@ -92,19 +92,19 @@ class FarmerAppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.shopping_cart),
-            title: const Text('My Orders'),
+            title: const Text('Customer Orders'),
             onTap: () async {
               String userType = await _getUserType();
               if (userType == 'farmer') {
                 // ignore: use_build_context_synchronously
-                Navigator.of(context).pushNamed(FarmerMyOrders.routeName);
+                Navigator.of(context).pushNamed(FarmerCustomerOrders.routeName);
                 // ignore: avoid_print
                 print("NI SUD SA Farmer");
               } else if (userType == 'organization') {
                 // ignore: avoid_print
                 print("NI SUD SA ORGANIZATION");
                 // ignore: use_build_context_synchronously
-                Navigator.of(context).pushNamed(OrgMyOrders.routeName);
+                Navigator.of(context).pushNamed(OrgCustomerOrders.routeName);
               } else {
                 // Handle unknown user type...
               }

@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 
 import 'organization_my_selected_order.dart';
 
-class OrgMyOrders extends StatefulWidget {
-  const OrgMyOrders({super.key});
-  static const routeName = '/org-my-order';
+class OrgCustomerOrders extends StatefulWidget {
+  const OrgCustomerOrders({super.key});
+  static const routeName = '/org-customer-orders';
 
   @override
   // ignore: library_private_types_in_public_api
-  _OrgMyOrdersState createState() => _OrgMyOrdersState();
+  _OrgCustomerOrdersState createState() => _OrgCustomerOrdersState();
 }
 
-class _OrgMyOrdersState extends State<OrgMyOrders> {
+class _OrgCustomerOrdersState extends State<OrgCustomerOrders> {
   @override
   Widget build(BuildContext context) {
     var userId = FirebaseAuth.instance.currentUser!.uid;
@@ -26,7 +26,7 @@ class _OrgMyOrdersState extends State<OrgMyOrders> {
         iconTheme: const IconThemeData(
           color: Colors.black, // Set the color of the back icon to black
         ),
-        title: const Text('My Orders',
+        title: const Text('Customer Orders',
             style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'Inter',
@@ -59,6 +59,7 @@ class _OrgMyOrdersState extends State<OrgMyOrders> {
                 onTap: () {
                   if (order.data() is Map) {
                     var buyerId = order['buyerId'];
+                    var orderDate = order['date'];
                     bool orderConfirmed = order['orderConfirmed'];
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => OrgMySelectedOrder(
@@ -66,6 +67,7 @@ class _OrgMyOrdersState extends State<OrgMyOrders> {
                             items: items,
                             deliveryFee: deliveryFee,
                             buyerId: buyerId,
+                            orderDate: orderDate,
                             orderConfirmed: orderConfirmed,
                             orderId: order.id)));
                   }
@@ -76,6 +78,7 @@ class _OrgMyOrdersState extends State<OrgMyOrders> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text('Order Date: ${order['date']}'),
                         Text('Order ID: ${order.id}'),
                         Text('Buyer: ${order['buyerName']}'),
                         ...items.map<Widget>((item) => ListTile(

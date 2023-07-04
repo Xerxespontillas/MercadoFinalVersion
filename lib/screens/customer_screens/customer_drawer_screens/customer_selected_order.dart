@@ -15,6 +15,8 @@ class CustomerSelectedOrder extends StatelessWidget {
   final String orderId;
   final String sellerId;
   final bool orderConfirmed;
+  //final bool orderCancelled;
+  final String orderDate;
 
   const CustomerSelectedOrder({
     Key? key,
@@ -24,6 +26,8 @@ class CustomerSelectedOrder extends StatelessWidget {
     required this.orderId,
     required this.sellerId,
     required this.orderConfirmed,
+    // required this.orderCancelled,
+    required this.orderDate,
   }) : super(key: key);
 
   Future<String> getSellerImageUrl() async {
@@ -136,6 +140,11 @@ class CustomerSelectedOrder extends StatelessWidget {
                       const SizedBox(height: 10),
                       const Divider(),
                       Text(
+                        'Order Date: $orderDate',
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
                         'Order ID: $orderId',
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
@@ -192,12 +201,14 @@ class CustomerSelectedOrder extends StatelessWidget {
                             .doc(orderId)
                             .snapshots()
                             .map((snapshot) => snapshot['orderConfirmed']),
+                        //.map((snapshot) => snapshot['orderCancelled']),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return const CircularProgressIndicator();
                           }
                           final bool orderConfirmed = snapshot.data ?? false;
+                          //final bool orderCancelled = snapshot.data ?? false;
                           return Center(
                             child: Column(
                               children: [

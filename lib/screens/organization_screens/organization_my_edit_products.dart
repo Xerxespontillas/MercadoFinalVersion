@@ -288,7 +288,7 @@ class _OrgMyEditProductsState extends State<OrgMyEditProducts> {
                                 ),
                               ),
                               child: const Icon(
-                                FontAwesomeIcons.dollarSign,
+                                FontAwesomeIcons.pesoSign,
                                 color: Colors.black, // Set desired icon color
                               ),
                             ),

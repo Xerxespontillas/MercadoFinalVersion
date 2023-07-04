@@ -15,6 +15,7 @@ class OrgMySelectedOrder extends StatelessWidget {
   final String orderId;
   final String buyerId;
   final bool orderConfirmed;
+  final String orderDate;
 
   const OrgMySelectedOrder({
     Key? key,
@@ -24,6 +25,7 @@ class OrgMySelectedOrder extends StatelessWidget {
     required this.orderId,
     required this.buyerId,
     required this.orderConfirmed,
+    required this.orderDate,
   }) : super(key: key);
 
   Future<String> getBuyerImageUrl() async {
@@ -52,7 +54,7 @@ class OrgMySelectedOrder extends StatelessWidget {
             iconTheme: const IconThemeData(
               color: Colors.black, // Set the color of the back icon to black
             ),
-            title: const Text('Your Orders',
+            title: const Text('Customer Orders',
                 style: TextStyle(
                     color: Colors.black,
                     fontFamily: 'Inter',
@@ -136,6 +138,11 @@ class OrgMySelectedOrder extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     const Divider(),
+                    Text(
+                      'Order Date: $orderDate',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                     Text(
                       'Order ID: $orderId',
                       style: const TextStyle(
@@ -246,7 +253,8 @@ class OrgMySelectedOrder extends StatelessWidget {
                                           const SnackBar(
                                             content: Text(
                                                 'Order has been cancelled.'),
-                                            backgroundColor: Colors.green,
+                                            backgroundColor:
+                                                Color.fromARGB(255, 255, 0, 0),
                                           ),
                                         );
                                         // ignore: use_build_context_synchronously

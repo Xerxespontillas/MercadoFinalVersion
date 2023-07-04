@@ -15,6 +15,8 @@ class FarmerMySelectedOrder extends StatelessWidget {
   final String orderId;
   final String buyerId;
   final bool orderConfirmed;
+  //final bool orderCancelled;
+  final String orderDate;
 
   const FarmerMySelectedOrder({
     Key? key,
@@ -24,6 +26,8 @@ class FarmerMySelectedOrder extends StatelessWidget {
     required this.orderId,
     required this.buyerId,
     required this.orderConfirmed,
+    //required this.orderCancelled,
+    required this.orderDate,
   }) : super(key: key);
 
   Future<String?> getBuyerImageUrl() async {
@@ -64,7 +68,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
             iconTheme: const IconThemeData(
               color: Colors.black, // Set the color of the back icon to black
             ),
-            title: const Text('Your Orders',
+            title: const Text('Customer Orders',
                 style: TextStyle(
                     color: Colors.black,
                     fontFamily: 'Inter',
@@ -150,6 +154,11 @@ class FarmerMySelectedOrder extends StatelessWidget {
                     const SizedBox(height: 10),
                     const Divider(),
                     Text(
+                      'Order date: $orderDate',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
                       'Order ID: $orderId',
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
@@ -205,12 +214,16 @@ class FarmerMySelectedOrder extends StatelessWidget {
                           .doc(orderId)
                           .snapshots()
                           .map((snapshot) => snapshot['orderConfirmed']),
+                      //.map((snapshot) => snapshot['orderCancelled']),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const CircularProgressIndicator();
                         }
+
                         final bool orderConfirmed = snapshot.data ?? false;
+                        final bool orderCancelled = snapshot.data ?? false;
+
                         return Center(
                           child: Column(
                             children: [
@@ -220,7 +233,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
                                       color: Colors.orange),
                               Text(
                                 !orderConfirmed
-                                    ? 'Order Status: Waiting for your confirmation'
+                                    ? 'Order Status: waiting for confirmation'
                                     : 'Order Status: Order Confirmed',
                                 style: TextStyle(
                                   fontSize: 16,
@@ -243,7 +256,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
                                             .doc(buyerId)
                                             .collection('orders')
                                             .doc(orderId)
-                                            .delete();
+                                            .update({'orderCancelled': true});
 
                                         // Here is how to delete the orderId from farmers collection
                                         await FirebaseFirestore.instance
@@ -251,7 +264,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
                                             .doc(userId)
                                             .collection('customerOrders')
                                             .doc(orderId)
-                                            .delete();
+                                            .update({'orderCancelled': true});
 
                                         // ignore: use_build_context_synchronously
                                         ScaffoldMessenger.of(context)
@@ -259,7 +272,8 @@ class FarmerMySelectedOrder extends StatelessWidget {
                                           const SnackBar(
                                             content: Text(
                                                 'Order has been cancelled.'),
-                                            backgroundColor: Colors.green,
+                                            backgroundColor:
+                                                Color.fromARGB(255, 255, 0, 0),
                                           ),
                                         );
                                         // ignore: use_build_context_synchronously

@@ -302,7 +302,7 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
                                 ),
                               ),
                               child: const Icon(
-                                FontAwesomeIcons.dollarSign,
+                                FontAwesomeIcons.pesoSign,
                                 color: Colors.black, // Set desired icon color
                               ),
                             ),

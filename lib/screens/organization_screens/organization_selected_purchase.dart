@@ -15,6 +15,7 @@ class OrganizationSelectedPurchase extends StatelessWidget {
   final String orderId;
   final String sellerId;
   final bool orderConfirmed;
+  final String orderDate;
 
   const OrganizationSelectedPurchase({
     Key? key,
@@ -24,6 +25,7 @@ class OrganizationSelectedPurchase extends StatelessWidget {
     required this.orderId,
     required this.sellerId,
     required this.orderConfirmed,
+    required this.orderDate,
   }) : super(key: key);
 
   Future<String> getSellerImageUrl() async {
@@ -172,6 +174,11 @@ class OrganizationSelectedPurchase extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       const Divider(),
+                      Text(
+                        'Order Date: $orderDate',
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
                       Text(
                         'Order ID: $orderId',
                         style: const TextStyle(

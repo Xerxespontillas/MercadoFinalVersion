@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../providers/cart_provider.dart';
 import '../farmer_screens/models/product.dart';
@@ -105,7 +106,10 @@ class CartScreen extends StatelessWidget {
         'sellerId': sellerId,
         'items': orderItems,
         'orderConfirmed': false,
-        'sellerType': sellerType, // Add this line
+        //'orderCanclled': false,
+        'sellerType': sellerType,
+        'date': DateFormat("MMMM, dd, yyyy")
+            .format(DateTime.now()), // Add this line
       });
 
 // Decrease the stock of each product
@@ -170,9 +174,11 @@ class CartScreen extends StatelessWidget {
         await sellerRef.set({
           'items': orderItems,
           'orderConfirmed': false,
+          //'orderCancelled': false,
           'buyerId': userId,
           'buyerName': await getBuyerName(_auth, _firestore),
           'buyerType': await getBuyerType(_auth, _firestore),
+          'date': DateFormat("MMMM, dd, yyyy").format(DateTime.now()),
         });
       }
     }

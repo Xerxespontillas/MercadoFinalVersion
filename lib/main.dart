@@ -5,15 +5,16 @@ import 'package:merkado/providers/cart_provider.dart';
 import 'package:merkado/providers/customer_ordered_products_provider.dart';
 import 'package:merkado/providers/organization_products_provider.dart';
 import 'package:merkado/screens/customer_screens/customer_drawer_screens/customer_my_orders.dart';
+import 'package:merkado/screens/customer_screens/customer_history.dart';
 import 'package:merkado/screens/customer_screens/selected_product_marketplace.dart';
 import 'package:merkado/screens/farmer_screens/farmer_all_location_screen.dart';
 import 'package:merkado/screens/farmer_screens/farmer_my_purchases.dart';
 import 'package:merkado/screens/organization_screens/organization_all_location_screen.dart';
 import 'package:merkado/screens/organization_screens/organization_market_screen.dart';
-
+import 'package:merkado/screens/customer_screens/tab_controllers.dart';
 import 'package:merkado/screens/farmer_screens/farmer_my_edit_products.dart';
 import 'package:merkado/screens/organization_screens/organization_my_edit_products.dart';
-import 'package:merkado/screens/organization_screens/organization_my_order.dart';
+import 'package:merkado/screens/organization_screens/organization_customer_orders.dart';
 import 'package:merkado/screens/organization_screens/organization_my_purchases.dart';
 
 import 'package:merkado/screens/organization_screens/organization_screen_controller.dart';
@@ -43,13 +44,14 @@ import 'screens/organization_screens/organization_farmer_chat_screen.dart';
 import 'screens/organization_screens/organization_location_screen.dart';
 
 import 'screens/farmer_screens/farmer_location_screen.dart';
-import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_order.dart';
+import 'screens/farmer_screens/farmer_drawer_screens/farmer_customer_order.dart';
 import 'screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
 import 'screens/farmer_screens/farmer_screen_controller.dart';
 import 'screens/farmer_screens/farmer_new_post.dart';
 import 'screens/farmer_screens/farmer_chat_screen.dart';
 import 'screens/farmer_screens/farmer_farmer_chat_screen.dart';
 
+import 'screens/customer_screens/customer_history.dart';
 import 'screens/customer_screens/splash_screen.dart';
 import 'screens/customer_screens/user_chat_screen.dart';
 import 'screens/customer_screens/user_location_screen.dart';
@@ -136,6 +138,8 @@ class _MerkadoState extends State<Merkado> {
         routes: {
           //User Side Routes
           SplashScreen.routeName: (ctx) => const SplashScreen(),
+          TabControllers.routeName: (ctx) => const TabControllers(),
+          CustomerHistory.routeName: (ctx) => const CustomerHistory(),
           RegisterScreen.routeName: (ctx) => const RegisterScreen(),
           LoginScreen.routeName: (ctx) => const LoginScreen(),
           ForgotPasswordScreen.routeName: (ctx) => const ForgotPasswordScreen(),
@@ -173,7 +177,7 @@ class _MerkadoState extends State<Merkado> {
           FarmerScreenController.routeName: (ctx) =>
               const FarmerScreenController(),
           FarmerLocationScreen.routeName: (ctx) => const FarmerLocationScreen(),
-          FarmerMyOrders.routeName: (ctx) => const FarmerMyOrders(),
+          FarmerCustomerOrders.routeName: (ctx) => const FarmerCustomerOrders(),
           FarmerMyProducts.routeName: (ctx) => const FarmerMyProducts(),
           FarmerNewProductPost.routeName: (ctx) => const FarmerNewProductPost(),
           FarmerSettingsScreen.routeName: (ctx) => const FarmerSettingsScreen(),
@@ -231,7 +235,7 @@ class _MerkadoState extends State<Merkado> {
           OrgSettingsScreen.routeName: (ctx) => const OrgSettingsScreen(),
           OrgMyEditProducts.routeName: (ctx) => const OrgMyEditProducts(),
           OrgAllLocationScreen.routeName: (ctx) => const OrgAllLocationScreen(),
-          OrgMyOrders.routeName: (ctx) => const OrgMyOrders(),
+          OrgCustomerOrders.routeName: (ctx) => const OrgCustomerOrders(),
           OrganizationMyPurchases.routeName: (ctx) =>
               const OrganizationMyPurchases(),
 

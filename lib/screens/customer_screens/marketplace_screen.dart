@@ -252,6 +252,15 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(height: 20),
+                                    Text(
+                                      "Posted on: ${productData['datePosted']}",
+                                      style: const TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w700,
+                                        //fontSize: 20,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
                                     Text(productData['productDetails']),
                                     const SizedBox(height: 4),
                                     Text(

@@ -84,6 +84,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 margin: const EdgeInsets.fromLTRB(20, 60, 20, 0),
                 child: Column(
                   children: [
+                    Image.asset(
+                      'assets/images/merkado_logo.png',
+                      width: 180,
+                      height: 180,
+                    ),
+                    const Text(
+                      'MERCADO',
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w900,
+                        //fontStyle: FontStyle.normal,
+                        color: Color.fromARGB(255, 77, 69, 69),
+                      ),
+                    ),
+                    const SizedBox(height: 60.0),
                     const Text(
                       'LOG IN',
                       style: TextStyle(

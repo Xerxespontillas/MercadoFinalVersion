@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:intl/intl.dart';
 import '../organization_screens/organization_screen_controller.dart';
 import 'farmer_screen_controller.dart';
 
@@ -89,6 +90,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
       "quantity": int.tryParse(_quantityController.text),
       "sellerName": await getSellerName(_auth, _firestore),
       "sellerUserId": farmerId,
+      "datePosted": DateFormat("MMMM, dd, yyyy").format(DateTime.now()),
     };
 
     var snapshot = await _storage
@@ -336,7 +338,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
                                   ),
                                 ),
                                 child: const Icon(
-                                  FontAwesomeIcons.dollarSign,
+                                  FontAwesomeIcons.pesoSign,
                                   color: Colors.black, // Set desired icon color
                                 ),
                               ),
