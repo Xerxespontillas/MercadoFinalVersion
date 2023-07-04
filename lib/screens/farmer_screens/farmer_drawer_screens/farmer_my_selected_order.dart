@@ -207,121 +207,151 @@ class FarmerMySelectedOrder extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     StreamBuilder<bool>(
-                      stream: FirebaseFirestore.instance
-                          .collection('farmers')
-                          .doc(userId)
-                          .collection('customerOrders')
-                          .doc(orderId)
-                          .snapshots()
-                          .map((snapshot) => snapshot['orderConfirmed']),
-                      //.map((snapshot) => snapshot['orderCancelled']),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        }
+                        stream: FirebaseFirestore.instance
+                            .collection('farmers')
+                            .doc(userId)
+                            .collection('customerOrders')
+                            .doc(orderId)
+                            .snapshots()
+                            .map((snapshot) => snapshot['orderConfirmed']),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          }
 
-                        final bool orderConfirmed = snapshot.data ?? false;
-                        final bool orderCancelled = snapshot.data ?? false;
+                          final bool orderConfirmed = snapshot.data ?? false;
 
-                        return Center(
-                          child: Column(
-                            children: [
-                              orderConfirmed
-                                  ? const Icon(Icons.check, color: Colors.green)
-                                  : const Icon(Icons.info_outline,
-                                      color: Colors.orange),
-                              Text(
-                                !orderConfirmed
-                                    ? 'Order Status: waiting for confirmation'
-                                    : 'Order Status: Order Confirmed',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: !orderConfirmed
-                                      ? Colors.orange
-                                      : Colors.green,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              if (!orderConfirmed)
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                          return StreamBuilder<bool>(
+                            stream: FirebaseFirestore.instance
+                                .collection('farmers')
+                                .doc(userId)
+                                .collection('customerOrders')
+                                .doc(orderId)
+                                .snapshots()
+                                .map((snapshot) => snapshot['orderCancelled']),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              }
+
+                              final bool orderCancelled =
+                                  snapshot.data ?? false;
+
+                              return Center(
+                                child: Column(
                                   children: [
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        await FirebaseFirestore.instance
-                                            .collection('customersOrders')
-                                            .doc(buyerId)
-                                            .collection('orders')
-                                            .doc(orderId)
-                                            .update({'orderCancelled': true});
-
-                                        // Here is how to delete the orderId from farmers collection
-                                        await FirebaseFirestore.instance
-                                            .collection('farmers')
-                                            .doc(userId)
-                                            .collection('customerOrders')
-                                            .doc(orderId)
-                                            .update({'orderCancelled': true});
-
-                                        // ignore: use_build_context_synchronously
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                                'Order has been cancelled.'),
-                                            backgroundColor:
-                                                Color.fromARGB(255, 255, 0, 0),
-                                          ),
-                                        );
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.of(context)
-                                            .pushReplacementNamed(
-                                                FarmerMyProducts.routeName);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red),
-                                      child: const Text('Decline Order'),
+                                    orderConfirmed
+                                        ? const Icon(Icons.check,
+                                            color: Colors.green)
+                                        : orderCancelled
+                                            ? const Icon(Icons.cancel,
+                                                color: Colors.red)
+                                            : const Icon(Icons.info_outline,
+                                                color: Colors.orange),
+                                    Text(
+                                      orderCancelled
+                                          ? 'Order Status: Declined Order'
+                                          : !orderConfirmed
+                                              ? 'Order Status: waiting for confirmation'
+                                              : 'Order Status: Order Confirmed',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: orderCancelled
+                                            ? Colors.red
+                                            : !orderConfirmed
+                                                ? Colors.orange
+                                                : Colors.green,
+                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        await FirebaseFirestore.instance
-                                            .collection('farmers')
-                                            .doc(userId)
-                                            .collection('customerOrders')
-                                            .doc(orderId)
-                                            .update({'orderConfirmed': true});
+                                    if (!orderConfirmed && !orderCancelled)
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              await FirebaseFirestore.instance
+                                                  .collection('customersOrders')
+                                                  .doc(buyerId)
+                                                  .collection('orders')
+                                                  .doc(orderId)
+                                                  .update(
+                                                      {'orderCancelled': true});
 
-                                        await FirebaseFirestore.instance
-                                            .collection('customersOrders')
-                                            .doc(buyerId)
-                                            .collection('orders')
-                                            .doc(orderId)
-                                            .update({'orderConfirmed': true});
+                                              // Here is how to delete the orderId from farmers collection
+                                              await FirebaseFirestore.instance
+                                                  .collection('farmers')
+                                                  .doc(userId)
+                                                  .collection('customerOrders')
+                                                  .doc(orderId)
+                                                  .update(
+                                                      {'orderCancelled': true});
 
-                                        // ignore: use_build_context_synchronously
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                                'Order has been confirmed.'),
-                                            backgroundColor: Colors.green,
+                                              // ignore: use_build_context_synchronously
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      'Order has been cancelled.'),
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          255, 255, 0, 0),
+                                                ),
+                                              );
+                                              // ignore: use_build_context_synchronously
+                                              Navigator.of(context)
+                                                  .pushReplacementNamed(
+                                                      FarmerMyProducts
+                                                          .routeName);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.red),
+                                            child: const Text('Decline Order'),
                                           ),
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.green),
-                                      child: const Text('Confirm Order'),
-                                    ),
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              await FirebaseFirestore.instance
+                                                  .collection('farmers')
+                                                  .doc(userId)
+                                                  .collection('customerOrders')
+                                                  .doc(orderId)
+                                                  .update(
+                                                      {'orderConfirmed': true});
+
+                                              await FirebaseFirestore.instance
+                                                  .collection('customersOrders')
+                                                  .doc(buyerId)
+                                                  .collection('orders')
+                                                  .doc(orderId)
+                                                  .update(
+                                                      {'orderConfirmed': true});
+
+                                              // ignore: use_build_context_synchronously
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      'Order has been confirmed.'),
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.green),
+                                            child: const Text('Confirm Order'),
+                                          ),
+                                        ],
+                                      ),
                                   ],
                                 ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                              );
+                            },
+                          );
+                        }),
                   ],
                 ),
               ),

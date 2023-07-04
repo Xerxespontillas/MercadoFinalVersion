@@ -106,7 +106,7 @@ class CartScreen extends StatelessWidget {
         'sellerId': sellerId,
         'items': orderItems,
         'orderConfirmed': false,
-        //'orderCanclled': false,
+        'orderCancelled': false,
         'sellerType': sellerType,
         'date': DateFormat("MMMM, dd, yyyy")
             .format(DateTime.now()), // Add this line

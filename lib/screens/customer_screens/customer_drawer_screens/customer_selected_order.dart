@@ -194,83 +194,109 @@ class CustomerSelectedOrder extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       StreamBuilder<bool>(
-                        stream: FirebaseFirestore.instance
-                            .collection('customersOrders')
-                            .doc(userId)
-                            .collection('orders')
-                            .doc(orderId)
-                            .snapshots()
-                            .map((snapshot) => snapshot['orderConfirmed']),
-                        //.map((snapshot) => snapshot['orderCancelled']),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          }
-                          final bool orderConfirmed = snapshot.data ?? false;
-                          //final bool orderCancelled = snapshot.data ?? false;
-                          return Center(
-                            child: Column(
-                              children: [
-                                orderConfirmed
-                                    ? const Icon(Icons.check,
-                                        color: Colors.green)
-                                    : const Icon(Icons.info_outline,
-                                        color: Colors.orange),
-                                Text(
-                                  !orderConfirmed
-                                      ? 'Order Status: Waiting for confirmation of Seller'
-                                      : 'Order Status: Order Confirmed',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: !orderConfirmed
-                                        ? Colors.orange
-                                        : Colors.green,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                if (!orderConfirmed)
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      await FirebaseFirestore.instance
-                                          .collection('customersOrders')
-                                          .doc(userId)
-                                          .collection('orders')
-                                          .doc(orderId)
-                                          .delete();
+                          stream: FirebaseFirestore.instance
+                              .collection('customersOrders')
+                              .doc(userId)
+                              .collection('orders')
+                              .doc(orderId)
+                              .snapshots()
+                              .map((snapshot) => snapshot['orderConfirmed']),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
 
-                                      // Here is how to delete the orderId from farmers collection
-                                      await FirebaseFirestore.instance
-                                          .collection('farmers')
-                                          .doc(sellerId)
-                                          .collection('customerOrders')
-                                          .doc(orderId)
-                                          .delete();
+                            final bool orderConfirmed = snapshot.data ?? false;
 
-                                      // ignore: use_build_context_synchronously
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content:
-                                              Text('Order has been cancelled.'),
-                                          backgroundColor: Colors.red,
+                            return StreamBuilder<bool>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('customersOrders')
+                                  .doc(userId)
+                                  .collection('orders')
+                                  .doc(orderId)
+                                  .snapshots()
+                                  .map(
+                                      (snapshot) => snapshot['orderCancelled']),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                }
+
+                                final bool orderCancelled =
+                                    snapshot.data ?? false;
+
+                                return Center(
+                                  child: Column(
+                                    children: [
+                                      orderConfirmed
+                                          ? const Icon(Icons.check,
+                                              color: Colors.green)
+                                          : orderCancelled
+                                              ? const Icon(Icons.cancel,
+                                                  color: Colors.red)
+                                              : const Icon(Icons.info_outline,
+                                                  color: Colors.orange),
+                                      Text(
+                                        orderCancelled
+                                            ? 'Order Status: Declined Order'
+                                            : !orderConfirmed
+                                                ? 'Order Status: waiting for confirmation'
+                                                : 'Order Status: Order Confirmed',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: orderCancelled
+                                              ? Colors.red
+                                              : !orderConfirmed
+                                                  ? Colors.orange
+                                                  : Colors.green,
                                         ),
-                                      );
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.of(context)
-                                          .pushReplacementNamed(
-                                              CustomerMyOrders.routeName);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red),
-                                    child: const Text('CANCEL'),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      if (!orderConfirmed && !orderCancelled)
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            await FirebaseFirestore.instance
+                                                .collection('customersOrders')
+                                                .doc(userId)
+                                                .collection('orders')
+                                                .doc(orderId)
+                                                .delete();
+
+                                            // Here is how to delete the orderId from farmers collection
+                                            await FirebaseFirestore.instance
+                                                .collection('farmers')
+                                                .doc(sellerId)
+                                                .collection('customerOrders')
+                                                .doc(orderId)
+                                                .delete();
+
+                                            // ignore: use_build_context_synchronously
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                    'Order has been cancelled.'),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                            // ignore: use_build_context_synchronously
+                                            Navigator.of(context)
+                                                .pushReplacementNamed(
+                                                    CustomerMyOrders.routeName);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red),
+                                          child: const Text('CANCEL'),
+                                        ),
+                                    ],
                                   ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                                );
+                              },
+                            );
+                          }),
                     ],
                   ),
                 ),

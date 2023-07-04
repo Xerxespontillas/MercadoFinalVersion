@@ -51,8 +51,15 @@ class _CustomerHistoryState extends State<CustomerHistory> {
             itemBuilder: (context, index) {
               var order = snapshot.data!.docs[index];
               var items = order['items'];
-
               var deliveryFee = 50.0; // Assuming a fixed delivery fee
+
+              final bool orderConfirmed = order['orderConfirmed'] ?? false;
+              final bool orderCancelled = order['orderCancelled'] ?? false;
+
+              // If both orderCancelled and orderConfirmed are false, don't display the item
+              if (!orderConfirmed && !orderCancelled) {
+                return Container();
+              }
 
               return InkWell(
                 child: Card(
@@ -70,6 +77,15 @@ class _CustomerHistoryState extends State<CustomerHistory> {
                         Text('Order date: ${order['date']}'),
                         Text('Order ID: ${order.id}'),
                         Text('Seller: ${order['sellerName']}'),
+                        Text(
+                          orderCancelled
+                              ? 'Status: Cancelled'
+                              : 'Status: Confirmed',
+                          style: TextStyle(
+                            color: orderCancelled ? Colors.red : Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         ...items.map<Widget>((item) => ListTile(
                               leading: Image.network(
                                 item['productImage'],
