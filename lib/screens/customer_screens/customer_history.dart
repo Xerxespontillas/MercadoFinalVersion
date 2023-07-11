@@ -1,3 +1,4 @@
+// previos code
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _CustomerHistoryState extends State<CustomerHistory> {
             .collection('customersOrders')
             .doc(userId)
             .collection('orders')
+            .orderBy('date', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -63,23 +65,43 @@ class _CustomerHistoryState extends State<CustomerHistory> {
 
               return InkWell(
                 child: Card(
-                  shape: const RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Colors.red,
-                      width: 5,
-                    ),
-                  ),
+                  shape: orderConfirmed
+                      ? const RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: Colors.green,
+                            width: 5,
+                          ),
+                        )
+                      : const RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: Colors.red,
+                            width: 5,
+                          ),
+                        ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Order date: ${order['date']}'),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              bottom:
+                                  20.0), // Adjust the bottom padding as needed
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Order date: ${order['date']}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
                         Text('Order ID: ${order.id}'),
                         Text('Seller: ${order['sellerName']}'),
                         Text(
                           orderCancelled
-                              ? 'Status: Cancelled'
+                              ? 'Status: Declined'
                               : 'Status: Confirmed',
                           style: TextStyle(
                             color: orderCancelled ? Colors.red : Colors.green,

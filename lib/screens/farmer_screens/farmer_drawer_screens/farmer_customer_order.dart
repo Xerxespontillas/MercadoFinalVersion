@@ -37,6 +37,7 @@ class _FarmerCustomerOrdersState extends State<FarmerCustomerOrders> {
             .collection('farmers')
             .doc(userId)
             .collection('customerOrders')
+            .orderBy('date', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

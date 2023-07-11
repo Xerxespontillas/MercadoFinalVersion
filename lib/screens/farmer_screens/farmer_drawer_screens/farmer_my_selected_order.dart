@@ -6,6 +6,7 @@ import 'package:merkado/screens/farmer_screens/farmer_farmer_chat_screen.dart';
 
 import '../farmer_chat_screen.dart';
 import '../farmer_org_chat_screen.dart';
+import 'farmer_customer_order.dart';
 
 class FarmerMySelectedOrder extends StatelessWidget {
   static const routeName = '/farmer-my-selected-order';
@@ -305,7 +306,8 @@ class FarmerMySelectedOrder extends StatelessWidget {
                                               // ignore: use_build_context_synchronously
                                               Navigator.of(context)
                                                   .pushReplacementNamed(
-                                                      FarmerMyProducts
+                                                      //FarmerMyProducts
+                                                      FarmerCustomerOrders
                                                           .routeName);
                                             },
                                             style: ElevatedButton.styleFrom(

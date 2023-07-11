@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +40,7 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
             .collection('customersOrders')
             .doc(userId)
             .collection('orders')
+            //.orderBy('date')
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -56,56 +59,67 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
 
               var deliveryFee = 50.0; // Assuming a fixed delivery fee
 
-              return InkWell(
-                onTap: () {
-                  if (order.data() is Map) {
-                    var sellerId = order['sellerId'];
-                    var orderDate = order['date'];
-                    bool orderConfirmed = order['orderConfirmed'];
-                    //bool orderCancelled = order['orderCancelled'];
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => CustomerSelectedOrder(
-                            order: order.data() as Map,
-                            items: items,
-                            deliveryFee: deliveryFee,
-                            sellerId: sellerId,
-                            orderDate: orderDate,
-                            orderConfirmed: orderConfirmed,
-                            //orderCancelled: orderCancelled,
-                            orderId: order.id)));
-                  }
-                },
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Order date: ${order['date']}'),
-                        Text('Order ID: ${order.id}'),
-                        Text('Seller: ${order['sellerName']}'),
-                        ...items.map<Widget>((item) => ListTile(
-                              leading: Image.network(
-                                item['productImage'],
-                                errorBuilder: (BuildContext context,
-                                    Object exception, StackTrace? stackTrace) {
-                                  // Return any widget you want to be displayed instead of the network image like an asset image or an icon
-                                  return const Icon(Icons.error);
-                                },
-                              ),
-                              title: Text(item['productName']),
-                              subtitle: Text('Price: ${item['productPrice']}'),
-                              trailing:
-                                  Text('Quantity: ${item['productQuantity']}'),
-                            )),
-                        Text('Delivery Fee: $deliveryFee'),
-                        Text(
-                            'Total Payment: ${items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + deliveryFee}'),
-                      ],
+              bool orderConfirmed = order['orderConfirmed'];
+              bool orderCancelled = order['orderCancelled'];
+
+              if ((orderConfirmed == false) && (orderCancelled == false)) {
+                //return const Center(child: Text('No orders found.'));
+                return InkWell(
+                  onTap: () {
+                    if (order.data() is Map) {
+                      var sellerId = order['sellerId'];
+                      var orderDate = order['date'];
+                      bool orderConfirmed = order['orderConfirmed'];
+                      //bool orderCancelled = order['orderCancelled'];
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => CustomerSelectedOrder(
+                              order: order.data() as Map,
+                              items: items,
+                              deliveryFee: deliveryFee,
+                              sellerId: sellerId,
+                              orderDate: orderDate,
+                              orderConfirmed: orderConfirmed,
+                              //orderCancelled: orderCancelled,
+                              orderId: order.id)));
+                    }
+                  },
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Order date: ${order['date']}',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text('Order ID: ${order.id}'),
+                          Text('Seller: ${order['sellerName']}'),
+                          ...items.map<Widget>((item) => ListTile(
+                                leading: Image.network(
+                                  item['productImage'],
+                                  errorBuilder: (BuildContext context,
+                                      Object exception,
+                                      StackTrace? stackTrace) {
+                                    // Return any widget you want to be displayed instead of the network image like an asset image or an icon
+                                    return const Icon(Icons.error);
+                                  },
+                                ),
+                                title: Text(item['productName']),
+                                subtitle:
+                                    Text('Price: ${item['productPrice']}'),
+                                trailing: Text(
+                                    'Quantity: ${item['productQuantity']}'),
+                              )),
+                          Text('Delivery Fee: $deliveryFee'),
+                          Text(
+                              'Total Payment: ${items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + deliveryFee}'),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
+                );
+              } // bag o na iff
             },
           );
         },

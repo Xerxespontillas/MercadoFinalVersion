@@ -176,7 +176,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore.collection('AllProducts').snapshots(),
+              stream: _firestore
+                  .collection('AllProducts')
+                  .orderBy('datePosted', descending: true)
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());

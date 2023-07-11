@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:merkado/screens/customer_screens/user_location_screen.dart';
 
+import '../tab_controllers.dart';
 import '../user_chat_screen.dart';
 import '../user_org_chat_screen.dart';
 import 'customer_my_orders.dart';
@@ -26,7 +27,7 @@ class CustomerSelectedOrder extends StatelessWidget {
     required this.orderId,
     required this.sellerId,
     required this.orderConfirmed,
-    // required this.orderCancelled,
+    //required this.orderCancelled,
     required this.orderDate,
   }) : super(key: key);
 
@@ -285,7 +286,8 @@ class CustomerSelectedOrder extends StatelessWidget {
                                             // ignore: use_build_context_synchronously
                                             Navigator.of(context)
                                                 .pushReplacementNamed(
-                                                    CustomerMyOrders.routeName);
+                                                    TabControllers.routeName);
+                                            //CustomerMyOrders.routeName);
                                           },
                                           style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.red),
