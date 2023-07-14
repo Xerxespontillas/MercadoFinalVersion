@@ -52,6 +52,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 66, 180, 119),
       endDrawer: FutureBuilder<bool>(
         future: isUserFarmer(FirebaseAuth.instance.currentUser!.uid),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -77,7 +78,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       ),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color.fromARGB(255, 66, 180, 119),
         centerTitle: true,
         title: const Text(
           'Market Place',

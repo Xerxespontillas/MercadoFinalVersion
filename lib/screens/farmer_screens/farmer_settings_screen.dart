@@ -22,10 +22,12 @@ class _FarmerSettingsScreenState extends State<FarmerSettingsScreen> {
   TextEditingController? _displayNameController;
   TextEditingController? _phoneNumberController;
   TextEditingController? _addressController;
+  TextEditingController? _roleContoller; //delete/copy
 
   String? _displayName;
   String? _phoneNumber;
   String? _address;
+  String? _role; //delete/copy
   String? _profilePictureUrl;
   File? _profilePicture;
 
@@ -59,12 +61,13 @@ class _FarmerSettingsScreenState extends State<FarmerSettingsScreen> {
           _phoneNumber = userData['phoneNumber'];
           _address = userData['address'];
           _profilePictureUrl = userData['profilePicture'];
-
+          _role = userData['role']; //delete/copy
           // Set the text editing controllers to the current values
 
           _displayNameController?.text = _displayName!;
           _phoneNumberController?.text = _phoneNumber!;
           _addressController?.text = _address!;
+          _roleContoller?.text = _role!; //delete/copy
         });
       }
     });
@@ -78,6 +81,7 @@ class _FarmerSettingsScreenState extends State<FarmerSettingsScreen> {
     _displayNameController = TextEditingController();
     _phoneNumberController = TextEditingController();
     _addressController = TextEditingController();
+    _roleContoller = TextEditingController(); //delete/copy
 
     // Fetch the user data and update the state variables
     updateData();
@@ -255,6 +259,7 @@ class _FarmerSettingsScreenState extends State<FarmerSettingsScreen> {
     _displayNameController?.dispose();
     _phoneNumberController?.dispose();
     _addressController?.dispose();
+    _roleContoller?.dispose(); //delete/copy
   }
 
   @override
@@ -446,6 +451,25 @@ class _FarmerSettingsScreenState extends State<FarmerSettingsScreen> {
                   ),
                 ],
               ),
+
+              Row(
+                children: [
+                  const Text(
+                    'User Type:         ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Inter',
+                    ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _roleContoller,
+                      readOnly: true,
+                    ),
+                  ),
+                ],
+              ), //delete/copy
+
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
