@@ -53,7 +53,7 @@ class _CustomerHistoryState extends State<CustomerHistory> {
             itemBuilder: (context, index) {
               var order = snapshot.data!.docs[index];
               var items = order['items'];
-              var deliveryFee = 50.0; // Assuming a fixed delivery fee
+              var deliveryFee = 0.0; // Assuming a fixed delivery fee
 
               final bool orderConfirmed = order['orderConfirmed'] ?? false;
               final bool orderCancelled = order['orderCancelled'] ?? false;

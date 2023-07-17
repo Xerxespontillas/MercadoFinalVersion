@@ -22,6 +22,11 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void removeItem(CartItem cartItem) {
+    _cartItems.remove(cartItem.id);
+    notifyListeners();
+  }
+
   Map<String, Map<String, dynamic>> get itemsBySeller {
     final Map<String, Map<String, dynamic>> itemsBySeller = {};
 

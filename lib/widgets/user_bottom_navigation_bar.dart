@@ -15,24 +15,24 @@ class UserCustomBottomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       onTap: onTabTapped,
       currentIndex: currentIndex,
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       selectedItemColor: Colors.black,
       unselectedItemColor: Colors.grey[600],
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home_work, size: 40),
-          label: '',
+          label: 'Home',
         ),
         BottomNavigationBarItem(
           icon: Icon(
             Icons.message,
             size: 40,
           ),
-          label: '',
+          label: 'Message',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings, size: 40),
-          label: '',
+          label: 'Settings',
         ),
       ],
     );

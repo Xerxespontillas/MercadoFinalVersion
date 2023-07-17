@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:merkado/screens/farmer_screens/farmer_location_screen.dart';
 import 'package:merkado/screens/organization_screens/organization_location_screen.dart';
 
+import '../screens/customer_screens/tab_controllers.dart';
 import '../screens/farmer_screens/farmer_drawer_screens/farmer_customer_order.dart';
 
 import '../screens/farmer_screens/farmer_my_purchases.dart';
@@ -114,21 +115,24 @@ class FarmerAppDrawer extends StatelessWidget {
             leading: const Icon(Icons.shopify_outlined),
             title: const Text('My Purchases'),
             onTap: () async {
-              String userType = await _getUserType();
-              if (userType == 'farmer') {
-                // ignore: use_build_context_synchronously
-                Navigator.of(context).pushNamed(FarmerMyPurchases.routeName);
-                // ignore: avoid_print
-                print("NI SUD SA Farmer");
-              } else if (userType == 'organization') {
-                // ignore: avoid_print
-                print("NI SUD SA ORGANIZATION");
-                // ignore: use_build_context_synchronously
-                Navigator.of(context)
-                    .pushNamed(OrganizationMyPurchases.routeName);
-              } else {
-                // Handle unknown user type...
-              }
+              // String userType = await _getUserType();
+              Navigator.of(context).pushNamed(TabControllers.routeName);
+              // if (userType == 'farmer') {
+
+              //   // ignore: use_build_context_synchronously
+              //   // Navigator.of(context).pushNamed(FarmerMyPurchases.routeName);
+              //   // ignore: avoid_print
+              //   print("NI SUD SA Farmer");
+              // } else if (userType == 'organization') {
+              //   Navigator.of(context).pushNamed(TabControllers.routeName);
+              //   // ignore: avoid_print
+              //   print("NI SUD SA ORGANIZATION");
+              //   // ignore: use_build_context_synchronously
+              //   // Navigator.of(context)
+              //       // .pushNamed(OrganizationMyPurchases.routeName);
+              // } else {
+              //   // Handle unknown user type...
+              // }
             },
           ),
           ListTile(

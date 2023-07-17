@@ -50,27 +50,31 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(child: Text('No orders found.'));
           }
-
+          print([
+            'itemCount',
+            snapshot.data!.docs.length,
+          ]);
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               var order = snapshot.data!.docs[index];
               var items = order['items'];
+              print('items');
+              print(items);
+              var deliveryFee = 0.0; // Assuming a fixed delivery feer
 
-              var deliveryFee = 50.0; // Assuming a fixed delivery fee
+              bool orderConfirmed = order['orderConfirmed'] ?? false;
+              bool orderCancelled = order['orderCancelled'] ?? false;
 
-              bool orderConfirmed = order['orderConfirmed'];
-              bool orderCancelled = order['orderCancelled'];
-
-              if ((orderConfirmed == false) && (orderCancelled == false)) {
-                //return const Center(child: Text('No orders found.'));
-                return InkWell(
+              print(items);
+              return Visibility(
+                visible: !orderConfirmed && !orderCancelled,
+                child: InkWell(
                   onTap: () {
                     if (order.data() is Map) {
-                      var sellerId = order['sellerId'];
+                      var sellerId = order['sellerId'] ?? '';
                       var orderDate = order['date'];
-                      bool orderConfirmed = order['orderConfirmed'];
-                      //bool orderCancelled = order['orderCancelled'];
+                      print(['order.id', order.id]);
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => CustomerSelectedOrder(
                               order: order.data() as Map,
@@ -95,22 +99,39 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
                           ),
                           Text('Order ID: ${order.id}'),
                           Text('Seller: ${order['sellerName']}'),
-                          ...items.map<Widget>((item) => ListTile(
-                                leading: Image.network(
-                                  item['productImage'],
-                                  errorBuilder: (BuildContext context,
-                                      Object exception,
-                                      StackTrace? stackTrace) {
-                                    // Return any widget you want to be displayed instead of the network image like an asset image or an icon
-                                    return const Icon(Icons.error);
-                                  },
+                          items is List
+                              ? ListTile(
+                                  leading: Image.network(
+                                    items[0]['productImage'] ?? '',
+                                    errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace? stackTrace) {
+                                      // Return any widget you want to be displayed instead of the network image like an asset image or an icon
+                                      return const Icon(Icons.error);
+                                    },
+                                  ),
+                                  title: Text(items[0]['productName']),
+                                  subtitle: Text(
+                                      'Price: ${items[0]['productPrice']}'),
+                                  trailing: Text(
+                                      'Quantity: ${items[0]['productQuantity']}'),
+                                )
+                              : ListTile(
+                                  leading: Image.network(
+                                    items['productImage'] ?? '',
+                                    errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace? stackTrace) {
+                                      // Return any widget you want to be displayed instead of the network image like an asset image or an icon
+                                      return const Icon(Icons.error);
+                                    },
+                                  ),
+                                  title: Text(items['productName']),
+                                  subtitle:
+                                      Text('Price: ${items['productPrice']}'),
+                                  trailing: Text(
+                                      'Quantity: ${items['productQuantity']}'),
                                 ),
-                                title: Text(item['productName']),
-                                subtitle:
-                                    Text('Price: ${item['productPrice']}'),
-                                trailing: Text(
-                                    'Quantity: ${item['productQuantity']}'),
-                              )),
                           Text('Delivery Fee: $deliveryFee'),
                           Text(
                               'Total Payment: ${items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + deliveryFee}'),
@@ -118,8 +139,8 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
                       ),
                     ),
                   ),
-                );
-              } // bag o na iff
+                ),
+              );
             },
           );
         },

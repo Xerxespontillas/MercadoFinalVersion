@@ -15,7 +15,7 @@ class OrgCustomBottomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       onTap: onTabTapped,
       currentIndex: currentIndex,
-      backgroundColor: const Color(0xFF33FF00),
+      backgroundColor: Colors.greenAccent,
       selectedItemColor: Colors.black,
       unselectedItemColor: Colors.grey[600],
       items: const [
@@ -25,7 +25,7 @@ class OrgCustomBottomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.add_box_outlined),
-          label: 'Add Product',
+          label: 'My Products',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.message_outlined),

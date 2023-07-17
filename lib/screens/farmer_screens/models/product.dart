@@ -35,6 +35,20 @@ class Product {
         sellerName = doc['sellerName'],
         sellerId = doc['sellerUserId'],
         image = doc['image'];
+
+  factory Product.fromMap(Map<String, dynamic> map) {
+    return Product(
+      id: map['id'],
+      productName: map['productName'],
+      productDetails: map['productDetails'],
+      price: map['price'],
+      quantity: map['quantity'],
+      maxQuantity: map['maxQuantity'],
+      sellerName: map['sellerName'],
+      sellerId: map['sellerId'],
+      image: map['image'],
+    );
+  }
 }
 
 class CartItem extends Product {
@@ -67,4 +81,31 @@ class CartItem extends Product {
   CartItem.fromDocumentSnapshot(DocumentSnapshot doc)
       : quantity = doc['quantity'],
         super.fromDocumentSnapshot(doc);
+
+  factory CartItem.fromMap(Map<dynamic, dynamic> map) {
+    return CartItem(
+      id: map['id'] ?? '',
+      productName: map['productName'] ?? '',
+      productDetails: map['productDetails'] ?? '',
+      price: map['price'] ?? 0.0,
+      quantity: map['quantity'] ?? 0.0,
+      maxQuantity: map['maxQuantity'] ?? 0.0,
+      sellerName: map['sellerName'] ?? '',
+      sellerId: map['sellerId'] ?? '',
+      image: map['image'] ?? '',
+    );
+  }
+  static Map<String, dynamic> toMap(CartItem item) {
+    return {
+      'id': item.id,
+      'productName': item.productName,
+      'productDetails': item.productDetails,
+      'price': item.price,
+      'quantity': item.quantity,
+      'maxQuantity': item.maxQuantity,
+      'sellerName': item.sellerName,
+      'sellerId': item.sellerId,
+      'image': item.image
+    };
+  }
 }

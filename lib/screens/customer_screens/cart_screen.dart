@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../providers/cart_provider.dart';
 import '../farmer_screens/models/product.dart';
+import 'customer_drawer_screens/customer_selected_order.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -112,7 +113,7 @@ class CartScreen extends StatelessWidget {
             .format(DateTime.now()), // Add this line
       });
 
-// Decrease the stock of each product
+      // Decrease the stock of each product
       for (var item in items) {
         DocumentReference productRef;
         DocumentSnapshot productSnapshot;
@@ -320,66 +321,93 @@ class CartScreen extends StatelessWidget {
                 child: ListView.builder(
                   itemCount: cartItems.length,
                   itemBuilder: (ctx, i) {
-                    var cartItem = cartItems.values.toList()[i];
+                    var cartItemObject = cartItems.values.toList()[i];
+                    var deliveryFee = 0.0; // Assuming a fixed delivery feer
+                    return InkWell(
+                      onTap: () {
+                        var cartItem =
+                            CartItem.toMap(cartItems.values.toList()[i]);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => CustomerSelectedOrder(
+                                order: cartItem,
+                                items: [],
+                                deliveryFee: deliveryFee,
+                                sellerId: cartItem['sellerId'] ?? 'id',
+                                orderDate: cartItem['date'] ??
+                                    DateTime.now().toIso8601String(),
+                                orderConfirmed:
+                                    cartItem['orderConfirmed'] ?? false,
+                                isPurchase: true,
+                                image: cartItemObject.image,
+                                total: (cartItemObject.price *
+                                    cartItemObject.quantity),
 
-                    return Card(
-                      margin: const EdgeInsets.all(8),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(cartItem.image),
-                          backgroundColor: Colors.transparent,
-                        ),
-                        title: Text(cartItem.productName),
-                        subtitle: Text(
-                            'Total: Php.${(cartItem.price * cartItem.quantity).toStringAsFixed(2)}'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            IconButton(
-                              icon: const Icon(Icons.remove),
-                              onPressed: () {
-                                if (cartItem.quantity == 1) {
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text('Remove Item'),
-                                        content: const Text(
-                                            'Do you want to remove this item from the cart?'),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            child: const Text('No'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          ElevatedButton(
-                                            child: const Text('Yes'),
-                                            onPressed: () {
-                                              cartProvider.removeItemQuantity(
-                                                  cartItem.id);
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  cartProvider.removeItemQuantity(cartItem.id);
-                                }
-                              },
-                            ),
-                            Text('${cartItem.quantity} x'),
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              onPressed: () {
-                                cartProvider.addItemQuantity(
-                                    cartItem.id, context);
-                              },
-                            ),
-                          ],
+                                //orderCancelled: orderCancelled,
+                                orderId: cartItem['id']),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        margin: const EdgeInsets.all(8),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(cartItemObject.image),
+                            backgroundColor: Colors.transparent,
+                          ),
+                          title: Text(cartItemObject.productName),
+                          subtitle: Text(
+                              'Total: Php.${(cartItemObject.price * cartItemObject.quantity).toStringAsFixed(2)}'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                onPressed: () {
+                                  if (cartItemObject.quantity == 1) {
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('Remove Item'),
+                                          content: const Text(
+                                              'Do you want to remove this item from the cart?'),
+                                          actions: <Widget>[
+                                            ElevatedButton(
+                                              child: const Text('No'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            ElevatedButton(
+                                              child: const Text('Yes'),
+                                              onPressed: () {
+                                                cartProvider.removeItemQuantity(
+                                                    cartItemObject.id);
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    cartProvider
+                                        .removeItemQuantity(cartItemObject.id);
+                                  }
+                                },
+                              ),
+                              Text('${cartItemObject.quantity} x'),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                onPressed: () {
+                                  cartProvider.addItemQuantity(
+                                      cartItemObject.id, context);
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );
