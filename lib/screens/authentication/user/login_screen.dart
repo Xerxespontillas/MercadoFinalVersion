@@ -75,223 +75,214 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      body: Column(
-        children: [
-          SingleChildScrollView(
-            child: SafeArea(
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                margin: const EdgeInsets.fromLTRB(20, 60, 20, 0),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          margin: const EdgeInsets.fromLTRB(20, 60, 20, 0),
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/images/merkado_logo.png',
+                width: 180,
+                height: 180,
+              ),
+              const Text(
+                'MERCADO',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w900,
+                  //fontStyle: FontStyle.normal,
+                  color: Color.fromARGB(255, 77, 69, 69),
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              const Text(
+                'LOG IN',
+                style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10.0),
+              Form(
+                key: _formKey,
                 child: Column(
                   children: [
-                    Image.asset(
-                      'assets/images/merkado_logo.png',
-                      width: 180,
-                      height: 180,
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'Enter your email',
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: Colors.black,
+                        ),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: validateEmail,
+                      onChanged: (value) {
+                        // Do something with the user input
+                      },
                     ),
-                    const Text(
-                      'MERCADO',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w900,
-                        //fontStyle: FontStyle.normal,
-                        color: Color.fromARGB(255, 77, 69, 69),
+                    const SizedBox(height: 20.0),
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: _obscureText,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        hintText: 'Enter your password',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        prefixIcon: const Icon(
+                          Icons.lock,
+                          color: Colors.black,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(_obscureText
+                              ? Icons.visibility_off
+                              : Icons.visibility),
+                          onPressed: _togglePasswordVisibility,
+                        ),
+                      ),
+                      validator: validatePassword,
+                    ),
+                    const SizedBox(height: 10.0),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
+                      alignment: Alignment.topLeft,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, ForgotPasswordScreen.routeName);
+                        },
+                        child: const Text(
+                          "Forgot your password?",
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 60.0),
-                    const Text(
-                      'LOG IN',
-                      style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 65,
-                          fontWeight: FontWeight.bold),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          side: const BorderSide(
+                            color: Colors.black,
+                            width: 5.0,
+                          ),
+                        ),
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 255, 255),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.fromLTRB(90, 15, 90, 15),
+                        child: Text(
+                          "LOG IN",
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      onPressed: () async {
+                        bool isConnected =
+                            await checkConnectivityAndHandleLogin(context);
+                        if (isConnected) {
+                          if (_formKey.currentState!.validate()) {
+                            // Form is valid, proceed with login
+                            // ignore: use_build_context_synchronously
+                            authProvider.login(
+                              emailController: _emailController,
+                              passwordController: _passwordController,
+                              context: context,
+                            );
+                          }
+                        }
+                      },
                     ),
-                    const SizedBox(height: 30.0),
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            controller: _emailController,
-                            decoration: InputDecoration(
-                              labelText: 'Email',
-                              hintText: 'Enter your email',
-                              prefixIcon: const Icon(
-                                Icons.email,
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            validator: validateEmail,
-                            onChanged: (value) {
-                              // Do something with the user input
-                            },
-                          ),
-                          const SizedBox(height: 20.0),
-                          TextFormField(
-                            controller: _passwordController,
-                            obscureText: _obscureText,
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              hintText: 'Enter your password',
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              prefixIcon: const Icon(
-                                Icons.lock,
-                                color: Colors.black,
-                              ),
-                              suffixIcon: IconButton(
-                                icon: Icon(_obscureText
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
-                                onPressed: _togglePasswordVisibility,
-                              ),
-                            ),
-                            validator: validatePassword,
-                          ),
-                          const SizedBox(height: 10.0),
-                          Container(
-                            margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
-                            alignment: Alignment.topLeft,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, ForgotPasswordScreen.routeName);
-                              },
-                              child: const Text(
-                                "Forgot your password?",
-                                style: TextStyle(
-                                  color: Colors.red,
-                                ),
-                              ),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(10, 20, 10, 20),
+                      child: Row(
+                        children: const [
+                          Expanded(
+                            child: Divider(
+                              color: Colors.black,
+                              height: 1,
                             ),
                           ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                side: const BorderSide(
-                                  color: Colors.black,
-                                  width: 5.0,
-                                ),
-                              ),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 255, 255),
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.fromLTRB(90, 20, 90, 20),
-                              child: Text(
-                                "LOG IN",
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            onPressed: () async {
-                              bool isConnected =
-                                  await checkConnectivityAndHandleLogin(
-                                      context);
-                              if (isConnected) {
-                                if (_formKey.currentState!.validate()) {
-                                  // Form is valid, proceed with login
-                                  // ignore: use_build_context_synchronously
-                                  authProvider.login(
-                                    emailController: _emailController,
-                                    passwordController: _passwordController,
-                                    context: context,
-                                  );
-                                }
-                              }
-                            },
-                          ),
-                          Container(
-                            margin: const EdgeInsets.fromLTRB(10, 40, 10, 20),
-                            child: Row(
-                              children: const [
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.black,
-                                    height: 1,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text(
-                                    'OR',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.black,
-                                    height: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
-                            //child: Text('Don\'t have an account? Create'),
-                            child: const Text(
-                              "Don't have an account?",
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              'OR',
                               style: TextStyle(
-                                fontSize: 25,
+                                fontSize: 20,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                side: const BorderSide(
-                                  color: Colors.black,
-                                  width: 5.0,
-                                ),
-                              ),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 0, 0, 0),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.black,
+                              height: 1,
                             ),
-                            child: const Padding(
-                              padding: EdgeInsets.fromLTRB(90, 20, 90, 20),
-                              child: Text(
-                                "SIGN UP",
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const RegisterScreen()));
-                            },
                           ),
                         ],
                       ),
                     ),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                      //child: Text('Don\'t have an account? Create'),
+                      child: const Text(
+                        "Don't have an account?",
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          side: const BorderSide(
+                            color: Colors.black,
+                            width: 5.0,
+                          ),
+                        ),
+                        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.fromLTRB(90, 20, 90, 20),
+                        child: Text(
+                          "SIGN UP",
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const RegisterScreen()));
+                      },
+                    ),
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
