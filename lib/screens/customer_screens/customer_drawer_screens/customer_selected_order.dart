@@ -169,8 +169,8 @@ class _CustomerSelectedOrderState extends State<CustomerSelectedOrder> {
                       ),
                       Text(
                         'Order ID: ${widget.orderId}',
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                        //style: const TextStyle(
+                        //fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 10),
                       const Divider(),
@@ -313,15 +313,15 @@ class _CustomerSelectedOrderState extends State<CustomerSelectedOrder> {
       return Container(
         alignment: Alignment.topRight,
         child: SizedBox(
-          width: 250,
-          height: 68,
+          width: 100,
+          height: 50,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
                 side: const BorderSide(
                   color: Colors.black,
-                  width: 15.0,
+                  width: 100.0,
                 ),
               ),
               backgroundColor: const Color.fromARGB(255, 0, 0, 0),

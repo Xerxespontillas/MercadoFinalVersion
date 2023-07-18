@@ -53,7 +53,7 @@ class _FarmerCustomerOrdersState extends State<FarmerCustomerOrders> {
             itemBuilder: (context, index) {
               var order = snapshot.data!.docs[index];
               var items = order['items'];
-              var deliveryFee = 50.0; // Assuming a fixed delivery fee
+              var deliveryFee = 0.0; // Assuming a fixed delivery fee
 
               return InkWell(
                 onTap: () {
@@ -80,7 +80,10 @@ class _FarmerCustomerOrdersState extends State<FarmerCustomerOrders> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Order Date: ${order['date']}'),
+                        Text(
+                          'Order Date: ${order['date']}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         Text('Order ID: ${order.id}'),
                         Text('Buyer: ${order['buyerName']}'),
                         ...items.map<Widget>((item) => ListTile(
@@ -92,14 +95,20 @@ class _FarmerCustomerOrdersState extends State<FarmerCustomerOrders> {
                                   return const Icon(Icons.error);
                                 },
                               ),
-                              title: Text(item['productName']),
+                              title: Text(
+                                item['productName'],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
                               subtitle: Text('Price: ${item['productPrice']}'),
                               trailing:
                                   Text('Quantity: ${item['productQuantity']}'),
                             )),
                         Text('Delivery Fee: $deliveryFee'),
                         Text(
-                            'Total Payment: ${items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + deliveryFee}'),
+                          'Total Payment: ${items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + deliveryFee}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ],
                     ),
                   ),

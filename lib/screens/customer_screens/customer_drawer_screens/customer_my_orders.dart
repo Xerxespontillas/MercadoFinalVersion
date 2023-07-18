@@ -110,7 +110,11 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
                                       return const Icon(Icons.error);
                                     },
                                   ),
-                                  title: Text(items[0]['productName']),
+                                  title: Text(
+                                    items[0]['productName'],
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                   subtitle: Text(
                                       'Price: ${items[0]['productPrice']}'),
                                   trailing: Text(
@@ -134,7 +138,9 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
                                 ),
                           Text('Delivery Fee: $deliveryFee'),
                           Text(
-                              'Total Payment: ${items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + deliveryFee}'),
+                            'Total Payment: ${items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + deliveryFee}',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ],
                       ),
                     ),
