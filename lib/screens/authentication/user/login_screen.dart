@@ -207,8 +207,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Container(
                       margin: const EdgeInsets.fromLTRB(10, 20, 10, 20),
-                      child: Row(
-                        children: const [
+                      child: const Row(
+                        children: [
                           Expanded(
                             child: Divider(
                               color: Colors.black,

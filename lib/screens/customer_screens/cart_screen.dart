@@ -441,7 +441,7 @@ class CartScreen extends StatelessWidget {
                               (total, item) =>
                                   total + item.price * item.quantity);
                           var deliveryFee =
-                              50.0; // PHP 50 delivery fee per seller
+                              0.0; // PHP 50 delivery fee per seller
 
                           return Card(
                             margin: const EdgeInsets.all(5),

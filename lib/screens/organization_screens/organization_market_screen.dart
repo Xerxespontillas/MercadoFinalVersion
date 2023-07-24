@@ -218,6 +218,13 @@ class _OrgMarketScreenState extends State<OrgMarketScreen> {
                                   ),
                                   context, // pass the context here
                                 );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    backgroundColor: Colors.green,
+                                    content:
+                                        Text("Item successfully added to cart"),
+                                  ),
+                                );
                               },
                               child: Container(
                                 margin: const EdgeInsets.fromLTRB(0, 0, 0, 90),
@@ -229,8 +236,8 @@ class _OrgMarketScreenState extends State<OrgMarketScreen> {
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black),
                                   ),
-                                  child: Row(
-                                    children: const [
+                                  child: const Row(
+                                    children: [
                                       Text('Add to cart',
                                           style: TextStyle(fontSize: 10)),
                                       SizedBox(width: 5),

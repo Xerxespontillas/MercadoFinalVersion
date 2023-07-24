@@ -296,6 +296,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                     ),
                                     context, // pass the context here
                                   );
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      backgroundColor: Colors.green,
+                                      content: Text(
+                                          "Item successfully added to cart"),
+                                    ),
+                                  );
                                 },
                                 child: Container(
                                   margin:
@@ -308,8 +315,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.black),
                                     ),
-                                    child: Row(
-                                      children: const [
+                                    child: const Row(
+                                      children: [
                                         Text('Add to cart',
                                             style: TextStyle(fontSize: 10)),
                                         SizedBox(width: 5),
