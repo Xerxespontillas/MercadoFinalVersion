@@ -40,7 +40,7 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
             .collection('customersOrders')
             .doc(userId)
             .collection('orders')
-            //.orderBy('date')
+            .orderBy('date', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
