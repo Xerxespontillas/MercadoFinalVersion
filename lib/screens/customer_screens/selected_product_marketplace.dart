@@ -343,6 +343,11 @@ class _SelectedProductMarketplaceState
                         ],
                       ),
                     ),
+                    SizedBox(
+                        height:
+                            screenSize.height * 0.02), // 2% of screen height
+                    Text('Discount: ${product.discount}%'),
+                    Text('Minimum Number of Items: ${product.minItems}')
                   ],
                 ),
               ),

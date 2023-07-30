@@ -11,7 +11,8 @@ class Product {
   final String sellerName;
   final String sellerId;
   final String image;
-
+  final minItems;
+  final discount;
   Product({
     required this.id,
     required this.productName,
@@ -22,6 +23,8 @@ class Product {
     required this.sellerName,
     required this.sellerId,
     required this.image,
+    required this.discount,
+    required this.minItems,
   });
 
   // Add this method
@@ -34,7 +37,9 @@ class Product {
         maxQuantity = doc['quantity'],
         sellerName = doc['sellerName'],
         sellerId = doc['sellerUserId'],
-        image = doc['image'];
+        image = doc['image'],
+        minItems = doc['minItems'],
+        discount = doc['discount'];
 
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
@@ -47,6 +52,8 @@ class Product {
       sellerName: map['sellerName'],
       sellerId: map['sellerId'],
       image: map['image'],
+      minItems: map['minItems'],
+      discount: map['discount'],
     );
   }
 }
@@ -66,6 +73,8 @@ class CartItem extends Product {
     required String sellerName,
     required String sellerId,
     required String image,
+    required String discount,
+    required String minItems,
   }) : super(
           id: id,
           productName: productName,
@@ -76,6 +85,8 @@ class CartItem extends Product {
           sellerName: sellerName,
           sellerId: sellerId,
           image: image,
+          minItems: minItems,
+          discount: discount,
         );
   // Add this method
   CartItem.fromDocumentSnapshot(DocumentSnapshot doc)
@@ -93,6 +104,8 @@ class CartItem extends Product {
       sellerName: map['sellerName'] ?? '',
       sellerId: map['sellerId'] ?? '',
       image: map['image'] ?? '',
+      minItems: map['minItems'] ?? 0,
+      discount: map['discount'] ?? 0,
     );
   }
   static Map<String, dynamic> toMap(CartItem item) {
@@ -105,7 +118,9 @@ class CartItem extends Product {
       'maxQuantity': item.maxQuantity,
       'sellerName': item.sellerName,
       'sellerId': item.sellerId,
-      'image': item.image
+      'image': item.image,
+      'minItems': item.minItems ?? 0,
+      'discount': item.discount ?? 0,
     };
   }
 }

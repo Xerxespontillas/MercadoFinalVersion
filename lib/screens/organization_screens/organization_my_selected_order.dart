@@ -183,7 +183,18 @@ class OrgMySelectedOrder extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Total Payment: ${items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + deliveryFee}',
+                      'Total Payment: ${items.fold(0.0, (total, item) {
+                            var itemSubtotal =
+                                item['productPrice'] * item['productQuantity'];
+                            var discountPercent = item['discount'] as int? ?? 0;
+                            var minItems = item['minItems'] as int? ?? 0;
+                            if (item['productQuantity'] >= minItems) {
+                              var discountAmount =
+                                  itemSubtotal * discountPercent / 100;
+                              itemSubtotal -= discountAmount;
+                            }
+                            return total + itemSubtotal;
+                          }) + deliveryFee}',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

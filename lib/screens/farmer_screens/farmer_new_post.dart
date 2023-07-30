@@ -91,6 +91,8 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
       "sellerName": await getSellerName(_auth, _firestore),
       "sellerUserId": farmerId,
       "datePosted": DateFormat("MMMM, dd, yyyy").format(DateTime.now()),
+      "discount": int.tryParse(_discountController.text) ?? 0,
+      "minItems": int.tryParse(_minItemsController.text) ?? 0,
     };
 
     var snapshot = await _storage
@@ -219,6 +221,79 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
     if (currentQuantity > 0) {
       _quantityController.text = (currentQuantity - 1).toString();
     }
+  }
+
+  final _discountController = TextEditingController();
+  final _minItemsController = TextEditingController();
+  bool _isLoading = false;
+  bool _isError = false;
+  Widget _discountDialog(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add/Edit Discount'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [],
+          ),
+          SizedBox(
+            height: 40,
+          ),
+          TextField(
+            controller: _discountController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Discount Percent (%)',
+            ),
+          ),
+          TextField(
+            controller: _minItemsController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Minimum Number of Items',
+            ),
+          ),
+          if (_isError)
+            Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Please fill in all fields'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: _isLoading
+              ? null
+              : () {
+                  if (_discountController.text.isEmpty ||
+                      _minItemsController.text.isEmpty) {
+                    setState(() {
+                      _isError = true;
+                    });
+                  } else {
+                    _isError = false;
+                    Navigator.of(context).pop();
+                  }
+                },
+          child:
+              _isLoading ? const CircularProgressIndicator() : const Text('OK'),
+        ),
+      ],
+    );
   }
 
   @override
@@ -420,6 +495,26 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
                                 onPressed: decreaseQuantity,
                               ),
                             ],
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: 38,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => _discountDialog(ctx),
+                              );
+                            },
+                            style: OutlinedButton.styleFrom(
+                              primary: Colors.black,
+                              side: const BorderSide(color: Colors.black),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: const Text('Add Discounts'),
+                            ),
                           ),
                         ),
                       ],

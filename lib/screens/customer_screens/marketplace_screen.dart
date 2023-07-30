@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +22,14 @@ class MarketplaceScreen extends StatefulWidget {
 }
 
 class _MarketplaceScreenState extends State<MarketplaceScreen> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final _discountController = TextEditingController();
+  final _minItemsController = TextEditingController();
+  bool _isLoading = false;
   String search = '';
   int cartCount = 0;
   final TextEditingController _searchController = TextEditingController();
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Color? itemColor;
 
@@ -194,7 +200,17 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
                     DocumentSnapshot productData = filteredProducts[index];
-                    // Print the data of the product document
+                    int discount = 0;
+                    int itemmin = 0;
+
+                    final data = productData.data() as Map<String, dynamic>?;
+                    if (data != null && data.containsKey('discount')) {
+                      discount = productData['discount'];
+                    }
+
+                    if (data != null && data.containsKey('minItems')) {
+                      itemmin = productData['minItems'];
+                    }
 
                     return InkWell(
                       highlightColor: Colors.green,
@@ -280,6 +296,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                     const SizedBox(height: 4),
                                     Text(
                                         "Seller Name:\n${productData['sellerName']}"),
+                                    const SizedBox(height: 4),
+                                    Text((discount > 0 && itemmin > 0)
+                                        ? "Discount: $discount% off for $itemmin items"
+                                        : "Discount: None")
                                   ],
                                 ),
                               ),
@@ -300,6 +320,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                       sellerName: productData['sellerName'],
                                       sellerId: productData['sellerUserId'],
                                       image: productData['image'],
+                                      discount: discount.toString(),
+                                      minItems: itemmin.toString(),
                                     ),
                                     context, // pass the context here
                                   );

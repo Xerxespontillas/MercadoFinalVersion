@@ -18,7 +18,6 @@ class CartScreen extends StatelessWidget {
   void placeOrder(BuildContext context) async {
     var cartProvider = Provider.of<CartProvider>(context, listen: false);
     var itemsBySeller = cartProvider.itemsBySeller;
-
     // Get the logged-in user's ID
     var userId = FirebaseAuth.instance.currentUser?.uid;
 
@@ -304,12 +303,24 @@ class CartScreen extends StatelessWidget {
           var itemsBySeller = cartProvider.itemsBySeller;
 
           // Calculate the total for all sellers
+          var discountAmount = 0.0;
           double grandTotal =
               itemsBySeller.values.fold(0.0, (total, sellerData) {
             var items = sellerData['items'] as List<CartItem>;
-            var subtotal = items.fold(0.0,
-                (itemTotal, item) => itemTotal + item.price * item.quantity);
-            var deliveryFee = 50.0; // PHP 50 delivery fee per seller
+            var subtotal = 0.0;
+            if (items.isNotEmpty) {
+              subtotal = items.fold(0.0, (itemTotal, item) {
+                var itemSubtotal = item.price * item.quantity;
+                var discountPercent = int.parse(item.discount);
+                var minItems = int.parse(item.minItems);
+                if (item.quantity >= minItems) {
+                  discountAmount = itemSubtotal * discountPercent / 100;
+                  itemSubtotal -= discountAmount;
+                }
+                return itemTotal + itemSubtotal;
+              });
+            }
+            var deliveryFee = 0.0; // PHP 50 delivery fee per seller
             return total + subtotal + deliveryFee;
           });
 
@@ -339,6 +350,7 @@ class CartScreen extends StatelessWidget {
                                 orderConfirmed:
                                     cartItem['orderConfirmed'] ?? false,
                                 isPurchase: true,
+                                totalDiscount: discountAmount,
                                 image: cartItemObject.image,
                                 total: (cartItemObject.price *
                                     cartItemObject.quantity),
@@ -436,13 +448,34 @@ class CartScreen extends StatelessWidget {
                           var seller = itemsBySeller.keys.toList()[i];
                           var sellerData = itemsBySeller[seller]!;
                           var items = sellerData['items'] as List<CartItem>;
-                          var subtotal = items.fold(
+                          // print([
+                          //   seller,
+                          //   sellerData['discount'],
+                          //   items[0].discount,
+                          //   'asdfasd'
+                          // ]);
+                          var subtotalBeforeDiscount = items.fold(
                               0.0,
                               (total, item) =>
                                   total + item.price * item.quantity);
+
+                          var subtotal = subtotalBeforeDiscount;
                           var deliveryFee =
                               0.0; // PHP 50 delivery fee per seller
+                          var discountPercent = int.parse(items[0].discount);
+                          var minItems = int.parse(items[0].minItems);
+                          double discountAmount = 0.0;
 
+                          if (items[0].quantity >= minItems) {
+                            discountAmount = subtotal * discountPercent / 100;
+                            subtotal -= discountAmount;
+                          }
+                          grandTotal += subtotal;
+
+                          if (subtotal < 0) {
+                            subtotal = 0;
+                          }
+                          print('adsf: adsf');
                           return Card(
                             margin: const EdgeInsets.all(5),
                             child: Padding(
@@ -460,11 +493,18 @@ class CartScreen extends StatelessWidget {
                                   // Your item list here
                                   const Divider(),
                                   Text(
-                                    'Subtotal: Php.${subtotal.toStringAsFixed(2)}',
+                                    'Subtotal: Php.${subtotalBeforeDiscount.toStringAsFixed(2)}',
                                     style: const TextStyle(fontSize: 10),
                                   ),
                                   Text(
                                     'Delivery Fee: Php.$deliveryFee',
+                                    style: const TextStyle(fontSize: 10),
+                                  ),
+
+                                  Text(
+                                    (discountAmount < 0)
+                                        ? 'Discount:  None'
+                                        : 'Discount:  -Php $discountAmount',
                                     style: const TextStyle(fontSize: 10),
                                   ),
                                   const Divider(),

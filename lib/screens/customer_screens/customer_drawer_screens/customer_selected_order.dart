@@ -27,8 +27,10 @@ class CustomerSelectedOrder extends StatefulWidget {
   final bool orderConfirmed;
   //final bool orderCancelled;
   final String orderDate;
+  String discountDescription = '';
   String image = '';
   double total = 0;
+  double totalDiscount = 0.0;
 
   CustomerSelectedOrder({
     Key? key,
@@ -43,6 +45,8 @@ class CustomerSelectedOrder extends StatefulWidget {
     this.isPurchase = false,
     this.image = '',
     this.total = 0,
+    this.totalDiscount = 0.0,
+    this.discountDescription = '',
   }) : super(key: key);
 
   @override
@@ -226,27 +230,53 @@ class _CustomerSelectedOrderState extends State<CustomerSelectedOrder> {
                         // }),
                       ),
                       const Divider(),
-                      Row(
+                      Column(
                         children: [
-                          Column(
-                            children: [
-                              Text(
-                                'Delivery Fee: ${widget.deliveryFee}',
+                          Text(
+                            'Delivery Fee: ${widget.deliveryFee}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Visibility(
+                              visible: widget.isPurchase,
+                              child: Text(
+                                'Discount: -${widget.totalDiscount}',
                                 style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                widget.isPurchase
-                                    ? 'Total  : ${(widget.total + widget.deliveryFee).toStringAsFixed(2)}'
-                                    : 'Total Payment: ${widget.items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + widget.deliveryFee}',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          )
+                              )),
+                          // Text(
+                          //   widget.isPurchase
+                          //       ? 'Discount: -${widget.totalDiscount}'
+                          //       : '',
+                          //   // style: const TextStyle(
+                          //   //   fontSize: 18,
+                          //   //   fontWeight: FontWeight.bold,
+                          //   //   color: Colors.black,
+                          //   // ),
+                          // ),
+                          const SizedBox(height: 10),
+                          Text(
+                            widget.isPurchase
+                                ? 'Total  : ${(widget.total + widget.deliveryFee - widget.totalDiscount).toStringAsFixed(2)}'
+                                : 'Total Payment: ${widget.items.fold(0.0, (total, item) {
+                                      var itemSubtotal = item['productPrice'] *
+                                          item['productQuantity'];
+                                      var discountPercent =
+                                          item['discount'] as int? ?? 0;
+                                      var minItems =
+                                          item['minItems'] as int? ?? 0;
+                                      if (item['productQuantity'] >= minItems) {
+                                        var discountAmount = itemSubtotal *
+                                            discountPercent /
+                                            100;
+                                        itemSubtotal -= discountAmount;
+                                      }
+                                      return total + itemSubtotal;
+                                    }) + widget.deliveryFee}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 20),

@@ -58,6 +58,8 @@ class OrganizationProducts with ChangeNotifier {
           maxQuantity: doc['quantity'],
           sellerName: doc['sellerName'],
           sellerId: doc['sellerUserId'],
+          discount: doc['discount'],
+          minItems: doc['minItems'],
         ));
       }
     });

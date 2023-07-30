@@ -48,6 +48,7 @@ class FarmerProducts with ChangeNotifier {
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
+        print(doc);
         loadedProducts.add(Product(
           id: doc.id,
           productName: doc['productName'],
@@ -58,6 +59,8 @@ class FarmerProducts with ChangeNotifier {
           maxQuantity: doc['quantity'],
           sellerName: doc['sellerName'],
           sellerId: doc['sellerUserId'],
+          minItems: doc['minItems'],
+          discount: doc['discount'],
         ));
       }
     });
