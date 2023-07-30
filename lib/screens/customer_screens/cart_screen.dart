@@ -70,6 +70,8 @@ class CartScreen extends StatelessWidget {
                 'productQuantity': item.quantity,
                 'productDetails': item.productDetails,
                 'productImage': item.image,
+                'discount': item.discount,
+                'minItems': item.minItems,
               })
           .toList();
 

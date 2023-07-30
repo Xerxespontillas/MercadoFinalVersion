@@ -260,9 +260,9 @@ class _CustomerSelectedOrderState extends State<CustomerSelectedOrder> {
                                       var itemSubtotal = item['productPrice'] *
                                           item['productQuantity'];
                                       var discountPercent =
-                                          item['discount'] as int? ?? 0;
+                                          int.parse(item['discount'] ?? '0');
                                       var minItems =
-                                          item['minItems'] as int? ?? 0;
+                                          int.parse(item['minItems'] ?? '0');
                                       if (item['productQuantity'] >= minItems) {
                                         var discountAmount = itemSubtotal *
                                             discountPercent /
