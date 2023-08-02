@@ -133,7 +133,9 @@ class _UserChatScreenState extends State<UserChatScreen> {
                 }
 
                 if (snapshot.hasError || snapshot.data == null) {
-                  return const Center(child: Text('Error occurred'));
+                  return const Center(
+                      child:
+                          Text('We are trying to get all the message first'));
                 }
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Center(child: Text('No messages yet'));

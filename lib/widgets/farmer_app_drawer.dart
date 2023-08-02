@@ -7,10 +7,8 @@ import 'package:merkado/screens/organization_screens/organization_location_scree
 import '../screens/customer_screens/tab_controllers.dart';
 import '../screens/farmer_screens/farmer_drawer_screens/farmer_customer_order.dart';
 
-import '../screens/farmer_screens/farmer_my_purchases.dart';
 import '../screens/farmer_screens/farmer_new_post.dart';
 import '../screens/organization_screens/organization_customer_orders.dart';
-import '../screens/organization_screens/organization_my_purchases.dart';
 
 class FarmerAppDrawer extends StatelessWidget {
   const FarmerAppDrawer({Key? key}) : super(key: key);

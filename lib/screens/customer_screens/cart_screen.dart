@@ -86,7 +86,7 @@ class CartScreen extends StatelessWidget {
       DocumentSnapshot orgDoc = await orgsRef.get();
 
       String sellerType;
-      String buyerType;
+      // String buyerType;
 
       if (farmerDoc.exists) {
         sellerType = 'Farmer';
@@ -331,7 +331,7 @@ class CartScreen extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => CustomerSelectedOrder(
                                 order: cartItem,
-                                items: [],
+                                items: const [],
                                 deliveryFee: deliveryFee,
                                 sellerId: cartItem['sellerId'] ?? 'id',
                                 orderDate: cartItem['date'] ??

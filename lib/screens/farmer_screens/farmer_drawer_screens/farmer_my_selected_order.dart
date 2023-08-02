@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:merkado/screens/farmer_screens/farmer_drawer_screens/farmer_my_products.dart';
 import 'package:merkado/screens/farmer_screens/farmer_farmer_chat_screen.dart';
 
 import '../farmer_chat_screen.dart';

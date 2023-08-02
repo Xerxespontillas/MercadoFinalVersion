@@ -127,7 +127,9 @@ class UserListScreen extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            return const Center(child: Text('Error occurred'));
+            return const Center(
+                child: Text(
+                    'We are fetching all your conversation.\nPlease try again later. '));
           }
 
           final combinedList = snapshot.data!;

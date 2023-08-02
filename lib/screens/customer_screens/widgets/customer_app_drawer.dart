@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merkado/screens/customer_screens/cart_screen.dart';
-import 'package:merkado/screens/customer_screens/customer_drawer_screens/customer_my_orders.dart';
+
 import 'package:merkado/screens/customer_screens/tab_controllers.dart';
 
 class CustomerAppDrawer extends StatelessWidget {

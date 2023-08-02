@@ -10,7 +10,6 @@ import 'package:photo_view/photo_view.dart';
 
 import '../farmer_screens/models/product.dart';
 
-import '../organization_screens/organization_market_screen.dart';
 import '../organization_screens/organization_screen_controller.dart';
 
 class SelectedProductMarketplace extends StatefulWidget {
@@ -144,7 +143,7 @@ class _SelectedProductMarketplaceState
 
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
-                      builder: (context) => OrgScreenController()),
+                      builder: (context) => const OrgScreenController()),
                   (Route<dynamic> route) => false,
                 );
               },
