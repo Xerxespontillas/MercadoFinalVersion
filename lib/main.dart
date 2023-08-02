@@ -51,7 +51,6 @@ import 'screens/farmer_screens/farmer_new_post.dart';
 import 'screens/farmer_screens/farmer_chat_screen.dart';
 import 'screens/farmer_screens/farmer_farmer_chat_screen.dart';
 
-import 'screens/customer_screens/customer_history.dart';
 import 'screens/customer_screens/splash_screen.dart';
 import 'screens/customer_screens/user_chat_screen.dart';
 import 'screens/customer_screens/user_location_screen.dart';
@@ -147,6 +146,7 @@ class _MerkadoState extends State<Merkado> {
           MarketplaceScreen.routeName: (ctx) => const MarketplaceScreen(),
           SelectedProductMarketplace.routeName: (ctx) =>
               const SelectedProductMarketplace(),
+          // ignore: equal_keys_in_map
           CustomerMyOrders.routeName: (ctx) => const CustomerMyOrders(),
 
           UserScreenController.routeName: (ctx) => const UserScreenController(),

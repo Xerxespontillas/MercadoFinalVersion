@@ -1,21 +1,21 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously, camel_case_types
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:merkado/screens/customer_screens/user_location_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/cart_provider.dart';
 import '../../farmer_screens/models/product.dart';
-import '../tab_controllers.dart';
 import '../user_chat_screen.dart';
 import '../user_org_chat_screen.dart';
-import 'customer_my_orders.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+// ignore: must_be_immutable
 class CustomerSelectedOrder extends StatefulWidget {
   bool isPurchase = false;
   static const routeName = '/customer-my-selected-order';
@@ -336,7 +336,7 @@ class _CustomerSelectedOrderState extends State<CustomerSelectedOrder> {
       );
     } catch (e, stk) {
       print([e, stk]);
-      return SizedBox();
+      return const SizedBox();
     }
   }
 
@@ -347,13 +347,11 @@ class _CustomerSelectedOrderState extends State<CustomerSelectedOrder> {
         .collection('orders')
         .where('id', isEqualTo: orderId)
         .snapshots();
-
-    print(snapshot);
   }
 
   Future<void> placeOrderSingle(BuildContext context, CartItem item) async {
     try {
-      await getOrderItems(this.userId ?? '', item.id);
+      await getOrderItems(this.userId, item.id);
       var sellerId = item.sellerId;
       var seller = item.sellerName;
 
@@ -365,7 +363,7 @@ class _CustomerSelectedOrderState extends State<CustomerSelectedOrder> {
 
       if (!productSnapshot.exists) {
         // If the product does not exist, show a dialog and clear the cart
-        // ignore: use_build_context_synchronously
+
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -414,7 +412,6 @@ class _CustomerSelectedOrderState extends State<CustomerSelectedOrder> {
       DocumentSnapshot orgDoc = await orgsRef.get();
 
       String sellerType;
-      String buyerType;
 
       if (farmerDoc.exists) {
         sellerType = 'Farmer';
@@ -568,6 +565,7 @@ class _CustomerSelectedOrderState extends State<CustomerSelectedOrder> {
 
 class _orderStatus extends StatelessWidget {
   const _orderStatus({
+    // ignore: unused_element
     super.key,
     required this.orderConfirmed,
     required this.orderCancelled,

@@ -25,6 +25,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   int cartCount = 0;
   final TextEditingController _searchController = TextEditingController();
 
+  Color? itemColor;
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -77,7 +79,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       ),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Color.fromARGB(0, 66, 180, 119),
+        backgroundColor: const Color.fromARGB(0, 66, 180, 119),
         centerTitle: true,
         title: const Text(
           'Market Place',
@@ -161,7 +163,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             ],
           ),
           Container(
-            padding: const EdgeInsets.all(10),
             alignment: AlignmentDirectional
                 .centerStart, // Aligns the child to the start (left)
             child: const Center(
@@ -195,8 +196,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                     DocumentSnapshot productData = filteredProducts[index];
                     // Print the data of the product document
 
-                    return GestureDetector(
+                    return InkWell(
+                      highlightColor: Colors.green,
                       onTap: () {
+                        setState(() {
+                          itemColor = Colors.green;
+                        });
                         Navigator.of(context).pushNamed(
                           SelectedProductMarketplace.routeName,
                           arguments: Product.fromDocumentSnapshot(productData),
@@ -213,6 +218,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,7 +283,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                   ],
                                 ),
                               ),
-                              GestureDetector(
+                              InkWell(
+                                highlightColor: Colors.green,
                                 onTap: () {
                                   Provider.of<CartProvider>(context,
                                           listen: false)
@@ -304,25 +311,20 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                     ),
                                   );
                                 },
-                                child: Container(
-                                  margin:
-                                      const EdgeInsets.fromLTRB(0, 0, 0, 90),
+                                child: InkWell(
                                   child: Container(
-                                    height: 25,
-                                    width: 88,
-                                    padding:
-                                        const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                                    padding: const EdgeInsets.only(left: 10),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.black),
                                     ),
                                     child: const Row(
                                       children: [
                                         Text('Add to cart',
-                                            style: TextStyle(fontSize: 10)),
+                                            style: TextStyle(fontSize: 12)),
                                         SizedBox(width: 5),
                                         Icon(
                                           Icons.add_shopping_cart,
-                                          size: 18,
+                                          size: 20,
                                         ),
                                       ],
                                     ),

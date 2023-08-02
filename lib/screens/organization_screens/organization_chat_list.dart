@@ -62,10 +62,11 @@ class OrganizationListScreen extends StatelessWidget {
     final organizationsList = organizationsSnapshot.docs.map((doc) {
       final orgData = doc.data();
       final organizationName = orgData['organizationName'];
+      final displayName = orgData['displayName'];
       final orgId = doc.id;
       return {
         'id': orgId,
-        'displayName': organizationName,
+        'displayName': displayName,
         'organizationName': organizationName,
         ...orgData,
       };
@@ -171,12 +172,16 @@ class OrganizationListScreen extends StatelessWidget {
             return const Center(child: Text('Error occurred'));
           }
 
-          final entityList = snapshot.data!;
+          final combinedList = snapshot.data;
+
+          if (combinedList == null || combinedList.isEmpty) {
+            return const Center(child: Text('No conversations yet.'));
+          }
 
           return ListView.builder(
-            itemCount: entityList.length,
+            itemCount: combinedList.length,
             itemBuilder: (context, index) {
-              final entity = entityList[index];
+              final entity = combinedList[index];
               final displayName = entity['displayName'];
               final role = entity['role'];
 

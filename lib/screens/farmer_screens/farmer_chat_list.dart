@@ -121,7 +121,11 @@ class FarmerListScreen extends StatelessWidget {
     final organizationMessages =
         organizationMessagesSnapshot.docs.map((doc) => doc.data()).toList();
 
-    final combinedList = [...farmers, ...customers, ...organizations];
+    final combinedList = [
+      ...customers,
+      ...farmers,
+      ...organizations,
+    ];
 
     combinedList.removeWhere((item) {
       final itemId = item['id'];

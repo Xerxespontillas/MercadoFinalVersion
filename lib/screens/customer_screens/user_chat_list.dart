@@ -127,15 +127,16 @@ class UserListScreen extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            return const Center(child: Text('Error occurred'));
+            return const Center(
+                child: Text(
+                    'We are fetching all your conversation.\nPlease try again later. '));
           }
 
-          final combinedList = snapshot.data!;
+          final combinedList = snapshot.data;
 
-          if (combinedList.isEmpty) {
+          if (combinedList == null || combinedList.isEmpty) {
             return const Center(child: Text('No conversations yet.'));
           }
-
           return ListView.builder(
             itemCount: combinedList.length,
             itemBuilder: (context, index) {
