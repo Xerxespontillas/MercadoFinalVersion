@@ -1,11 +1,13 @@
 // ignore_for_file: unused_field
 
 import 'package:flutter/material.dart';
+//import 'package:merkado/screens/authentication/user/admin_screen.dart';
 
 import 'package:merkado/screens/authentication/user/validators.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/auth_provider.dart';
+//import 'admin_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -402,11 +404,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           backgroundColor:
                               const Color.fromARGB(255, 255, 255, 255),
                         ),
-                        child: const Padding(
-                          padding: EdgeInsets.fromLTRB(90, 15, 90, 15),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(90, 15, 90, 15),
                           child: Text(
-                            "SIGN UP",
-                            style: TextStyle(
+                            _value == 2 || _value == 3
+                                ? "Submit request"
+                                : "SIGN UP",
+                            style: const TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 15,
                               fontWeight: FontWeight.w900,
@@ -415,6 +419,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         onPressed: () async {
+                          //if (_value == 2 || _value == 3) {
+                          //   Navigator.pushNamed(context, AdminScreen.routeName);
+                          //  }
                           if (formKey.currentState?.validate() ?? false) {
                             await authProvider.register(
                               formKey: formKey,
