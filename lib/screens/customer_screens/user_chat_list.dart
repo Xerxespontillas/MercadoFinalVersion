@@ -132,12 +132,11 @@ class UserListScreen extends StatelessWidget {
                     'We are fetching all your conversation.\nPlease try again later. '));
           }
 
-          final combinedList = snapshot.data!;
+          final combinedList = snapshot.data;
 
-          if (combinedList.isEmpty) {
+          if (combinedList == null || combinedList.isEmpty) {
             return const Center(child: Text('No conversations yet.'));
           }
-
           return ListView.builder(
             itemCount: combinedList.length,
             itemBuilder: (context, index) {

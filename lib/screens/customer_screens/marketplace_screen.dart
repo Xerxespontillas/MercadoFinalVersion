@@ -312,23 +312,21 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                   );
                                 },
                                 child: InkWell(
-                                  child: Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.black),
-                                      ),
-                                      child: const Row(
-                                        children: [
-                                          Text('Add to cart',
-                                              style: TextStyle(fontSize: 12)),
-                                          SizedBox(width: 5),
-                                          Icon(
-                                            Icons.add_shopping_cart,
-                                            size: 20,
-                                          ),
-                                        ],
-                                      ),
+                                  child: Container(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.black),
+                                    ),
+                                    child: const Row(
+                                      children: [
+                                        Text('Add to cart',
+                                            style: TextStyle(fontSize: 12)),
+                                        SizedBox(width: 5),
+                                        Icon(
+                                          Icons.add_shopping_cart,
+                                          size: 20,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
