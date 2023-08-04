@@ -120,6 +120,7 @@ class _MerkadoState extends State<Merkado> {
         debugShowCheckedModeBanner: false,
         title: 'Merkado',
         theme: ThemeData(
+          useMaterial3: false,
           primarySwatch: const MaterialColor(0xFF000000, {
             50: Color(0xFF000000),
             100: Color(0xFF000000),

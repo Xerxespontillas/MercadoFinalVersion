@@ -106,7 +106,20 @@ class _FarmerCustomerOrdersState extends State<FarmerCustomerOrders> {
                             )),
                         Text('Delivery Fee: $deliveryFee'),
                         Text(
-                          'Total Payment: ${items.fold(0.0, (total, item) => total + item['productPrice'] * item['productQuantity']) + deliveryFee}',
+                          'Total Payment: ${items.fold(0.0, (total, item) {
+                                var itemSubtotal = item['productPrice'] *
+                                    item['productQuantity'];
+                                var discountPercent =
+                                    int.parse(item['discount'] ?? '0');
+                                var minItems =
+                                    int.parse(item['minItems'] ?? '0');
+                                if (item['productQuantity'] >= minItems) {
+                                  var discountAmount =
+                                      itemSubtotal * discountPercent / 100;
+                                  itemSubtotal -= discountAmount;
+                                }
+                                return total + itemSubtotal;
+                              }) + deliveryFee}',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],

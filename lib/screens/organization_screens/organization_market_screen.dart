@@ -183,58 +183,54 @@ class _OrgMarketScreenState extends State<OrgMarketScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(width: 5),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 20),
-                                    Text(productData['productDetails']),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                        "Quantity: ${productData['quantity']}"),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                        "Price: ₱ ${NumberFormat('#,##0.00').format(productData['price'])}"),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                        "Seller Name:\n${productData['sellerName']}"),
-                                  ],
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  Provider.of<CartProvider>(context,
-                                          listen: false)
-                                      .addItem(
-                                    Product(
-                                      id: productData.id,
-                                      productName: productData['productName'],
-                                      productDetails:
-                                          productData['productDetails'],
-                                      price: productData['price'].toDouble(),
-                                      quantity: productData['quantity'],
-                                      maxQuantity: productData['quantity'],
-                                      sellerName: productData['sellerName'],
-                                      sellerId: productData['sellerUserId'],
-                                      image: productData['image'],
-                                    ),
-                                    context, // pass the context here
-                                  );
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      backgroundColor: Colors.green,
-                                      content: Text(
-                                          "Item successfully added to cart"),
-                                    ),
-                                  );
-                                },
-                                child: InkWell(
-                                  child: Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.black),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Provider.of<CartProvider>(context,
+                                        listen: false)
+                                    .addItem(
+                                  Product(
+                                    id: productData.id,
+                                    productName: productData['productName'],
+                                    productDetails:
+                                        productData['productDetails'],
+                                    price: productData['price'].toDouble(),
+                                    quantity: productData['quantity'],
+                                    maxQuantity: productData['quantity'],
+                                    sellerName: productData['sellerName'],
+                                    sellerId: productData['sellerUserId'],
+                                    image: productData['image'],
+                                    discount: productData['discount'],
+                                    minItems: productData['minItems'],
+                                  ),
+                                  context, // pass the context here
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    backgroundColor: Colors.green,
+                                    content:
+                                        Text("Item successfully added to cart"),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.fromLTRB(0, 0, 0, 90),
+                                child: Container(
+                                  height: 25,
+                                  width: 88,
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black),
+                                  ),
+                                  child: const Row(
+                                    children: [
+                                      Text('Add to cart',
+                                          style: TextStyle(fontSize: 10)),
+                                      SizedBox(width: 5),
+                                      Icon(
+                                        Icons.add_shopping_cart,
+                                        size: 18,
                                       ),
                                       child: const Row(
                                         children: [

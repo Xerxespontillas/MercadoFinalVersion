@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../screens/farmer_screens/models/product.dart';
@@ -100,6 +102,8 @@ class CartProvider with ChangeNotifier {
             sellerName: existingCartItem.sellerName,
             sellerId: existingCartItem.sellerId,
             image: existingCartItem.image,
+            minItems: existingCartItem.minItems,
+            discount: existingCartItem.discount,
           ),
         );
       } else {
@@ -118,6 +122,8 @@ class CartProvider with ChangeNotifier {
           sellerName: product.sellerName,
           sellerId: product.sellerId,
           image: product.image,
+          minItems: product.minItems,
+          discount: product.discount,
         ),
       );
     }

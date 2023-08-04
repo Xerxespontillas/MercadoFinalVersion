@@ -1,5 +1,5 @@
+// ignore_for_file: prefer_const_constructors
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -192,6 +192,162 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
     }
   }
 
+  void _sendQuery(
+      String productId, FirebaseAuth auth, FirebaseFirestore firestore) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final discount = int.tryParse(_discountController.text);
+    final minItems = int.tryParse(_minItemsController.text);
+
+    if (discount == null || minItems == null) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    User? user = auth.currentUser;
+    if (user != null) {
+      String displayName = await getSellerName(auth, _firestore);
+
+      final ref = _firestore
+          .collection('FarmerProducts')
+          .doc(user.uid)
+          .collection(displayName)
+          .doc(productId);
+
+      try {
+        await ref.update({
+          'discount': discount,
+          'minItems': minItems,
+        });
+
+        await _firestore.collection('AllProducts').doc(productId).update({
+          'discount': discount,
+          'minItems': minItems,
+        });
+      } catch (e) {
+        print('Error adding discount: $e');
+      }
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+    if (mounted) {
+      // Show a success message
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     content: Text('Discount added successfully!'),
+      //     // backgroundColor: Colors.green,
+      //   ),
+      // );
+
+      // Navigate back to the previous screen
+      Navigator.of(context).pop();
+    }
+  }
+
+  final _discountController = TextEditingController();
+  final _minItemsController = TextEditingController();
+  bool _isLoading = false;
+  bool _isError = false;
+  Widget _discountDialog(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add/Edit Discount'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Current Discount',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                'Minimum Items for Discount: ${product.minItems}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                'Discount: ${product.discount}%',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 40,
+          ),
+          TextField(
+            controller: _discountController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Discount Percent (%)',
+            ),
+          ),
+          TextField(
+            controller: _minItemsController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Minimum Number of Items',
+            ),
+          ),
+          if (_isError)
+            Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Please fill in all fields'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: _isLoading
+              ? null
+              : () {
+                  if (_discountController.text.isEmpty ||
+                      _minItemsController.text.isEmpty) {
+                    setState(() {
+                      _isError = true;
+                    });
+                  } else {
+                    _isError = false;
+                    _sendQuery(product.id, _auth, _firestore);
+                  }
+                },
+          child:
+              _isLoading ? const CircularProgressIndicator() : const Text('OK'),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -279,7 +435,7 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
                                       .none, // Remove the default border
                                   contentPadding: EdgeInsets.symmetric(
                                       horizontal:
-                                          8.0), // Adjust padding as needed
+                                          8.0), // Adjust padding  needed
                                 ),
                               ),
                             ),
@@ -351,6 +507,7 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
                                 color: Colors.black, // Set desired icon color
                               ),
                             ),
+
                             SizedBox(
                                 width: screenSize.width *
                                     0.03), // 1% of screen width
@@ -372,6 +529,26 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
                           ],
                         ),
                       ),
+                      Container(
+                        width: double.infinity,
+                        height: 38,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => _discountDialog(ctx),
+                            );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            primary: Colors.black,
+                            side: const BorderSide(color: Colors.black),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: const Text('View/Edit Discount'),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -389,6 +566,7 @@ class _FarmerMyEditProductsState extends State<FarmerMyEditProducts> {
                 ),
               ),
             ),
+
             SizedBox(height: screenSize.height * 0.02), // 2% of screen height
 
             // ADD ITEM NOW and CANCEL buttons
