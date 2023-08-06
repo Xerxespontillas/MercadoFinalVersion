@@ -20,12 +20,8 @@ late ConnectivityResult _connectivityResult;
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController =
-      //     TextEditingController(text: "Farmer1@gmail.com");
-
-      TextEditingController(text: "Customer1@gmail.com");
-  final TextEditingController _passwordController =
-      TextEditingController(text: "123456");
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   bool _obscureText = true;
 

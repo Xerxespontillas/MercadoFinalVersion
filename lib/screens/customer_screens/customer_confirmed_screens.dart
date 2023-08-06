@@ -1,22 +1,18 @@
-// ignore: unused_import
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'customer_selected_order.dart';
+import 'customer_drawer_screens/customer_selected_order.dart';
 
-class CustomerMyOrders extends StatefulWidget {
-  const CustomerMyOrders({super.key});
-  static const routeName = '/customer-my-orders';
+class CustomerConfirmedOrders extends StatefulWidget {
+  const CustomerConfirmedOrders({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _CustomerMyOrdersState createState() => _CustomerMyOrdersState();
+  State<CustomerConfirmedOrders> createState() =>
+      _CustomerConfirmedOrdersState();
 }
 
-class _CustomerMyOrdersState extends State<CustomerMyOrders> {
+class _CustomerConfirmedOrdersState extends State<CustomerConfirmedOrders> {
   @override
   Widget build(BuildContext context) {
     var userId = FirebaseAuth.instance.currentUser!.uid;
@@ -27,7 +23,7 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
         backgroundColor: Colors.transparent,
         centerTitle: true,
         title: Text(
-          "Pending Orders",
+          "Confirmed Orders",
           style: TextStyle(
               color: Colors.black,
               fontFamily: 'Inter',
@@ -39,7 +35,7 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
             .collection('customersOrders')
             .doc(userId)
             .collection('orders')
-            .orderBy('date', descending: true)
+            .where('orderConfirmed', isEqualTo: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -67,7 +63,7 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
 
               print(items);
               return Visibility(
-                visible: !orderConfirmed && !orderCancelled,
+                visible: orderConfirmed && !orderCancelled,
                 child: InkWell(
                   onTap: () {
                     if (order.data() is Map) {
