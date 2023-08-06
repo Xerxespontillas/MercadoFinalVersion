@@ -256,7 +256,7 @@ class _CustomersCompletedOrdersState extends State<CustomersCompletedOrders> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
-              'Total Earnings: ${_totalEarnings.toStringAsFixed(2)}',
+              'Total Expenses: ${_totalEarnings.toStringAsFixed(2)}',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
