@@ -371,6 +371,7 @@ class _CustomerSelectedOrderState extends State<CustomerSelectedOrder> {
   }
 
   getOrderItems(userId, orderId) async {
+    // ignore: unused_local_variable
     var snapshot = FirebaseFirestore.instance
         .collection('customersOrders')
         .doc(userId)

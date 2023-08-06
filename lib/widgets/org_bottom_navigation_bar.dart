@@ -99,7 +99,7 @@ class OrgCustomBottomNavBar extends StatelessWidget {
           backgroundColor: Colors.greenAccent,
           selectedItemColor: Colors.black,
           unselectedItemColor: Colors.grey[600],
-          items: const [
+          items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
               label: 'Home',
@@ -111,6 +111,15 @@ class OrgCustomBottomNavBar extends StatelessWidget {
             BottomNavigationBarItem(
               icon: Icon(Icons.message_outlined),
               label: 'Messages',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                'assets/images/organization.png',
+                width: 25,
+                height: 25,
+              ), // Custom groups icon
+
+              label: 'Farmers',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings_outlined),

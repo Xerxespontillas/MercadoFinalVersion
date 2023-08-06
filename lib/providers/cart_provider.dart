@@ -1,3 +1,4 @@
+// ignore: unused_import
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -94,6 +95,7 @@ class CartProvider with ChangeNotifier {
           product.id,
           (existingCartItem) => CartItem(
             id: existingCartItem.id,
+            productSeller: existingCartItem.productSeller,
             productName: existingCartItem.productName,
             productDetails: existingCartItem.productDetails,
             price: existingCartItem.price,
@@ -114,6 +116,7 @@ class CartProvider with ChangeNotifier {
         product.id,
         () => CartItem(
           id: product.id,
+          productSeller: product.productSeller,
           productName: product.productName,
           productDetails: product.productDetails,
           price: product.price,

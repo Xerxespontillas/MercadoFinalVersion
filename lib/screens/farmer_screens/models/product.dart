@@ -11,8 +11,10 @@ class Product {
   final String sellerName;
   final String sellerId;
   final String image;
+  final String productSeller; // Add the productSeller field
   final minItems;
   final discount;
+
   Product({
     required this.id,
     required this.productName,
@@ -23,13 +25,15 @@ class Product {
     required this.sellerName,
     required this.sellerId,
     required this.image,
+    required this.productSeller, // Include the productSeller parameter
     required this.discount,
     required this.minItems,
   });
-
+//
   // Add this method
   Product.fromDocumentSnapshot(DocumentSnapshot doc)
       : id = doc.id,
+        productSeller = doc['productSeller'],
         productName = doc['productName'],
         productDetails = doc['productDetails'],
         price = doc['price'],
@@ -44,6 +48,7 @@ class Product {
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
       id: map['id'],
+      productSeller: map['productSeller'],
       productName: map['productName'],
       productDetails: map['productDetails'],
       price: map['price'],
@@ -75,8 +80,10 @@ class CartItem extends Product {
     required String image,
     required String discount,
     required String minItems,
+    required String productSeller,
   }) : super(
           id: id,
+          productSeller: productSeller,
           productName: productName,
           productDetails: productDetails,
           price: price,
@@ -96,6 +103,7 @@ class CartItem extends Product {
   factory CartItem.fromMap(Map<dynamic, dynamic> map) {
     return CartItem(
       id: map['id'] ?? '',
+      productSeller: map['productSeller'] ?? '',
       productName: map['productName'] ?? '',
       productDetails: map['productDetails'] ?? '',
       price: map['price'] ?? 0.0,

@@ -77,7 +77,10 @@ class AuthProvider extends ChangeNotifier {
           ...userData,
           if (role == 'Customer') 'isCustomer': true,
           if (role == 'Farmer') 'isFarmer': true,
+          'isFarmerConfirmed':
+              false, // Add 'isConfirmed' field to the farmer document and set it to 'false
           if (role == 'Organization') 'isOrganization': true,
+          'isOrgConfirmed': false,
         });
 
         // Show a success message or navigate to the next screen
@@ -99,6 +102,12 @@ class AuthProvider extends ChangeNotifier {
     try {
       String email = emailController.text.trim();
       String password = passwordController.text;
+
+      if (email == 'admin123@admin.com' && password == '321admin') {
+        // Navigate to the admin screen (assuming '/admin-home' is defined in your main.dart routes)
+        Navigator.pushReplacementNamed(context, '/admin-screen');
+        return;
+      }
 
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -130,20 +139,31 @@ class AuthProvider extends ChangeNotifier {
         }
 
         if (collectionName.isNotEmpty) {
+          // Check if the user is a farmer and not yet confirmed
+          if (collectionName == 'farmers' &&
+              userData['isFarmerConfirmed'] == false) {
+            Navigator.pushReplacementNamed(context, '/waiting-screen');
+            return;
+          }
+
+          // Check if the user is an organization and not yet confirmed
+          if (collectionName == 'organizations' &&
+              userData['isOrgConfirmed'] == false) {
+            Navigator.pushReplacementNamed(context, '/waiting-screen');
+            return;
+          }
+
           // Navigate to the appropriate screen based on the user's role type
           if (collectionName == 'customers') {
             // Navigate to the customer screen
-            // ignore: use_build_context_synchronously
             Navigator.pushReplacementNamed(context, '/home-page',
                 arguments: userData);
           } else if (collectionName == 'farmers') {
             // Navigate to the farmer screen
-            // ignore: use_build_context_synchronously
             Navigator.pushReplacementNamed(context, '/farmer-home',
                 arguments: userData);
           } else if (collectionName == 'organizations') {
             // Navigate to the organization screen
-            // ignore: use_build_context_synchronously
             Navigator.pushReplacementNamed(context, '/org-home',
                 arguments: userData);
           } else {

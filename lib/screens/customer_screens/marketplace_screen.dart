@@ -1,4 +1,6 @@
-import 'dart:js_interop';
+// import 'dart:js_interop';
+
+// ignore_for_file: unused_field
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -311,6 +313,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                       .addItem(
                                     Product(
                                       id: productData.id,
+                                      productSeller:
+                                          productData['productSeller'],
                                       productName: productData['productName'],
                                       productDetails:
                                           productData['productDetails'],
