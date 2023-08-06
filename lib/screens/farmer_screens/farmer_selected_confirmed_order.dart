@@ -1,13 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:merkado/screens/farmer_screens/farmer_chat_screen.dart';
 import 'package:merkado/screens/farmer_screens/farmer_farmer_chat_screen.dart';
+import 'package:merkado/screens/farmer_screens/farmer_org_chat_screen.dart';
 
-import '../farmer_chat_screen.dart';
-import '../farmer_org_chat_screen.dart';
-import 'farmer_customer_order.dart';
+import 'farmer_drawer_screens/farmer_customer_order.dart';
 
-class FarmerMySelectedOrder extends StatelessWidget {
+class FarmerMySelectedConfirmedOrder extends StatelessWidget {
   static const routeName = '/farmer-my-selected-order';
   final Map order;
   final List items;
@@ -18,7 +18,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
   //final bool orderCancelled;
   final String orderDate;
 
-  const FarmerMySelectedOrder({
+  const FarmerMySelectedConfirmedOrder({
     Key? key,
     required this.order,
     required this.items,
@@ -226,14 +226,14 @@ class FarmerMySelectedOrder extends StatelessWidget {
                             .collection('customerOrders')
                             .doc(orderId)
                             .snapshots()
-                            .map((snapshot) => snapshot['orderConfirmed']),
+                            .map((snapshot) => snapshot['orderCompleted']),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return const CircularProgressIndicator();
                           }
 
-                          final bool orderConfirmed = snapshot.data ?? false;
+                          final bool orderCompleted = snapshot.data ?? false;
 
                           return StreamBuilder<bool>(
                             stream: FirebaseFirestore.instance
@@ -255,7 +255,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
                               return Center(
                                 child: Column(
                                   children: [
-                                    orderConfirmed
+                                    orderCompleted
                                         ? const Icon(Icons.check,
                                             color: Colors.green)
                                         : orderCancelled
@@ -266,25 +266,61 @@ class FarmerMySelectedOrder extends StatelessWidget {
                                     Text(
                                       orderCancelled
                                           ? 'Order Status: Declined Order'
-                                          : !orderConfirmed
-                                              ? 'Order Status: waiting for confirmation'
-                                              : 'Order Status: Order Confirmed',
+                                          : !orderCompleted
+                                              ? 'Order Status: waiting to be completed'
+                                              : 'Order Status: Order Completed',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: orderCancelled
                                             ? Colors.red
-                                            : !orderConfirmed
+                                            : !orderCompleted
                                                 ? Colors.orange
                                                 : Colors.green,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
-                                    if (!orderConfirmed && !orderCancelled)
+                                    if (!orderCompleted && !orderCancelled)
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              await FirebaseFirestore.instance
+                                                  .collection('farmers')
+                                                  .doc(userId)
+                                                  .collection('customerOrders')
+                                                  .doc(orderId)
+                                                  .update({
+                                                'orderCompleted': true,
+                                                'orderCancelled': false
+                                              });
+
+                                              await FirebaseFirestore.instance
+                                                  .collection('customersOrders')
+                                                  .doc(buyerId)
+                                                  .collection('orders')
+                                                  .doc(orderId)
+                                                  .update({
+                                                'orderCompleted': true,
+                                                'orderCancelled': false
+                                              });
+
+                                              // ignore: use_build_context_synchronously
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      'Order has been Completed.'),
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.green),
+                                            child: const Text('Completed'),
+                                          ),
                                           ElevatedButton(
                                             onPressed: () async {
                                               await FirebaseFirestore.instance
@@ -324,45 +360,7 @@ class FarmerMySelectedOrder extends StatelessWidget {
                                             },
                                             style: ElevatedButton.styleFrom(
                                                 backgroundColor: Colors.red),
-                                            child: const Text('Decline Order'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () async {
-                                              await FirebaseFirestore.instance
-                                                  .collection('farmers')
-                                                  .doc(userId)
-                                                  .collection('customerOrders')
-                                                  .doc(orderId)
-                                                  .update({
-                                                'orderConfirmed': true,
-                                                'orderCompleted': false,
-                                                'orderCancelled': false
-                                              });
-
-                                              await FirebaseFirestore.instance
-                                                  .collection('customersOrders')
-                                                  .doc(buyerId)
-                                                  .collection('orders')
-                                                  .doc(orderId)
-                                                  .update({
-                                                'orderConfirmed': true,
-                                                'orderCompleted': false,
-                                                'orderCancelled': false
-                                              });
-
-                                              // ignore: use_build_context_synchronously
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                      'Order has been confirmed.'),
-                                                  backgroundColor: Colors.green,
-                                                ),
-                                              );
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.green),
-                                            child: const Text('Confirm Order'),
+                                            child: const Text('Cancel Order'),
                                           ),
                                         ],
                                       ),

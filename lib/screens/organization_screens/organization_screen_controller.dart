@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:merkado/screens/organization_screens/org_farmer_list.dart';
 import 'package:merkado/screens/organization_screens/organization_chat_list.dart';
 
 import '../customer_screens/marketplace_screen.dart';
@@ -33,6 +34,7 @@ class OrgScreenControllerState extends State<OrgScreenController> {
       const MarketplaceScreen(),
       const OrganizationMyProducts(),
       const OrganizationListScreen(),
+      const OrgFarmerList(),
       const OrgSettingsScreen(),
     ];
 

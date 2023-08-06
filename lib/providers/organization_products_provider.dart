@@ -50,6 +50,7 @@ class OrganizationProducts with ChangeNotifier {
       for (var doc in querySnapshot.docs) {
         loadedProducts.add(Product(
           id: doc.id,
+          productSeller: doc['productSeller'],
           productName: doc['productName'],
           productDetails: doc['productDetails'],
           image: doc['image'],

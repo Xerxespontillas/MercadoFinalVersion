@@ -1,3 +1,4 @@
+// ignore: unused_import
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,15 +24,15 @@ class _CustomerMyOrdersState extends State<CustomerMyOrders> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(
-          color: Colors.black, // Set the color of the back icon to black
+          color: Colors.white, // Set the color of the back icon to black
         ),
         title: const Text('Pending Orders',
             style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontFamily: 'Inter',
                 fontWeight: FontWeight.w700)),
       ),

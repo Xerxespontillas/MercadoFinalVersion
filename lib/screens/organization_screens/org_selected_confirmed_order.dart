@@ -7,8 +7,8 @@ import 'organization_chat_screen.dart';
 import 'organization_farmer_chat_screen.dart';
 import 'organization_my_products.dart';
 
-class OrgMySelectedOrder extends StatelessWidget {
-  static const routeName = '/organization-my-selected-order';
+class OrgMySelectedConfirmOrder extends StatelessWidget {
+  static const routeName = '/organization-my-selected-confirmed-order';
   final Map order;
   final List items;
   final double deliveryFee;
@@ -17,7 +17,7 @@ class OrgMySelectedOrder extends StatelessWidget {
   final bool orderConfirmed;
   final String orderDate;
 
-  const OrgMySelectedOrder({
+  const OrgMySelectedConfirmOrder({
     Key? key,
     required this.order,
     required this.items,
@@ -224,34 +224,85 @@ class OrgMySelectedOrder extends StatelessWidget {
                           .collection('customerOrders')
                           .doc(orderId)
                           .snapshots()
-                          .map((snapshot) => snapshot['orderConfirmed']),
+                          .map((snapshot) => snapshot['orderCompleted']),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const CircularProgressIndicator();
                         }
-                        final bool orderConfirmed = snapshot.data ?? false;
+                        final bool orderCompleted = snapshot.data ?? false;
+                        final bool orderCancelled = snapshot.data ?? false;
+
                         return Center(
                           child: Column(
                             children: [
-                              orderConfirmed
-                                  ? const Icon(Icons.check, color: Colors.green)
-                                  : const Icon(Icons.info_outline,
-                                      color: Colors.orange),
-                              Text(
-                                !orderConfirmed
-                                    ? 'Order Status: Waiting for your confirmation'
-                                    : 'Order Status: Order Confirmed',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: !orderConfirmed
-                                      ? Colors.orange
-                                      : Colors.green,
+                              if (orderCompleted && orderCancelled)
+                                Column(
+                                  children: [
+                                    Icon(Icons.check, color: Colors.green),
+                                    Text(
+                                      'Order Status: Order Completed',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                )
+                              else if (!orderCancelled && orderCompleted)
+                                Column(
+                                  children: [
+                                    Icon(Icons.warning, color: Colors.red),
+                                    Text(
+                                      'Order Status: Order Cancelled',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                )
+                              else
+                                Column(
+                                  children: [
+                                    Icon(Icons.info_outline,
+                                        color: Colors.orange),
+                                    Text(
+                                      'Order Status: Waiting to be Completed or Cancelled',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.orange,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                              if (!orderConfirmed)
+
+                              // if (!orderCompleted && orderCancelled)
+                              //   orderCompleted
+                              //       ? const Icon(Icons.check,
+                              //           color: Colors.green)
+                              //       : const Icon(Icons.info_outline,
+                              //           color: Colors.orange),
+                              // Text(
+                              //   !orderCompleted
+                              //       ? 'Waiting to be Completed or Cancelled'
+                              //       : 'Order Status: Order Completed',
+                              //   style: TextStyle(
+                              //     fontSize: 16,
+                              //     fontWeight: FontWeight.bold,
+                              //     color: !orderCompleted
+                              //         ? Colors.orange
+                              //         : Colors.green,
+                              //   ),
+                              //   textAlign: TextAlign.center,
+                              // ),
+                              if (!orderCompleted || !orderCancelled)
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
@@ -291,7 +342,7 @@ class OrgMySelectedOrder extends StatelessWidget {
                                       },
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.red),
-                                      child: const Text('Decline Order'),
+                                      child: const Text('Cancel Order'),
                                     ),
                                     ElevatedButton(
                                       onPressed: () async {
@@ -301,8 +352,7 @@ class OrgMySelectedOrder extends StatelessWidget {
                                             .collection('customerOrders')
                                             .doc(orderId)
                                             .update({
-                                          'orderConfirmed': true,
-                                          'orderCompleted': false,
+                                          'orderCompleted': true,
                                           'orderCancelled': false
                                         });
 
@@ -312,8 +362,7 @@ class OrgMySelectedOrder extends StatelessWidget {
                                             .collection('orders')
                                             .doc(orderId)
                                             .update({
-                                          'orderConfirmed': true,
-                                          'orderCompleted': false,
+                                          'orderCompleted': true,
                                           'orderCancelled': false
                                         });
 
@@ -322,14 +371,14 @@ class OrgMySelectedOrder extends StatelessWidget {
                                             .showSnackBar(
                                           const SnackBar(
                                             content: Text(
-                                                'Order has been confirmed.'),
+                                                'Order has been completed.'),
                                             backgroundColor: Colors.green,
                                           ),
                                         );
                                       },
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.green),
-                                      child: const Text('Confirm Order'),
+                                      child: const Text('Order Completed'),
                                     ),
                                   ],
                                 ),

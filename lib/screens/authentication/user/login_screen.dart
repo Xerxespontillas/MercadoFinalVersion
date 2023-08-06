@@ -196,6 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () async {
                         bool isConnected =
                             await checkConnectivityAndHandleLogin(context);
+
                         if (isConnected) {
                           if (_formKey.currentState!.validate()) {
                             // Form is valid, proceed with login

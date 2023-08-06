@@ -65,6 +65,7 @@ class CartScreen extends StatelessWidget {
       var orderItems = items
           .map((item) => {
                 'productId': item.id,
+                'productSeller': item.productSeller,
                 'productName': item.productName,
                 'productPrice': item.price,
                 'productQuantity': item.quantity,

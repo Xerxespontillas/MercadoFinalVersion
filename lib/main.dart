@@ -4,11 +4,18 @@ import 'package:flutter/services.dart';
 import 'package:merkado/providers/cart_provider.dart';
 import 'package:merkado/providers/customer_ordered_products_provider.dart';
 import 'package:merkado/providers/organization_products_provider.dart';
+import 'package:merkado/screens/admin_screens/admin_screen.dart';
+import 'package:merkado/screens/admin_screens/waiting_screen.dart';
 import 'package:merkado/screens/customer_screens/customer_drawer_screens/customer_my_orders.dart';
 import 'package:merkado/screens/customer_screens/customer_history.dart';
 import 'package:merkado/screens/customer_screens/selected_product_marketplace.dart';
 import 'package:merkado/screens/farmer_screens/farmer_all_location_screen.dart';
 import 'package:merkado/screens/farmer_screens/farmer_my_purchases.dart';
+import 'package:merkado/screens/organization_screens/org_add_farmer.dart';
+import 'package:merkado/screens/organization_screens/org_completed_orders.dart';
+import 'package:merkado/screens/organization_screens/org_farmer_add_products.dart';
+import 'package:merkado/screens/organization_screens/org_farmer_list.dart';
+import 'package:merkado/screens/organization_screens/org_farmer_profile.dart';
 import 'package:merkado/screens/organization_screens/organization_all_location_screen.dart';
 import 'package:merkado/screens/organization_screens/organization_market_screen.dart';
 import 'package:merkado/screens/customer_screens/tab_controllers.dart';
@@ -239,6 +246,7 @@ class _MerkadoState extends State<Merkado> {
           OrgCustomerOrders.routeName: (ctx) => const OrgCustomerOrders(),
           OrganizationMyPurchases.routeName: (ctx) =>
               const OrganizationMyPurchases(),
+          OrgAddFarmer.routeName: (ctx) => const OrgAddFarmer(),
 
           OrganizationChatScreen.routeName: (ctx) {
             final args = ModalRoute.of(ctx)!.settings.arguments
@@ -280,6 +288,18 @@ class _MerkadoState extends State<Merkado> {
               customerId: args.orgId,
             );
           },
+
+          OrgFarmerAddProducts.routeName: (ctx) => OrgFarmerAddProducts(),
+          OrgFarmerList.routeName: (ctx) => const OrgFarmerList(),
+          OrgFarmerProfile.routeName: (ctx) => OrgFarmerProfile(
+                farmerData: {},
+              ),
+          OrgFarmerCompletedOrders.routeName: (ctx) =>
+              const OrgFarmerCompletedOrders(),
+
+          //Admin Side Routes
+          AdminScreen.routeName: (ctx) => const AdminScreen(),
+          WaitingScreen.routeName: (ctx) => const WaitingScreen(),
         },
       ),
     );
