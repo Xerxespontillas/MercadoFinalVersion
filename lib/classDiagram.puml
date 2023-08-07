@@ -1,0 +1,1573 @@
+@startuml classDiagram
+set namespaceSeparator ::
+
+class "merkado::firebase_options.dart::DefaultFirebaseOptions" {
+  {static} +FirebaseOptions web
+  {static} +FirebaseOptions android
+  {static} +FirebaseOptions ios
+  {static} +FirebaseOptions currentPlatform
+}
+
+"merkado::firebase_options.dart::DefaultFirebaseOptions" o-- "firebase_core_platform_interface::firebase_core_platform_interface.dart::FirebaseOptions"
+
+class "merkado::main.dart::Merkado" {
+  +State<Merkado> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::main.dart::Merkado"
+
+class "merkado::main.dart::_MerkadoState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::main.dart::_MerkadoState"
+
+class "merkado::providers::auth_provider.dart::AuthProvider" {
+  -FirebaseAuth _auth
+  -FirebaseFirestore _firestore
+  +String message
+  -bool _isAuthenticated
+  +bool isAuthenticated
+  +Future<void> register()
+  +User? getCurrentUser()
+  +Future<void> login()
+}
+
+"merkado::providers::auth_provider.dart::AuthProvider" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"merkado::providers::auth_provider.dart::AuthProvider" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "merkado::providers::auth_provider.dart::AuthProvider"
+
+class "merkado::providers::cart_provider.dart::CartProvider" {
+  -Map<String, CartItem> _cartItems
+  +Map<String, CartItem> cartItems
+  +int cartItemCount
+  +int itemCount
+  +Map<String, Map<String, dynamic>> itemsBySeller
+  +void clearCart()
+  +void removeItem()
+  +void addItemQuantity()
+  -void _showNoStockDialog()
+  +void removeItemQuantity()
+  +void addItem()
+}
+
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "merkado::providers::cart_provider.dart::CartProvider"
+
+class "merkado::providers::customer_ordered_products_provider.dart::CustomerOrderedProducts" {
+  -List<Product> _items
+  +List<Product> items
+  +Future<void> fetchProducts()
+}
+
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "merkado::providers::customer_ordered_products_provider.dart::CustomerOrderedProducts"
+
+class "merkado::providers::customer_provider.dart::Customer" {
+  +String name
+  +Map<String, dynamic> toMap()
+}
+
+class "merkado::providers::customer_provider.dart::CustomersProvider" {
+  -String _currentCustomerDocId
+  -FirebaseAuth _auth
+  +CollectionReference<Map<String, dynamic>> customersCollection
+  -bool _isAuthenticated
+  -Customer? _currentCustomers
+  +String currentCustomerDocId
+  +bool isAuthenticated
+  +Customer? currentCustomers
+  +dynamic customersProvider()
+  +dynamic authProviderCustomers()
+  +Future<Customer?> getCurrentCustomers()
+  +void setCurrentCustomers()
+  +Future<void> addFarmers()
+  +User? getCurrentUser()
+}
+
+"merkado::providers::customer_provider.dart::CustomersProvider" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"merkado::providers::customer_provider.dart::CustomersProvider" o-- "cloud_firestore::cloud_firestore.dart::CollectionReference<Map<String, dynamic>>"
+"merkado::providers::customer_provider.dart::CustomersProvider" o-- "merkado::providers::customer_provider.dart::Customer"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "merkado::providers::customer_provider.dart::CustomersProvider"
+
+class "merkado::providers::farmers_provider.dart::Farmers" {
+  +String fullName
+  +String address
+  +Map<String, dynamic> toMap()
+}
+
+class "merkado::providers::farmers_provider.dart::FarmersProvider" {
+  -String _currentFarmerDocId
+  -FirebaseAuth _auth
+  +CollectionReference<Map<String, dynamic>> farmersCollection
+  -bool _isAuthenticated
+  -Farmers? _currentFarmers
+  +String currentFarmerDocId
+  +String currentFarmersDocId
+  +bool isAuthenticated
+  +Farmers? currentFarmers
+  +dynamic authProviderFarmers()
+  +Future<Farmers?> getCurrentFarmers()
+  +void setCurrentFarmers()
+  +Future<void> addFarmers()
+  +User? getCurrentUser()
+}
+
+"merkado::providers::farmers_provider.dart::FarmersProvider" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"merkado::providers::farmers_provider.dart::FarmersProvider" o-- "cloud_firestore::cloud_firestore.dart::CollectionReference<Map<String, dynamic>>"
+"merkado::providers::farmers_provider.dart::FarmersProvider" o-- "merkado::providers::farmers_provider.dart::Farmers"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "merkado::providers::farmers_provider.dart::FarmersProvider"
+
+class "merkado::providers::farmer_products_provider.dart::FarmerProducts" {
+  -List<Product> _items
+  +List<Product> items
+  +Future<String> getSellerName()
+  +Future<void> fetchProducts()
+}
+
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "merkado::providers::farmer_products_provider.dart::FarmerProducts"
+
+class "merkado::providers::organization_products_provider.dart::OrganizationProducts" {
+  -List<Product> _items
+  +List<Product> items
+  +Future<String> getSellerName()
+  +Future<void> fetchProducts()
+}
+
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "merkado::providers::organization_products_provider.dart::OrganizationProducts"
+
+class "merkado::providers::organization_provider.dart::Organization" {
+  +String orgName
+  +String address
+  +Map<String, dynamic> toMap()
+}
+
+class "merkado::providers::organization_provider.dart::OrganizationProvider" {
+  -String _currentOrgDocId
+  -FirebaseAuth _auth
+  +CollectionReference<Map<String, dynamic>> organizationCollection
+  -bool _isAuthenticated
+  -Organization? _currentOrganization
+  +String currentOrgDocId
+  +String currentBusDocId
+  +bool isAuthenticated
+  +Organization? currentOrganization
+  +dynamic authProviderOrganization()
+  +Future<Organization?> getCurrentorganization()
+  +void setCurrentorganization()
+  +Future<void> addorganization()
+  +User? getCurrentUser()
+}
+
+"merkado::providers::organization_provider.dart::OrganizationProvider" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"merkado::providers::organization_provider.dart::OrganizationProvider" o-- "cloud_firestore::cloud_firestore.dart::CollectionReference<Map<String, dynamic>>"
+"merkado::providers::organization_provider.dart::OrganizationProvider" o-- "merkado::providers::organization_provider.dart::Organization"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "merkado::providers::organization_provider.dart::OrganizationProvider"
+
+class "merkado::screens::authentication::user::forgot_password.dart::ForgotPasswordScreen" {
+  {static} +String routeName
+  +State<ForgotPasswordScreen> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::authentication::user::forgot_password.dart::ForgotPasswordScreen"
+
+class "merkado::screens::authentication::user::forgot_password.dart::_ForgotPasswordScreenState" {
+  -GlobalKey<FormState> _emailKey
+  -TextEditingController _emailController
+  +Future<void> resetPassword()
+  +Widget build()
+}
+
+"merkado::screens::authentication::user::forgot_password.dart::_ForgotPasswordScreenState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"merkado::screens::authentication::user::forgot_password.dart::_ForgotPasswordScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::authentication::user::forgot_password.dart::_ForgotPasswordScreenState"
+
+class "merkado::screens::authentication::user::login_screen.dart::LoginScreen" {
+  {static} +String routeName
+  +State<LoginScreen> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::authentication::user::login_screen.dart::LoginScreen"
+
+class "merkado::screens::authentication::user::login_screen.dart::_LoginScreenState" {
+  -GlobalKey<FormState> _formKey
+  -TextEditingController _emailController
+  -TextEditingController _passwordController
+  -bool _obscureText
+  -void _togglePasswordVisibility()
+  +void dispose()
+  +void initState()
+  +Widget build()
+}
+
+"merkado::screens::authentication::user::login_screen.dart::_LoginScreenState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"merkado::screens::authentication::user::login_screen.dart::_LoginScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::authentication::user::login_screen.dart::_LoginScreenState"
+
+class "merkado::screens::authentication::user::register_screen.dart::RegisterScreen" {
+  {static} +String routeName
+  +_RegisterScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::authentication::user::register_screen.dart::RegisterScreen"
+
+class "merkado::screens::authentication::user::register_screen.dart::_RegisterScreenState" {
+  +GlobalKey<FormState> formKey
+  +TextEditingController emailController
+  +TextEditingController passwordController
+  +TextEditingController confirmPasswordController
+  +TextEditingController fullNameController
+  +TextEditingController addressController
+  +TextEditingController phoneNumberController
+  +TextEditingController orgController
+  +TextEditingController roleController
+  -bool _farmerOrgVisible
+  -int _value
+  -bool _obscureText
+  -void _togglePasswordVisibility()
+  +void dispose()
+  +Widget myDropdownButton()
+  +Widget build()
+}
+
+"merkado::screens::authentication::user::register_screen.dart::_RegisterScreenState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"merkado::screens::authentication::user::register_screen.dart::_RegisterScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::authentication::user::register_screen.dart::_RegisterScreenState"
+
+class "merkado::screens::customer_screens::cart_screen.dart::CartScreen" {
+  {static} +String routeName
+  +void placeOrder()
+  +Future<String> getBuyerType()
+  +Future<String> getBuyerName()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::screens::customer_screens::cart_screen.dart::CartScreen"
+
+class "merkado::screens::customer_screens::customer_drawer_screens::customer_my_orders.dart::CustomerMyOrders" {
+  {static} +String routeName
+  +_CustomerMyOrdersState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::customer_drawer_screens::customer_my_orders.dart::CustomerMyOrders"
+
+class "merkado::screens::customer_screens::customer_drawer_screens::customer_my_orders.dart::_CustomerMyOrdersState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::customer_drawer_screens::customer_my_orders.dart::_CustomerMyOrdersState"
+
+class "merkado::screens::customer_screens::customer_drawer_screens::customer_selected_order.dart::CustomerSelectedOrder" {
+  +bool isPurchase
+  {static} +String routeName
+  +Map<dynamic, dynamic> order
+  +List<dynamic> items
+  +double deliveryFee
+  +String orderId
+  +String sellerId
+  +bool orderConfirmed
+  +String orderDate
+  +String discountDescription
+  +String image
+  +double total
+  +double totalDiscount
+  +State<CustomerSelectedOrder> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::customer_drawer_screens::customer_selected_order.dart::CustomerSelectedOrder"
+
+class "merkado::screens::customer_screens::customer_drawer_screens::customer_selected_order.dart::_CustomerSelectedOrderState" {
+  +String userId
+  +Future<String> getSellerImageUrl()
+  +Widget build()
+  -Widget _purchaseCard()
+  +dynamic getOrderItems()
+  +Future<void> placeOrderSingle()
+  +Future<String> getBuyerType()
+  +Future<String> getBuyerName()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::customer_drawer_screens::customer_selected_order.dart::_CustomerSelectedOrderState"
+
+class "merkado::screens::customer_screens::customer_drawer_screens::customer_selected_order.dart::_orderStatus" {
+  +bool orderConfirmed
+  +bool orderCancelled
+  +String userId
+  +String orderId
+  +String sellerId
+  +Widget build()
+  -Future<void> _queryToDb()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::screens::customer_screens::customer_drawer_screens::customer_selected_order.dart::_orderStatus"
+
+class "merkado::screens::customer_screens::customer_history.dart::CustomerHistory" {
+  {static} +String routeName
+  +_CustomerHistoryState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::customer_history.dart::CustomerHistory"
+
+class "merkado::screens::customer_screens::customer_history.dart::_CustomerHistoryState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::customer_history.dart::_CustomerHistoryState"
+
+class "merkado::screens::customer_screens::marketplace_screen.dart::MarketplaceScreen" {
+  {static} +String routeName
+  +State<MarketplaceScreen> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::marketplace_screen.dart::MarketplaceScreen"
+
+class "merkado::screens::customer_screens::marketplace_screen.dart::_MarketplaceScreenState" {
+  -TextEditingController _discountController
+  -TextEditingController _minItemsController
+  -bool _isLoading
+  +String search
+  +int cartCount
+  -TextEditingController _searchController
+  -FirebaseFirestore _firestore
+  +Color? itemColor
+  +void dispose()
+  +Future<bool> isUserFarmer()
+  +Widget build()
+}
+
+"merkado::screens::customer_screens::marketplace_screen.dart::_MarketplaceScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::customer_screens::marketplace_screen.dart::_MarketplaceScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"merkado::screens::customer_screens::marketplace_screen.dart::_MarketplaceScreenState" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::marketplace_screen.dart::_MarketplaceScreenState"
+
+class "merkado::screens::customer_screens::selected_product_marketplace.dart::SelectedProductMarketplace" {
+  {static} +String routeName
+  +_SelectedProductMarketplaceState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::selected_product_marketplace.dart::SelectedProductMarketplace"
+
+class "merkado::screens::customer_screens::selected_product_marketplace.dart::_SelectedProductMarketplaceState" {
+  +User? currentUser
+  +String userType
+  +Product product
+  -TextEditingController _productNameController
+  -TextEditingController _priceController
+  -TextEditingController _productDetailsController
+  -File? _image
+  +int quantity
+  -FirebaseFirestore _firestore
+  +void didChangeDependencies()
+  +void initState()
+  +Future<void> getUserType()
+  +void showDeleteDialog()
+  +Widget build()
+}
+
+"merkado::screens::customer_screens::selected_product_marketplace.dart::_SelectedProductMarketplaceState" o-- "firebase_auth::firebase_auth.dart::User"
+"merkado::screens::customer_screens::selected_product_marketplace.dart::_SelectedProductMarketplaceState" o-- "merkado::screens::farmer_screens::models::product.dart::Product"
+"merkado::screens::customer_screens::selected_product_marketplace.dart::_SelectedProductMarketplaceState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::customer_screens::selected_product_marketplace.dart::_SelectedProductMarketplaceState" o-- "dart::io::File"
+"merkado::screens::customer_screens::selected_product_marketplace.dart::_SelectedProductMarketplaceState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::selected_product_marketplace.dart::_SelectedProductMarketplaceState"
+
+class "merkado::screens::customer_screens::splash_screen.dart::SplashScreen" {
+  {static} +String routeName
+  +_SplashScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::splash_screen.dart::SplashScreen"
+
+class "merkado::screens::customer_screens::splash_screen.dart::_SplashScreenState" {
+  -AnimationController _animationController
+  -Animation<double> _animation
+  +bool isCustomer
+  +bool isFarmer
+  +bool isOrganization
+  +void initState()
+  +void navigateToUserScreen()
+  +Widget build()
+}
+
+"merkado::screens::customer_screens::splash_screen.dart::_SplashScreenState" o-- "flutter::src::animation::animation_controller.dart::AnimationController"
+"merkado::screens::customer_screens::splash_screen.dart::_SplashScreenState" o-- "flutter::src::animation::animation.dart::Animation<double>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::splash_screen.dart::_SplashScreenState"
+"flutter::src::widgets::ticker_provider.dart::SingleTickerProviderStateMixin" <|-- "merkado::screens::customer_screens::splash_screen.dart::_SplashScreenState"
+
+class "merkado::screens::customer_screens::tab_controllers.dart::TabControllers" {
+  {static} +String routeName
+  +State<TabControllers> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::tab_controllers.dart::TabControllers"
+
+class "merkado::screens::customer_screens::tab_controllers.dart::_TabControllersState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::tab_controllers.dart::_TabControllersState"
+
+class "merkado::screens::customer_screens::user_chat_list.dart::UserListScreen" {
+  {static} +String routeName
+  +Future<List<Map<String, dynamic>>> fetchRegisteredFarmers()
+  +Future<List<Map<String, dynamic>>> fetchRegisteredOrganizations()
+  -Future<List<Map<String, dynamic>>> _fetchData()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::screens::customer_screens::user_chat_list.dart::UserListScreen"
+
+class "merkado::screens::customer_screens::user_chat_screen.dart::UserChatArguments" {
+  +String userId
+  +UserType userType
+  +String displayName
+  +String farmerId
+}
+
+"merkado::screens::customer_screens::user_chat_screen.dart::UserChatArguments" o-- "merkado::screens::customer_screens::user_chat_screen.dart::UserType"
+
+class "merkado::screens::customer_screens::user_chat_screen.dart::UserChatScreen" {
+  {static} +String routeName
+  +String userId
+  +UserType userType
+  +String farmerId
+  +String displayName
+  +_UserChatScreenState createState()
+}
+
+"merkado::screens::customer_screens::user_chat_screen.dart::UserChatScreen" o-- "merkado::screens::customer_screens::user_chat_screen.dart::UserType"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::user_chat_screen.dart::UserChatScreen"
+
+class "merkado::screens::customer_screens::user_chat_screen.dart::_UserChatScreenState" {
+  -TextEditingController _messageController
+  -FirebaseFirestore _firestore
+  -Stream<QuerySnapshot<Object?>> _chatStream
+  +void initState()
+  +String getChatCollection()
+  -void _sendMessage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::customer_screens::user_chat_screen.dart::_UserChatScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::customer_screens::user_chat_screen.dart::_UserChatScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"merkado::screens::customer_screens::user_chat_screen.dart::_UserChatScreenState" o-- "dart::async::Stream<QuerySnapshot<Object>>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::user_chat_screen.dart::_UserChatScreenState"
+
+class "merkado::screens::customer_screens::user_chat_screen.dart::UserType" {
+  +int index
+  {static} +List<UserType> values
+  {static} +UserType customers
+  {static} +UserType farmer
+  {static} +UserType organization
+}
+
+"merkado::screens::customer_screens::user_chat_screen.dart::UserType" o-- "merkado::screens::customer_screens::user_chat_screen.dart::UserType"
+"dart::core::Enum" <|-- "merkado::screens::customer_screens::user_chat_screen.dart::UserType"
+
+class "merkado::screens::customer_screens::user_location_screen.dart::UserLocationScreen" {
+  {static} +String routeName
+  +UserLocationScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::user_location_screen.dart::UserLocationScreen"
+
+class "merkado::screens::customer_screens::user_location_screen.dart::UserLocationScreenState" {
+  -GoogleMapController _mapController
+  -Set<Marker> _markers
+  -Set<Marker> _orgMarkers
+  -Set<Marker> _farmerMarkers
+  -LatLng _userLocation
+  -StreamSubscription<Position>? _positionStreamSubscription
+  +void initState()
+  -Future<void> _requestLocationPermission()
+  +Future<BitmapDescriptor> userMarker()
+  +Future<BitmapDescriptor> organizationMarker()
+  +Future<BitmapDescriptor> farmersMarker()
+  -void _subscribeToFarmersLocationUpdates()
+  -void _subscribeToOrgLocationUpdates()
+  -void _subscribeToLocationUpdates()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::customer_screens::user_location_screen.dart::UserLocationScreenState" o-- "google_maps_flutter::google_maps_flutter.dart::GoogleMapController"
+"merkado::screens::customer_screens::user_location_screen.dart::UserLocationScreenState" o-- "google_maps_flutter_platform_interface::src::types::location.dart::LatLng"
+"merkado::screens::customer_screens::user_location_screen.dart::UserLocationScreenState" o-- "dart::async::StreamSubscription<Position>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::user_location_screen.dart::UserLocationScreenState"
+
+class "merkado::screens::customer_screens::user_org_chat_screen.dart::OrgChatArguments" {
+  +String userId
+  +OrgType userType
+  +String displayName
+  +String orgId
+}
+
+"merkado::screens::customer_screens::user_org_chat_screen.dart::OrgChatArguments" o-- "merkado::screens::customer_screens::user_org_chat_screen.dart::OrgType"
+
+class "merkado::screens::customer_screens::user_org_chat_screen.dart::OrgChatScreen" {
+  {static} +String routeName
+  +String userId
+  +OrgType orgType
+  +String orgId
+  +String displayName
+  +_OrgChatScreenState createState()
+}
+
+"merkado::screens::customer_screens::user_org_chat_screen.dart::OrgChatScreen" o-- "merkado::screens::customer_screens::user_org_chat_screen.dart::OrgType"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::user_org_chat_screen.dart::OrgChatScreen"
+
+class "merkado::screens::customer_screens::user_org_chat_screen.dart::_OrgChatScreenState" {
+  -TextEditingController _messageController
+  -FirebaseFirestore _firestore
+  -Stream<QuerySnapshot<Object?>> _chatStream
+  +void initState()
+  +String getChatCollection()
+  -void _sendMessage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::customer_screens::user_org_chat_screen.dart::_OrgChatScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::customer_screens::user_org_chat_screen.dart::_OrgChatScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"merkado::screens::customer_screens::user_org_chat_screen.dart::_OrgChatScreenState" o-- "dart::async::Stream<QuerySnapshot<Object>>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::user_org_chat_screen.dart::_OrgChatScreenState"
+
+class "merkado::screens::customer_screens::user_org_chat_screen.dart::OrgType" {
+  +int index
+  {static} +List<OrgType> values
+  {static} +OrgType customers
+  {static} +OrgType farmer
+  {static} +OrgType organization
+}
+
+"merkado::screens::customer_screens::user_org_chat_screen.dart::OrgType" o-- "merkado::screens::customer_screens::user_org_chat_screen.dart::OrgType"
+"dart::core::Enum" <|-- "merkado::screens::customer_screens::user_org_chat_screen.dart::OrgType"
+
+class "merkado::screens::customer_screens::user_screen_controller.dart::UserScreenController" {
+  {static} +String routeName
+  +UserScreenControllerState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::user_screen_controller.dart::UserScreenController"
+
+class "merkado::screens::customer_screens::user_screen_controller.dart::UserScreenControllerState" {
+  -int _currentIndex
+  +void onTabTapped()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::user_screen_controller.dart::UserScreenControllerState"
+
+class "merkado::screens::customer_screens::user_settings_screen.dart::UserSettingsScreen" {
+  {static} +String routeName
+  +State<UserSettingsScreen> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::customer_screens::user_settings_screen.dart::UserSettingsScreen"
+
+class "merkado::screens::customer_screens::user_settings_screen.dart::_UserSettingsScreenState" {
+  -TextEditingController? _displayNameController
+  -TextEditingController? _phoneNumberController
+  -TextEditingController? _addressController
+  -TextEditingController? _roleContoller
+  -String? _displayName
+  -String? _phoneNumber
+  -String? _address
+  -String? _role
+  -String? _profilePictureUrl
+  -File? _profilePicture
+  -Future<void> _pickImage()
+  +Future<DocumentSnapshot<Object?>> fetchUserData()
+  +void updateData()
+  +void initState()
+  -void _updateProfile()
+  -Future<String?> _showPasswordDialog()
+  -Future<void> _uploadImage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::customer_screens::user_settings_screen.dart::_UserSettingsScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::customer_screens::user_settings_screen.dart::_UserSettingsScreenState" o-- "dart::io::File"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::customer_screens::user_settings_screen.dart::_UserSettingsScreenState"
+
+class "merkado::screens::customer_screens::widgets::customer_app_drawer.dart::CustomerAppDrawer" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::screens::customer_screens::widgets::customer_app_drawer.dart::CustomerAppDrawer"
+
+class "merkado::screens::farmer_screens::farmer_all_location_screen.dart::FarmerAllLocationScreen" {
+  {static} +String routeName
+  +FarmerAllLocationScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_all_location_screen.dart::FarmerAllLocationScreen"
+
+class "merkado::screens::farmer_screens::farmer_all_location_screen.dart::FarmerAllLocationScreenState" {
+  -GoogleMapController _mapController
+  -Set<Marker> _markers
+  -Set<Marker> _orgMarkers
+  -Set<Marker> _farmerMarkers
+  -LatLng _userLocation
+  -StreamSubscription<Position>? _positionStreamSubscription
+  +void initState()
+  -Future<void> _requestLocationPermission()
+  +Future<BitmapDescriptor> organizationMarker()
+  +Future<BitmapDescriptor> farmersMarker()
+  -void _subscribeToFarmersLocationUpdates()
+  -void _subscribeToOrgLocationUpdates()
+  -void _subscribeToLocationUpdates()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::farmer_screens::farmer_all_location_screen.dart::FarmerAllLocationScreenState" o-- "google_maps_flutter::google_maps_flutter.dart::GoogleMapController"
+"merkado::screens::farmer_screens::farmer_all_location_screen.dart::FarmerAllLocationScreenState" o-- "google_maps_flutter_platform_interface::src::types::location.dart::LatLng"
+"merkado::screens::farmer_screens::farmer_all_location_screen.dart::FarmerAllLocationScreenState" o-- "dart::async::StreamSubscription<Position>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_all_location_screen.dart::FarmerAllLocationScreenState"
+
+class "merkado::screens::farmer_screens::farmer_chat_list.dart::FarmerListScreen" {
+  {static} +String routeName
+  +Future<List<Map<String, dynamic>>> fetchRegisteredCustomers()
+  +Future<List<Map<String, dynamic>>> fetchRegisteredFarmers()
+  +Future<List<Map<String, dynamic>>> fetchRegisteredOrganizations()
+  -Future<List<Map<String, dynamic>>> _fetchData()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::screens::farmer_screens::farmer_chat_list.dart::FarmerListScreen"
+
+class "merkado::screens::farmer_screens::farmer_chat_screen.dart::FarmerChatArguments" {
+  +String userId
+  +FarmerType userType
+  +String displayName
+  +String customerId
+}
+
+"merkado::screens::farmer_screens::farmer_chat_screen.dart::FarmerChatArguments" o-- "merkado::screens::farmer_screens::farmer_chat_screen.dart::FarmerType"
+
+class "merkado::screens::farmer_screens::farmer_chat_screen.dart::FarmerChatScreen" {
+  {static} +String routeName
+  +String userId
+  +FarmerType userType
+  +String customerId
+  +String displayName
+  +_FarmerChatScreenState createState()
+}
+
+"merkado::screens::farmer_screens::farmer_chat_screen.dart::FarmerChatScreen" o-- "merkado::screens::farmer_screens::farmer_chat_screen.dart::FarmerType"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_chat_screen.dart::FarmerChatScreen"
+
+class "merkado::screens::farmer_screens::farmer_chat_screen.dart::_FarmerChatScreenState" {
+  -TextEditingController _messageController
+  -FirebaseFirestore _firestore
+  -Stream<QuerySnapshot<Object?>> _chatStream
+  +void initState()
+  +String getChatCollection()
+  -void _sendMessage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::farmer_screens::farmer_chat_screen.dart::_FarmerChatScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::farmer_screens::farmer_chat_screen.dart::_FarmerChatScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"merkado::screens::farmer_screens::farmer_chat_screen.dart::_FarmerChatScreenState" o-- "dart::async::Stream<QuerySnapshot<Object>>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_chat_screen.dart::_FarmerChatScreenState"
+
+class "merkado::screens::farmer_screens::farmer_chat_screen.dart::FarmerType" {
+  +int index
+  {static} +List<FarmerType> values
+  {static} +FarmerType customers
+  {static} +FarmerType farmer
+  {static} +FarmerType organization
+}
+
+"merkado::screens::farmer_screens::farmer_chat_screen.dart::FarmerType" o-- "merkado::screens::farmer_screens::farmer_chat_screen.dart::FarmerType"
+"dart::core::Enum" <|-- "merkado::screens::farmer_screens::farmer_chat_screen.dart::FarmerType"
+
+class "merkado::screens::farmer_screens::farmer_drawer_screens::farmer_customer_order.dart::FarmerCustomerOrders" {
+  {static} +String routeName
+  +_FarmerCustomerOrdersState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_drawer_screens::farmer_customer_order.dart::FarmerCustomerOrders"
+
+class "merkado::screens::farmer_screens::farmer_drawer_screens::farmer_customer_order.dart::_FarmerCustomerOrdersState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_drawer_screens::farmer_customer_order.dart::_FarmerCustomerOrdersState"
+
+class "merkado::screens::farmer_screens::farmer_drawer_screens::farmer_my_products.dart::FarmerMyProducts" {
+  {static} +String routeName
+  +FarmerMyProductsState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_drawer_screens::farmer_my_products.dart::FarmerMyProducts"
+
+class "merkado::screens::farmer_screens::farmer_drawer_screens::farmer_my_products.dart::FarmerMyProductsState" {
+  -bool _isInit
+  -bool _isLoading
+  +void didChangeDependencies()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_drawer_screens::farmer_my_products.dart::FarmerMyProductsState"
+
+class "merkado::screens::farmer_screens::farmer_drawer_screens::farmer_my_selected_order.dart::FarmerMySelectedOrder" {
+  {static} +String routeName
+  +Map<dynamic, dynamic> order
+  +List<dynamic> items
+  +double deliveryFee
+  +String orderId
+  +String buyerId
+  +bool orderConfirmed
+  +String orderDate
+  +Future<String?> getBuyerImageUrl()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::screens::farmer_screens::farmer_drawer_screens::farmer_my_selected_order.dart::FarmerMySelectedOrder"
+
+class "merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::FarmersChatArguments" {
+  +String userId
+  +FarmersType userType
+  +String displayName
+  +String farmerId
+}
+
+"merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::FarmersChatArguments" o-- "merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::FarmersType"
+
+class "merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::FarmerToFarmerChatScreen" {
+  {static} +String routeName
+  +String userId
+  +FarmersType userType
+  +String customerId
+  +String displayName
+  +_FarmerToFarmerChatScreenState createState()
+}
+
+"merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::FarmerToFarmerChatScreen" o-- "merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::FarmersType"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::FarmerToFarmerChatScreen"
+
+class "merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::_FarmerToFarmerChatScreenState" {
+  -TextEditingController _messageController
+  -FirebaseFirestore _firestore
+  -Stream<QuerySnapshot<Object?>> _chatStream
+  +void initState()
+  +String getChatCollection()
+  -void _sendMessage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::_FarmerToFarmerChatScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::_FarmerToFarmerChatScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::_FarmerToFarmerChatScreenState" o-- "dart::async::Stream<QuerySnapshot<Object>>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::_FarmerToFarmerChatScreenState"
+
+class "merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::FarmersType" {
+  +int index
+  {static} +List<FarmersType> values
+  {static} +FarmersType customers
+  {static} +FarmersType farmer
+  {static} +FarmersType organization
+}
+
+"merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::FarmersType" o-- "merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::FarmersType"
+"dart::core::Enum" <|-- "merkado::screens::farmer_screens::farmer_farmer_chat_screen.dart::FarmersType"
+
+class "merkado::screens::farmer_screens::farmer_homescreen.dart::HomePage" {
+  {static} +String routeName
+  +State<HomePage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_homescreen.dart::HomePage"
+
+class "merkado::screens::farmer_screens::farmer_homescreen.dart::_HomePageState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_homescreen.dart::_HomePageState"
+
+class "merkado::screens::farmer_screens::farmer_location_screen.dart::FarmerLocationScreen" {
+  {static} +String routeName
+  {static} +Route<dynamic> route()
+  +FarmerLocationScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_location_screen.dart::FarmerLocationScreen"
+
+class "merkado::screens::farmer_screens::farmer_location_screen.dart::FarmerLocationScreenState" {
+  -GoogleMapController _mapController
+  -Set<Marker> _markers
+  -LatLng _farmersLocation
+  -StreamSubscription<Position>? _positionStreamSubscription
+  +void initState()
+  -Future<void> _requestLocationPermission()
+  +Future<BitmapDescriptor> farmersMarker()
+  -void _subscribeToLocationUpdates()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::farmer_screens::farmer_location_screen.dart::FarmerLocationScreenState" o-- "google_maps_flutter::google_maps_flutter.dart::GoogleMapController"
+"merkado::screens::farmer_screens::farmer_location_screen.dart::FarmerLocationScreenState" o-- "google_maps_flutter_platform_interface::src::types::location.dart::LatLng"
+"merkado::screens::farmer_screens::farmer_location_screen.dart::FarmerLocationScreenState" o-- "dart::async::StreamSubscription<Position>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_location_screen.dart::FarmerLocationScreenState"
+
+class "merkado::screens::farmer_screens::farmer_my_edit_products.dart::FarmerMyEditProducts" {
+  {static} +String routeName
+  +_FarmerMyEditProductsState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_my_edit_products.dart::FarmerMyEditProducts"
+
+class "merkado::screens::farmer_screens::farmer_my_edit_products.dart::_FarmerMyEditProductsState" {
+  +Product product
+  -TextEditingController _productNameController
+  -TextEditingController _priceController
+  -TextEditingController _productDetailsController
+  -ImagePicker _picker
+  -File? _image
+  +int quantity
+  -FirebaseStorage _storage
+  -FirebaseAuth _auth
+  -FirebaseFirestore _firestore
+  -TextEditingController _discountController
+  -TextEditingController _minItemsController
+  -bool _isLoading
+  -bool _isError
+  +void didChangeDependencies()
+  +void increaseQuantity()
+  +void decreaseQuantity()
+  +Future<void> deleteProductFromFarmerProducts()
+  -void _deleteProductFromDatabase()
+  +Future<String> getSellerName()
+  -Future<void> _updateProductInDatabaseWithImage()
+  +Future<void> updateProductInFarmerProducts()
+  -void _sendQuery()
+  -Widget _discountDialog()
+  +Widget build()
+}
+
+"merkado::screens::farmer_screens::farmer_my_edit_products.dart::_FarmerMyEditProductsState" o-- "merkado::screens::farmer_screens::models::product.dart::Product"
+"merkado::screens::farmer_screens::farmer_my_edit_products.dart::_FarmerMyEditProductsState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::farmer_screens::farmer_my_edit_products.dart::_FarmerMyEditProductsState" o-- "image_picker::image_picker.dart::ImagePicker"
+"merkado::screens::farmer_screens::farmer_my_edit_products.dart::_FarmerMyEditProductsState" o-- "dart::io::File"
+"merkado::screens::farmer_screens::farmer_my_edit_products.dart::_FarmerMyEditProductsState" o-- "firebase_storage::firebase_storage.dart::FirebaseStorage"
+"merkado::screens::farmer_screens::farmer_my_edit_products.dart::_FarmerMyEditProductsState" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"merkado::screens::farmer_screens::farmer_my_edit_products.dart::_FarmerMyEditProductsState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_my_edit_products.dart::_FarmerMyEditProductsState"
+
+class "merkado::screens::farmer_screens::farmer_my_purchases.dart::FarmerMyPurchases" {
+  {static} +String routeName
+  +_FarmerMyPurchasesState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_my_purchases.dart::FarmerMyPurchases"
+
+class "merkado::screens::farmer_screens::farmer_my_purchases.dart::_FarmerMyPurchasesState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_my_purchases.dart::_FarmerMyPurchasesState"
+
+class "merkado::screens::farmer_screens::farmer_new_post.dart::FarmerNewProductPost" {
+  {static} +String routeName
+  +_FarmerNewProductPostState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_new_post.dart::FarmerNewProductPost"
+
+class "merkado::screens::farmer_screens::farmer_new_post.dart::_FarmerNewProductPostState" {
+  -TextEditingController _quantityController
+  -TextEditingController _productNameController
+  -TextEditingController _priceController
+  +int quantity
+  -TextEditingController _textController
+  -File? _image
+  -ImagePicker _picker
+  -FirebaseAuth _auth
+  -FirebaseStorage _storage
+  -GlobalKey<FormState> _formKey
+  -FirebaseFirestore _firestore
+  +String farmerId
+  -TextEditingController _discountController
+  -TextEditingController _minItemsController
+  -bool _isLoading
+  -bool _isError
+  +void initState()
+  -Future<void> _addProductToDatabaseWithImage()
+  +Future<void> navigateBasedOnUserType()
+  +Future<void> addProductToDatabase()
+  +Future<String> getSellerName()
+  +void increaseQuantity()
+  +void decreaseQuantity()
+  -Widget _discountDialog()
+  +Widget build()
+}
+
+"merkado::screens::farmer_screens::farmer_new_post.dart::_FarmerNewProductPostState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::farmer_screens::farmer_new_post.dart::_FarmerNewProductPostState" o-- "dart::io::File"
+"merkado::screens::farmer_screens::farmer_new_post.dart::_FarmerNewProductPostState" o-- "image_picker::image_picker.dart::ImagePicker"
+"merkado::screens::farmer_screens::farmer_new_post.dart::_FarmerNewProductPostState" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"merkado::screens::farmer_screens::farmer_new_post.dart::_FarmerNewProductPostState" o-- "firebase_storage::firebase_storage.dart::FirebaseStorage"
+"merkado::screens::farmer_screens::farmer_new_post.dart::_FarmerNewProductPostState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"merkado::screens::farmer_screens::farmer_new_post.dart::_FarmerNewProductPostState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_new_post.dart::_FarmerNewProductPostState"
+
+class "merkado::screens::farmer_screens::farmer_org_chat_screen.dart::FarmerToOrgChatArguments" {
+  +String userId
+  +FarmerToOrgType userType
+  +String displayName
+  +String orgId
+}
+
+"merkado::screens::farmer_screens::farmer_org_chat_screen.dart::FarmerToOrgChatArguments" o-- "merkado::screens::farmer_screens::farmer_org_chat_screen.dart::FarmerToOrgType"
+
+class "merkado::screens::farmer_screens::farmer_org_chat_screen.dart::FarmerToOrgChatScreen" {
+  {static} +String routeName
+  +String userId
+  +FarmerToOrgType userType
+  +String orgId
+  +String displayName
+  +_FarmerToOrgChatScreenState createState()
+}
+
+"merkado::screens::farmer_screens::farmer_org_chat_screen.dart::FarmerToOrgChatScreen" o-- "merkado::screens::farmer_screens::farmer_org_chat_screen.dart::FarmerToOrgType"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_org_chat_screen.dart::FarmerToOrgChatScreen"
+
+class "merkado::screens::farmer_screens::farmer_org_chat_screen.dart::_FarmerToOrgChatScreenState" {
+  -TextEditingController _messageController
+  -FirebaseFirestore _firestore
+  -Stream<QuerySnapshot<Object?>> _chatStream
+  +void initState()
+  +String getChatCollection()
+  -void _sendMessage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::farmer_screens::farmer_org_chat_screen.dart::_FarmerToOrgChatScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::farmer_screens::farmer_org_chat_screen.dart::_FarmerToOrgChatScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"merkado::screens::farmer_screens::farmer_org_chat_screen.dart::_FarmerToOrgChatScreenState" o-- "dart::async::Stream<QuerySnapshot<Object>>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_org_chat_screen.dart::_FarmerToOrgChatScreenState"
+
+class "merkado::screens::farmer_screens::farmer_org_chat_screen.dart::FarmerToOrgType" {
+  +int index
+  {static} +List<FarmerToOrgType> values
+  {static} +FarmerToOrgType customers
+  {static} +FarmerToOrgType farmer
+  {static} +FarmerToOrgType organization
+}
+
+"merkado::screens::farmer_screens::farmer_org_chat_screen.dart::FarmerToOrgType" o-- "merkado::screens::farmer_screens::farmer_org_chat_screen.dart::FarmerToOrgType"
+"dart::core::Enum" <|-- "merkado::screens::farmer_screens::farmer_org_chat_screen.dart::FarmerToOrgType"
+
+class "merkado::screens::farmer_screens::farmer_screen_controller.dart::FarmerScreenController" {
+  {static} +String routeName
+  +FarmerScreenControllerState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_screen_controller.dart::FarmerScreenController"
+
+class "merkado::screens::farmer_screens::farmer_screen_controller.dart::FarmerScreenControllerState" {
+  -int _currentIndex
+  +void onTabTapped()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_screen_controller.dart::FarmerScreenControllerState"
+
+class "merkado::screens::farmer_screens::farmer_selected_purchase.dart::FarmerSelectedPurchase" {
+  {static} +String routeName
+  +Map<dynamic, dynamic> order
+  +List<dynamic> items
+  +double deliveryFee
+  +String orderId
+  +String sellerId
+  +bool orderConfirmed
+  +String orderDate
+  +Future<String> getSellerImageUrl()
+  -Future<String> _getUserType()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::screens::farmer_screens::farmer_selected_purchase.dart::FarmerSelectedPurchase"
+
+class "merkado::screens::farmer_screens::farmer_settings_screen.dart::FarmerSettingsScreen" {
+  {static} +String routeName
+  +State<FarmerSettingsScreen> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::farmer_settings_screen.dart::FarmerSettingsScreen"
+
+class "merkado::screens::farmer_screens::farmer_settings_screen.dart::_FarmerSettingsScreenState" {
+  -TextEditingController? _displayNameController
+  -TextEditingController? _phoneNumberController
+  -TextEditingController? _addressController
+  -TextEditingController? _roleContoller
+  -String? _displayName
+  -String? _phoneNumber
+  -String? _address
+  -String? _role
+  -String? _profilePictureUrl
+  -File? _profilePicture
+  -Future<void> _pickImage()
+  +Future<DocumentSnapshot<Object?>> fetchUserData()
+  +void updateData()
+  +void initState()
+  -void _updateProfile()
+  -Future<String?> _showPasswordDialog()
+  -Future<void> _uploadImage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::farmer_screens::farmer_settings_screen.dart::_FarmerSettingsScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::farmer_screens::farmer_settings_screen.dart::_FarmerSettingsScreenState" o-- "dart::io::File"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::farmer_settings_screen.dart::_FarmerSettingsScreenState"
+
+class "merkado::screens::farmer_screens::models::product.dart::Product" {
+  +String id
+  +String productName
+  +String productDetails
+  +double price
+  +int quantity
+  +int maxQuantity
+  +String sellerName
+  +String sellerId
+  +String image
+  +dynamic minItems
+  +dynamic discount
+}
+
+class "merkado::screens::farmer_screens::models::product.dart::CartItem" {
+  +int quantity
+  {static} +Map<String, dynamic> toMap()
+}
+
+"merkado::screens::farmer_screens::models::product.dart::Product" <|-- "merkado::screens::farmer_screens::models::product.dart::CartItem"
+
+class "merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::ReceiverFarmersChatArguments" {
+  +String userId
+  +ReceiverFarmersType userType
+  +String displayName
+  +String farmerId
+}
+
+"merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::ReceiverFarmersChatArguments" o-- "merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::ReceiverFarmersType"
+
+class "merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::ReceiverFarmerToFarmerChatScreen" {
+  {static} +String routeName
+  +String userId
+  +ReceiverFarmersType userType
+  +String customerId
+  +String displayName
+  +_ReceiverFarmerToFarmerChatScreenState createState()
+}
+
+"merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::ReceiverFarmerToFarmerChatScreen" o-- "merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::ReceiverFarmersType"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::ReceiverFarmerToFarmerChatScreen"
+
+class "merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::_ReceiverFarmerToFarmerChatScreenState" {
+  -TextEditingController _messageController
+  -FirebaseFirestore _firestore
+  -Stream<QuerySnapshot<Object?>> _chatStream
+  +void initState()
+  +String getChatCollection()
+  -void _sendMessage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::_ReceiverFarmerToFarmerChatScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::_ReceiverFarmerToFarmerChatScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::_ReceiverFarmerToFarmerChatScreenState" o-- "dart::async::Stream<QuerySnapshot<Object>>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::_ReceiverFarmerToFarmerChatScreenState"
+
+class "merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::ReceiverFarmersType" {
+  +int index
+  {static} +List<ReceiverFarmersType> values
+  {static} +ReceiverFarmersType customers
+  {static} +ReceiverFarmersType farmer
+  {static} +ReceiverFarmersType organization
+}
+
+"merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::ReceiverFarmersType" o-- "merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::ReceiverFarmersType"
+"dart::core::Enum" <|-- "merkado::screens::farmer_screens::receiver_farmer_farmer_chat_screen.dart::ReceiverFarmersType"
+
+class "merkado::screens::organization_screens::organization_all_location_screen.dart::OrgAllLocationScreen" {
+  {static} +String routeName
+  +OrgAllLocationScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::organization_all_location_screen.dart::OrgAllLocationScreen"
+
+class "merkado::screens::organization_screens::organization_all_location_screen.dart::OrgAllLocationScreenState" {
+  -GoogleMapController _mapController
+  -Set<Marker> _markers
+  -Set<Marker> _orgMarkers
+  -Set<Marker> _farmerMarkers
+  -LatLng _userLocation
+  -StreamSubscription<Position>? _positionStreamSubscription
+  +void initState()
+  -Future<void> _requestLocationPermission()
+  +Future<BitmapDescriptor> organizationMarker()
+  +Future<BitmapDescriptor> farmersMarker()
+  -void _subscribeToFarmersLocationUpdates()
+  -void _subscribeToOrgLocationUpdates()
+  -void _subscribeToLocationUpdates()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::organization_screens::organization_all_location_screen.dart::OrgAllLocationScreenState" o-- "google_maps_flutter::google_maps_flutter.dart::GoogleMapController"
+"merkado::screens::organization_screens::organization_all_location_screen.dart::OrgAllLocationScreenState" o-- "google_maps_flutter_platform_interface::src::types::location.dart::LatLng"
+"merkado::screens::organization_screens::organization_all_location_screen.dart::OrgAllLocationScreenState" o-- "dart::async::StreamSubscription<Position>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::organization_all_location_screen.dart::OrgAllLocationScreenState"
+
+class "merkado::screens::organization_screens::organization_chat_list.dart::OrganizationListScreen" {
+  {static} +String routeName
+  +Future<List<Map<String, dynamic>>> fetchRegisteredCustomers()
+  +Future<List<Map<String, dynamic>>> fetchRegisteredFarmers()
+  +Future<List<Map<String, dynamic>>> fetchRegisteredOrganizations()
+  -Future<List<Map<String, dynamic>>> _fetchData()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::screens::organization_screens::organization_chat_list.dart::OrganizationListScreen"
+
+class "merkado::screens::organization_screens::organization_chat_screen.dart::OrganizationChatArguments" {
+  +String userId
+  +OrganizationType userType
+  +String displayName
+  +String customerId
+}
+
+"merkado::screens::organization_screens::organization_chat_screen.dart::OrganizationChatArguments" o-- "merkado::screens::organization_screens::organization_chat_screen.dart::OrganizationType"
+
+class "merkado::screens::organization_screens::organization_chat_screen.dart::OrganizationChatScreen" {
+  {static} +String routeName
+  +String userId
+  +OrganizationType userType
+  +String customerId
+  +String displayName
+  +_OrganizationChatScreenState createState()
+}
+
+"merkado::screens::organization_screens::organization_chat_screen.dart::OrganizationChatScreen" o-- "merkado::screens::organization_screens::organization_chat_screen.dart::OrganizationType"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::organization_chat_screen.dart::OrganizationChatScreen"
+
+class "merkado::screens::organization_screens::organization_chat_screen.dart::_OrganizationChatScreenState" {
+  -TextEditingController _messageController
+  -FirebaseFirestore _firestore
+  -Stream<QuerySnapshot<Object?>> _chatStream
+  +void initState()
+  +String getChatCollection()
+  -void _sendMessage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::organization_screens::organization_chat_screen.dart::_OrganizationChatScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::organization_screens::organization_chat_screen.dart::_OrganizationChatScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"merkado::screens::organization_screens::organization_chat_screen.dart::_OrganizationChatScreenState" o-- "dart::async::Stream<QuerySnapshot<Object>>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::organization_chat_screen.dart::_OrganizationChatScreenState"
+
+class "merkado::screens::organization_screens::organization_chat_screen.dart::OrganizationType" {
+  +int index
+  {static} +List<OrganizationType> values
+  {static} +OrganizationType customers
+  {static} +OrganizationType farmer
+  {static} +OrganizationType organization
+}
+
+"merkado::screens::organization_screens::organization_chat_screen.dart::OrganizationType" o-- "merkado::screens::organization_screens::organization_chat_screen.dart::OrganizationType"
+"dart::core::Enum" <|-- "merkado::screens::organization_screens::organization_chat_screen.dart::OrganizationType"
+
+class "merkado::screens::organization_screens::organization_customer_orders.dart::OrgCustomerOrders" {
+  {static} +String routeName
+  +_OrgCustomerOrdersState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::organization_customer_orders.dart::OrgCustomerOrders"
+
+class "merkado::screens::organization_screens::organization_customer_orders.dart::_OrgCustomerOrdersState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::organization_customer_orders.dart::_OrgCustomerOrdersState"
+
+class "merkado::screens::organization_screens::organization_farmer_chat_screen.dart::OrgToFarmerChatArguments" {
+  +String userId
+  +OrgToFarmerType userType
+  +String displayName
+  +String farmerId
+}
+
+"merkado::screens::organization_screens::organization_farmer_chat_screen.dart::OrgToFarmerChatArguments" o-- "merkado::screens::organization_screens::organization_farmer_chat_screen.dart::OrgToFarmerType"
+
+class "merkado::screens::organization_screens::organization_farmer_chat_screen.dart::OrgToFarmerChatScreen" {
+  {static} +String routeName
+  +String userId
+  +OrgToFarmerType userType
+  +String farmerId
+  +String displayName
+  +_OrgToFarmerChatScreenState createState()
+}
+
+"merkado::screens::organization_screens::organization_farmer_chat_screen.dart::OrgToFarmerChatScreen" o-- "merkado::screens::organization_screens::organization_farmer_chat_screen.dart::OrgToFarmerType"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::organization_farmer_chat_screen.dart::OrgToFarmerChatScreen"
+
+class "merkado::screens::organization_screens::organization_farmer_chat_screen.dart::_OrgToFarmerChatScreenState" {
+  -TextEditingController _messageController
+  -FirebaseFirestore _firestore
+  -Stream<QuerySnapshot<Object?>> _chatStream
+  +void initState()
+  +String getChatCollection()
+  -void _sendMessage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::organization_screens::organization_farmer_chat_screen.dart::_OrgToFarmerChatScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::organization_screens::organization_farmer_chat_screen.dart::_OrgToFarmerChatScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"merkado::screens::organization_screens::organization_farmer_chat_screen.dart::_OrgToFarmerChatScreenState" o-- "dart::async::Stream<QuerySnapshot<Object>>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::organization_farmer_chat_screen.dart::_OrgToFarmerChatScreenState"
+
+class "merkado::screens::organization_screens::organization_farmer_chat_screen.dart::OrgToFarmerType" {
+  +int index
+  {static} +List<OrgToFarmerType> values
+  {static} +OrgToFarmerType customers
+  {static} +OrgToFarmerType farmer
+  {static} +OrgToFarmerType organization
+}
+
+"merkado::screens::organization_screens::organization_farmer_chat_screen.dart::OrgToFarmerType" o-- "merkado::screens::organization_screens::organization_farmer_chat_screen.dart::OrgToFarmerType"
+"dart::core::Enum" <|-- "merkado::screens::organization_screens::organization_farmer_chat_screen.dart::OrgToFarmerType"
+
+class "merkado::screens::organization_screens::organization_location_screen.dart::OrganizationLocationScreen" {
+  {static} +String routeName
+  {static} +Route<dynamic> route()
+  +OrganizationLocationScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::organization_location_screen.dart::OrganizationLocationScreen"
+
+class "merkado::screens::organization_screens::organization_location_screen.dart::OrganizationLocationScreenState" {
+  -GoogleMapController _mapController
+  -Set<Marker> _markers
+  -LatLng _organizationLocation
+  -StreamSubscription<Position>? _positionStreamSubscription
+  +void initState()
+  -Future<void> _requestLocationPermission()
+  +Future<BitmapDescriptor> organizationMarker()
+  -void _subscribeToLocationUpdates()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::organization_screens::organization_location_screen.dart::OrganizationLocationScreenState" o-- "google_maps_flutter::google_maps_flutter.dart::GoogleMapController"
+"merkado::screens::organization_screens::organization_location_screen.dart::OrganizationLocationScreenState" o-- "google_maps_flutter_platform_interface::src::types::location.dart::LatLng"
+"merkado::screens::organization_screens::organization_location_screen.dart::OrganizationLocationScreenState" o-- "dart::async::StreamSubscription<Position>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::organization_location_screen.dart::OrganizationLocationScreenState"
+
+class "merkado::screens::organization_screens::organization_market_screen.dart::OrgMarketScreen" {
+  {static} +String routeName
+  +State<OrgMarketScreen> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::organization_market_screen.dart::OrgMarketScreen"
+
+class "merkado::screens::organization_screens::organization_market_screen.dart::_OrgMarketScreenState" {
+  -FirebaseFirestore _firestore
+  +String search
+  +int cartCount
+  +Widget build()
+}
+
+"merkado::screens::organization_screens::organization_market_screen.dart::_OrgMarketScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::organization_market_screen.dart::_OrgMarketScreenState"
+
+class "merkado::screens::organization_screens::organization_my_edit_products.dart::OrgMyEditProducts" {
+  {static} +String routeName
+  +_OrgMyEditProductsState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::organization_my_edit_products.dart::OrgMyEditProducts"
+
+class "merkado::screens::organization_screens::organization_my_edit_products.dart::_OrgMyEditProductsState" {
+  +Product product
+  -TextEditingController _productNameController
+  -TextEditingController _priceController
+  -TextEditingController _productDetailsController
+  -ImagePicker _picker
+  -File? _image
+  +int quantity
+  -FirebaseStorage _storage
+  -FirebaseAuth _auth
+  -FirebaseFirestore _firestore
+  +void didChangeDependencies()
+  +void increaseQuantity()
+  +void decreaseQuantity()
+  +Future<void> deleteProductFromFarmerProducts()
+  -void _deleteProductFromDatabase()
+  +Future<String> getSellerName()
+  -Future<void> _updateProductInDatabaseWithImage()
+  +Future<void> updateProductInFarmerProducts()
+  +Widget build()
+}
+
+"merkado::screens::organization_screens::organization_my_edit_products.dart::_OrgMyEditProductsState" o-- "merkado::screens::farmer_screens::models::product.dart::Product"
+"merkado::screens::organization_screens::organization_my_edit_products.dart::_OrgMyEditProductsState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::organization_screens::organization_my_edit_products.dart::_OrgMyEditProductsState" o-- "image_picker::image_picker.dart::ImagePicker"
+"merkado::screens::organization_screens::organization_my_edit_products.dart::_OrgMyEditProductsState" o-- "dart::io::File"
+"merkado::screens::organization_screens::organization_my_edit_products.dart::_OrgMyEditProductsState" o-- "firebase_storage::firebase_storage.dart::FirebaseStorage"
+"merkado::screens::organization_screens::organization_my_edit_products.dart::_OrgMyEditProductsState" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"merkado::screens::organization_screens::organization_my_edit_products.dart::_OrgMyEditProductsState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::organization_my_edit_products.dart::_OrgMyEditProductsState"
+
+class "merkado::screens::organization_screens::organization_my_products.dart::OrganizationMyProducts" {
+  {static} +String routeName
+  +OrganizationMyProductsState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::organization_my_products.dart::OrganizationMyProducts"
+
+class "merkado::screens::organization_screens::organization_my_products.dart::OrganizationMyProductsState" {
+  -bool _isInit
+  -bool _isLoading
+  +void didChangeDependencies()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::organization_my_products.dart::OrganizationMyProductsState"
+
+class "merkado::screens::organization_screens::organization_my_purchases.dart::OrganizationMyPurchases" {
+  {static} +String routeName
+  +_OrganizationMyPurchasesState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::organization_my_purchases.dart::OrganizationMyPurchases"
+
+class "merkado::screens::organization_screens::organization_my_purchases.dart::_OrganizationMyPurchasesState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::organization_my_purchases.dart::_OrganizationMyPurchasesState"
+
+class "merkado::screens::organization_screens::organization_my_selected_order.dart::OrgMySelectedOrder" {
+  {static} +String routeName
+  +Map<dynamic, dynamic> order
+  +List<dynamic> items
+  +double deliveryFee
+  +String orderId
+  +String buyerId
+  +bool orderConfirmed
+  +String orderDate
+  +Future<String> getBuyerImageUrl()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::screens::organization_screens::organization_my_selected_order.dart::OrgMySelectedOrder"
+
+class "merkado::screens::organization_screens::organization_screen_controller.dart::OrgScreenController" {
+  {static} +String routeName
+  +OrgScreenControllerState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::organization_screen_controller.dart::OrgScreenController"
+
+class "merkado::screens::organization_screens::organization_screen_controller.dart::OrgScreenControllerState" {
+  -int _currentIndex
+  +void onTabTapped()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::organization_screen_controller.dart::OrgScreenControllerState"
+
+class "merkado::screens::organization_screens::organization_selected_purchase.dart::OrganizationSelectedPurchase" {
+  {static} +String routeName
+  +Map<dynamic, dynamic> order
+  +List<dynamic> items
+  +double deliveryFee
+  +String orderId
+  +String sellerId
+  +bool orderConfirmed
+  +String orderDate
+  +Future<String> getSellerImageUrl()
+  -Future<String> _getUserType()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::screens::organization_screens::organization_selected_purchase.dart::OrganizationSelectedPurchase"
+
+class "merkado::screens::organization_screens::organization_settings_screen.dart::OrgSettingsScreen" {
+  {static} +String routeName
+  +State<OrgSettingsScreen> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::organization_settings_screen.dart::OrgSettingsScreen"
+
+class "merkado::screens::organization_screens::organization_settings_screen.dart::_OrgSettingsScreenState" {
+  -TextEditingController? _displayNameController
+  -TextEditingController? _phoneNumberController
+  -TextEditingController? _addressController
+  -TextEditingController? _roleContoller
+  -String? _displayName
+  -String? _phoneNumber
+  -String? _address
+  -String? _role
+  -String? _profilePictureUrl
+  -File? _profilePicture
+  -Future<void> _pickImage()
+  +Future<DocumentSnapshot<Object?>> fetchUserData()
+  +void updateData()
+  +void initState()
+  -void _updateProfile()
+  -Future<String?> _showPasswordDialog()
+  -Future<void> _uploadImage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::organization_screens::organization_settings_screen.dart::_OrgSettingsScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::organization_screens::organization_settings_screen.dart::_OrgSettingsScreenState" o-- "dart::io::File"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::organization_settings_screen.dart::_OrgSettingsScreenState"
+
+class "merkado::screens::organization_screens::org_org_chat_screen.dart::OrgToOrgChatArguments" {
+  +String userId
+  +OrgToOrgType userType
+  +String displayName
+  +String orgId
+}
+
+"merkado::screens::organization_screens::org_org_chat_screen.dart::OrgToOrgChatArguments" o-- "merkado::screens::organization_screens::org_org_chat_screen.dart::OrgToOrgType"
+
+class "merkado::screens::organization_screens::org_org_chat_screen.dart::OrgToOrgChatScreen" {
+  {static} +String routeName
+  +String userId
+  +OrgToOrgType userType
+  +String customerId
+  +String displayName
+  +_OrgToOrgChatScreenState createState()
+}
+
+"merkado::screens::organization_screens::org_org_chat_screen.dart::OrgToOrgChatScreen" o-- "merkado::screens::organization_screens::org_org_chat_screen.dart::OrgToOrgType"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::org_org_chat_screen.dart::OrgToOrgChatScreen"
+
+class "merkado::screens::organization_screens::org_org_chat_screen.dart::_OrgToOrgChatScreenState" {
+  -TextEditingController _messageController
+  -FirebaseFirestore _firestore
+  -Stream<QuerySnapshot<Object?>> _chatStream
+  +void initState()
+  +String getChatCollection()
+  -void _sendMessage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::organization_screens::org_org_chat_screen.dart::_OrgToOrgChatScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::organization_screens::org_org_chat_screen.dart::_OrgToOrgChatScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"merkado::screens::organization_screens::org_org_chat_screen.dart::_OrgToOrgChatScreenState" o-- "dart::async::Stream<QuerySnapshot<Object>>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::org_org_chat_screen.dart::_OrgToOrgChatScreenState"
+
+class "merkado::screens::organization_screens::org_org_chat_screen.dart::OrgToOrgType" {
+  +int index
+  {static} +List<OrgToOrgType> values
+  {static} +OrgToOrgType customers
+  {static} +OrgToOrgType farmer
+  {static} +OrgToOrgType organization
+}
+
+"merkado::screens::organization_screens::org_org_chat_screen.dart::OrgToOrgType" o-- "merkado::screens::organization_screens::org_org_chat_screen.dart::OrgToOrgType"
+"dart::core::Enum" <|-- "merkado::screens::organization_screens::org_org_chat_screen.dart::OrgToOrgType"
+
+class "merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::ReceiverOrgToOrgChatArguments" {
+  +String userId
+  +ReceiverOrgToOrgType userType
+  +String displayName
+  +String orgId
+}
+
+"merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::ReceiverOrgToOrgChatArguments" o-- "merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::ReceiverOrgToOrgType"
+
+class "merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::ReceiverOrgToOrgChatScreen" {
+  {static} +String routeName
+  +String userId
+  +ReceiverOrgToOrgType userType
+  +String customerId
+  +String displayName
+  +_ReceiverOrgToOrgChatScreenState createState()
+}
+
+"merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::ReceiverOrgToOrgChatScreen" o-- "merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::ReceiverOrgToOrgType"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::ReceiverOrgToOrgChatScreen"
+
+class "merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::_ReceiverOrgToOrgChatScreenState" {
+  -TextEditingController _messageController
+  -FirebaseFirestore _firestore
+  -Stream<QuerySnapshot<Object?>> _chatStream
+  +void initState()
+  +String getChatCollection()
+  -void _sendMessage()
+  +void dispose()
+  +Widget build()
+}
+
+"merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::_ReceiverOrgToOrgChatScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::_ReceiverOrgToOrgChatScreenState" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::_ReceiverOrgToOrgChatScreenState" o-- "dart::async::Stream<QuerySnapshot<Object>>"
+"flutter::src::widgets::framework.dart::State" <|-- "merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::_ReceiverOrgToOrgChatScreenState"
+
+class "merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::ReceiverOrgToOrgType" {
+  +int index
+  {static} +List<ReceiverOrgToOrgType> values
+  {static} +ReceiverOrgToOrgType customers
+  {static} +ReceiverOrgToOrgType farmer
+  {static} +ReceiverOrgToOrgType organization
+}
+
+"merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::ReceiverOrgToOrgType" o-- "merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::ReceiverOrgToOrgType"
+"dart::core::Enum" <|-- "merkado::screens::organization_screens::receiver_org_org_chat_screen.dart::ReceiverOrgToOrgType"
+
+class "merkado::widgets::bottom_navigation_bar.dart::CustomBottomNavBar" {
+  +dynamic Function(int) onTabTapped
+  +int currentIndex
+  -Future<String> _getUserType()
+  +Widget build()
+}
+
+"merkado::widgets::bottom_navigation_bar.dart::CustomBottomNavBar" o-- "null::dynamic Function(int)"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::widgets::bottom_navigation_bar.dart::CustomBottomNavBar"
+
+class "merkado::widgets::farmer_app_drawer.dart::FarmerAppDrawer" {
+  -Future<String> _getUserType()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::widgets::farmer_app_drawer.dart::FarmerAppDrawer"
+
+class "merkado::widgets::org_bottom_navigation_bar.dart::OrgCustomBottomNavBar" {
+  +dynamic Function(int) onTabTapped
+  +int currentIndex
+  -Future<String> _getUserType()
+  +Widget build()
+}
+
+"merkado::widgets::org_bottom_navigation_bar.dart::OrgCustomBottomNavBar" o-- "null::dynamic Function(int)"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::widgets::org_bottom_navigation_bar.dart::OrgCustomBottomNavBar"
+
+class "merkado::widgets::user_bottom_navigation_bar.dart::UserCustomBottomNavBar" {
+  +dynamic Function(int) onTabTapped
+  +int currentIndex
+  +Widget build()
+}
+
+"merkado::widgets::user_bottom_navigation_bar.dart::UserCustomBottomNavBar" o-- "null::dynamic Function(int)"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "merkado::widgets::user_bottom_navigation_bar.dart::UserCustomBottomNavBar"
+
+
+@enduml

@@ -240,7 +240,7 @@ class _OrgMarketScreenState extends State<OrgMarketScreen> {
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.black),
                                       ),
-                                      child: const Row(
+                                      child: Row(
                                         children: [
                                           Text('Add to cart',
                                               style: TextStyle(fontSize: 12)),

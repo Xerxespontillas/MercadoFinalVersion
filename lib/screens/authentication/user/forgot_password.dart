@@ -40,7 +40,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       Container(
                         alignment: Alignment.topLeft,
                         margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

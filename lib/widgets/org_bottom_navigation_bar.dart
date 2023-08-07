@@ -67,7 +67,7 @@ class OrgCustomBottomNavBar extends StatelessWidget {
                   backgroundColor: MaterialStateProperty.all<Color>(Colors
                       .green), // Set the button's background color to green
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment:
                       MainAxisAlignment.center, // Align icon to the left
                   children: [
