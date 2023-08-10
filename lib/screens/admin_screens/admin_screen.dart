@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:merkado/screens/admin_screens/farmer_overall_sales.dart';
+import 'package:merkado/screens/admin_screens/organization_overall_sales.dart';
 
 import '../authentication/user/login_screen.dart';
 import 'farmer_list.dart';
@@ -17,7 +19,7 @@ class _AdminScreenState extends State<AdminScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -88,6 +90,20 @@ class _AdminScreenState extends State<AdminScreen> {
                     icon: Image.asset(
                         'assets/images/organization.png'), // Custom groups icon
                   ),
+                  Tab(
+                    icon: Image.asset(
+                      'assets/images/farmer_sales.png',
+                      width: 50,
+                      height: 50,
+                    ), // Custom groups icon
+                  ),
+                  Tab(
+                    icon: Image.asset(
+                      'assets/images/organization_sales.png',
+                      width: 50,
+                      height: 50,
+                    ), // Custom groups icon
+                  ),
                 ],
               ),
             ),
@@ -96,6 +112,8 @@ class _AdminScreenState extends State<AdminScreen> {
                 children: [
                   FarmerList(),
                   OrganizationList(),
+                  FarmerSalesOverall(),
+                  OrganizationSalesOverall()
                 ],
               ),
             ),

@@ -11,7 +11,7 @@ class Product {
   final String sellerName;
   final String sellerId;
   final String image;
-  final String productSeller; // Add the productSeller field
+  final String? productSeller; // Add the productSeller field
   final minItems;
   final discount;
 
@@ -25,7 +25,7 @@ class Product {
     required this.sellerName,
     required this.sellerId,
     required this.image,
-    required this.productSeller, // Include the productSeller parameter
+    this.productSeller, // Include the productSeller parameter
     required this.discount,
     required this.minItems,
   });
@@ -33,7 +33,7 @@ class Product {
   // Add this method
   Product.fromDocumentSnapshot(DocumentSnapshot doc)
       : id = doc.id,
-        productSeller = doc['productSeller'],
+        productSeller = doc['productSeller'] as String?,
         productName = doc['productName'],
         productDetails = doc['productDetails'],
         price = doc['price'],
@@ -48,7 +48,7 @@ class Product {
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
       id: map['id'],
-      productSeller: map['productSeller'],
+      productSeller: map['productSeller'] as String?,
       productName: map['productName'],
       productDetails: map['productDetails'],
       price: map['price'],
