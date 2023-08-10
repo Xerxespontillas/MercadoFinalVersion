@@ -182,7 +182,22 @@ class _OrgMyEditProductsState extends State<OrgMyEditProducts> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(_productNameController.text),
+        title: Column(
+          children: [
+            Text(
+              _productNameController.text,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+                color: Colors.black,
+              ),
+            ),
+            Divider(
+              height: 10,
+              color: Colors.green,
+            ),
+          ],
+        ),
         content: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('organizations')
@@ -237,10 +252,19 @@ class _OrgMyEditProductsState extends State<OrgMyEditProducts> {
               return SizedBox(
                 height: 80,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Item price: $thisitemPrice'),
+                    Text('Item price: ₱$thisitemPrice'),
+                    SizedBox(height: 5),
                     Text('Total quantity: $thistotalQuantity'),
-                    Text('Total sales: $totalSales'),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Divider(),
+                    Text(
+                      'Total sales: ₱$totalSales',
+                      style: TextStyle(fontWeight: FontWeight.w800),
+                    ),
                   ],
                 ),
               );

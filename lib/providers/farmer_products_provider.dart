@@ -50,7 +50,6 @@ class FarmerProducts with ChangeNotifier {
       for (var doc in querySnapshot.docs) {
         print(doc);
         loadedProducts.add(Product(
-          productSeller: doc['productSeller'],
           id: doc.id,
           productName: doc['productName'],
           productDetails: doc['productDetails'],

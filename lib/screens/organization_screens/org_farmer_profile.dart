@@ -305,7 +305,8 @@ class _OrgFarmerProfileState extends State<OrgFarmerProfile> {
                     Navigator.pushNamed(
                       context,
                       OrgFarmerCompletedOrders.routeName,
-                      // Use widget.farmerData here
+                      arguments: widget.farmerData[
+                          "displayName"], // Pass the displayName as arguments
                     );
                   },
                   icon: const Icon(
