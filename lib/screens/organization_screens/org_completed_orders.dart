@@ -78,7 +78,7 @@ class _OrgFarmerCompletedOrdersState extends State<OrgFarmerCompletedOrders> {
         (total, order) {
           var items = order['items'];
           var deliveryFee = 0.0; // Assuming a fixed delivery fee
-
+//filterSellers
           var filteredItems = items.where(
             (item) => item['productSeller'] == displayName,
           );
