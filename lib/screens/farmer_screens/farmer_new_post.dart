@@ -84,6 +84,7 @@ class _FarmerNewProductPostState extends State<FarmerNewProductPost> {
 
     // Create a map of the data we want to upload
     Map<String, dynamic> data = {
+      'productSeller': 'Farmer',
       "productName": productName,
       "productDetails": productDetails,
       "price": price,

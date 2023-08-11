@@ -79,7 +79,6 @@ class _OrgFarmerAddProductsState extends State<OrgFarmerAddProducts> {
   // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   var farmerId = FirebaseAuth.instance.currentUser!.uid;
-
   Future<void> _addProductToDatabaseWithImage() async {
     // Check if any of the fields are empty
     if (_productNameController.text.isEmpty ||
@@ -98,69 +97,103 @@ class _OrgFarmerAddProductsState extends State<OrgFarmerAddProducts> {
       return;
     }
 
-    // Your code to add the product to the database with the image
-    // ...
+    try {
+      final farmerId = FirebaseAuth.instance.currentUser!.uid;
 
-    // Check if the quantity is 0
-    if (int.tryParse(_quantityController.text) == 0) {
+      // ... (rest of your existing code)
+
+      // Check if the quantity is 0
+      if (int.tryParse(_quantityController.text) == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Quantity should not be 0.'),
+          ),
+        );
+        return;
+      }
+
+      if (_image == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please upload an image.'),
+          ),
+        );
+        return;
+      }
+
+      setState(() {});
+      String productSeller = _productSellerController.text;
+      String productName = _productNameController.text;
+      String productDetails = _textController.text;
+      double price = double.parse(_priceController.text);
+
+      // Create a map of the data we want to upload
+      Map<String, dynamic> data = {
+        "productSeller": productSeller,
+        "productName": productName,
+        "productDetails": productDetails,
+        "price": price,
+        "quantity": int.tryParse(_quantityController.text),
+        "sellerName": await getSellerName(_auth, _firestore),
+        "sellerUserId": farmerId,
+        "datePosted": DateFormat("MMMM, dd, yyyy").format(DateTime.now()),
+        "discount": int.tryParse(_discountController.text) ?? 0,
+        "minItems": int.tryParse(_minItemsController.text) ?? 0,
+      };
+
+      var snapshot = await _storage
+          .ref('AllProducts/${_image!.path.split('/').last}')
+          .putFile(_image!);
+      var downloadUrl = await snapshot.ref.getDownloadURL();
+
+      data['image'] = downloadUrl;
+
+      // Get a reference to the OrgAddFarmers document
+      final orgAddFarmersQuerySnapshot = await _firestore
+          .collection('organizations')
+          .doc(farmerId)
+          .collection('OrgAddFarmers')
+          .where('displayName', isEqualTo: productSeller)
+          .get();
+
+      if (orgAddFarmersQuerySnapshot.docs.isEmpty) {
+        // No matching OrgAddFarmers document found
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Product seller not found.'),
+          ),
+        );
+        return;
+      }
+
+      // You can set the document ID here if needed, otherwise let Firestore generate one
+      final orgAddFarmersDocRef =
+          orgAddFarmersQuerySnapshot.docs.first.reference;
+      // Generate a new document reference in 'products' subcollection of OrgAddFarmers
+      DocumentReference newDocRef =
+          orgAddFarmersDocRef.collection('products').doc();
+
+      // Use the unique ID from the new document reference as the productId
+      String productId = newDocRef.id;
+
+      // Add the product data to the subcollection
+      await newDocRef.set(data);
+
+      // Add the product data to the 'AllProducts' collection with the productId
+      await _firestore.collection('AllProducts').doc(productId).set(data);
+      // Add the product data to the 'FarmerProducts' collection
+      await addProductToDatabase(productId, data, _auth, _firestore);
+      // ... (rest of your existing code)
+
+      setState(() {});
+    } catch (error) {
+      print('Error adding product: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Quantity should not be 0.'),
+          content: Text('An error occurred. Please try again.'),
         ),
       );
-      return;
     }
-
-    if (_image == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please upload an image.'),
-        ),
-      );
-      return;
-    }
-
-    setState(() {});
-    String productSeller = _productSellerController.text;
-    String productName = _productNameController.text;
-    String productDetails = _textController.text;
-    double price = double.parse(_priceController.text);
-
-    // Create a map of the data we want to upload
-
-    Map<String, dynamic> data = {
-      "productSeller": productSeller,
-      "productName": productName,
-      "productDetails": productDetails,
-      "price": price,
-      "quantity": int.tryParse(_quantityController.text),
-      "sellerName": await getSellerName(_auth, _firestore),
-      "sellerUserId": farmerId,
-      "datePosted": DateFormat("MMMM, dd, yyyy").format(DateTime.now()),
-      "discount": int.tryParse(_discountController.text) ?? 0,
-      "minItems": int.tryParse(_minItemsController.text) ?? 0,
-    };
-
-    var snapshot = await _storage
-        .ref('AllProducts/${_image!.path.split('/').last}')
-        .putFile(_image!);
-    var downloadUrl = await snapshot.ref.getDownloadURL();
-
-    data['image'] = downloadUrl;
-
-    // Generate a new document reference in 'products' collection to get a unique ID
-    DocumentReference newDocRef = _firestore.collection('AllProducts').doc();
-
-    // Use the unique ID from the new document reference as the productId
-    String productId = newDocRef.id;
-
-    // Add the product data to the 'AllProducts' collection with the productId
-    await _firestore.collection('AllProducts').doc(productId).set(data);
-
-    // Add the product data to the 'FarmerProducts' collection
-    await addProductToDatabase(productId, data, _auth, _firestore);
-
-    setState(() {});
   }
 
   Future<void> addProductToDatabase(

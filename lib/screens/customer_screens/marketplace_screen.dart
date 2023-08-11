@@ -314,7 +314,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                     Product(
                                       id: productData.id,
                                       productSeller:
-                                          productData['productSeller'],
+                                          productData['productSeller']
+                                              as String?,
                                       productName: productData['productName'],
                                       productDetails:
                                           productData['productDetails'],

@@ -176,6 +176,106 @@ class _OrgMyEditProductsState extends State<OrgMyEditProducts> {
     }
   }
 
+  Future<void> _showProductSaleSummary(String productId) async {
+    var userId = FirebaseAuth.instance.currentUser!.uid;
+    print(userId);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Column(
+          children: [
+            Text(
+              _productNameController.text,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+                color: Colors.black,
+              ),
+            ),
+            Divider(
+              height: 10,
+              color: Colors.green,
+            ),
+          ],
+        ),
+        content: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('organizations')
+              .doc(userId)
+              .collection('customerOrders')
+              .where('orderCompleted', isEqualTo: true)
+              .snapshots(),
+          builder: (ctx, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            }
+            if (snapshot.hasError) {
+              print("Error found");
+              return Text('Error: ${snapshot.error}');
+            }
+            if (!snapshot.hasData) {
+              print("No data found");
+              return Text('No data found.');
+            }
+            if (snapshot.hasData) {
+              final documents = snapshot.data!.docs;
+
+              print(documents);
+
+              double totalSales = 0;
+              int thistotalQuantity = 0;
+              double thisitemPrice = 0;
+              for (final document in documents) {
+                final orderData = document;
+                if (orderData != null) {
+                  final items = orderData['items'] as List<dynamic>?;
+                  if (items != null) {
+                    for (final item in items) {
+                      final itemId = item['productId'] as String?;
+                      if (itemId == productId) {
+                        final itemPrice = item['productPrice'] as double;
+                        thisitemPrice = itemPrice;
+                        final itemQuantity = item['productQuantity'] as int;
+                        thistotalQuantity += itemQuantity;
+                        final itemDiscount =
+                            double.parse(item['discount'] as String);
+
+                        final itemTotal =
+                            itemPrice * itemQuantity * (1 - itemDiscount / 100);
+                        totalSales += itemTotal;
+                      }
+                    }
+                  }
+                }
+              }
+
+              return SizedBox(
+                height: 80,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Item price: ₱$thisitemPrice'),
+                    SizedBox(height: 5),
+                    Text('Total quantity: $thistotalQuantity'),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Divider(),
+                    Text(
+                      'Total sales: ₱$totalSales',
+                      style: TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                  ],
+                ),
+              );
+            }
+            return SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -370,6 +470,23 @@ class _OrgMyEditProductsState extends State<OrgMyEditProducts> {
                 maxLines: null,
                 decoration: const InputDecoration(
                   hintText: 'Enter Product details',
+                ),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              height: 38,
+              child: OutlinedButton(
+                onPressed: () {
+                  _showProductSaleSummary(product.id);
+                },
+                style: OutlinedButton.styleFrom(
+                  primary: Colors.black,
+                  side: const BorderSide(color: Colors.black),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Text('View Product Sale Summary'),
                 ),
               ),
             ),

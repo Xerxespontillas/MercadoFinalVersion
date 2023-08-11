@@ -24,6 +24,12 @@ class _OrgFarmerCompletedOrdersState extends State<OrgFarmerCompletedOrders> {
     super.initState();
     _datePickerController.text =
         DateFormat('MMMM, dd, yyyy').format(_chosenDate);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Call _calculateTotalEarnings here
     _calculateTotalEarnings();
   }
 
@@ -57,6 +63,8 @@ class _OrgFarmerCompletedOrdersState extends State<OrgFarmerCompletedOrders> {
 
   void _calculateTotalEarnings() {
     var userId = FirebaseAuth.instance.currentUser!.uid;
+    final displayName = ModalRoute.of(context)?.settings.arguments as String;
+
     FirebaseFirestore.instance
         .collection('organizations')
         .doc(userId)
@@ -70,8 +78,17 @@ class _OrgFarmerCompletedOrdersState extends State<OrgFarmerCompletedOrders> {
         (total, order) {
           var items = order['items'];
           var deliveryFee = 0.0; // Assuming a fixed delivery fee
+
+          var filteredItems = items.where(
+            (item) => item['productSeller'] == displayName,
+          );
+
+          if (filteredItems.isEmpty) {
+            return total;
+          }
+
           return total +
-              items.fold(
+              filteredItems.fold(
                 0.0,
                 (subTotal, item) {
                   var itemSubtotal =
@@ -98,7 +115,7 @@ class _OrgFarmerCompletedOrdersState extends State<OrgFarmerCompletedOrders> {
   @override
   Widget build(BuildContext context) {
     var userId = FirebaseAuth.instance.currentUser!.uid;
-
+    final displayName = ModalRoute.of(context)?.settings.arguments as String;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -157,6 +174,14 @@ class _OrgFarmerCompletedOrdersState extends State<OrgFarmerCompletedOrders> {
                       return Container();
                     }
 
+                    var filteredItems = items
+                        .where((item) => item['productSeller'] == displayName)
+                        .toList();
+
+                    if (filteredItems.isEmpty) {
+                      return Container();
+                    }
+
                     return Stack(
                       children: [
                         InkWell(
@@ -169,7 +194,7 @@ class _OrgFarmerCompletedOrdersState extends State<OrgFarmerCompletedOrders> {
                                   Padding(
                                     padding: const EdgeInsets.only(
                                       bottom: 20.0,
-                                    ), // Adjust the bottom padding as needed
+                                    ),
                                     child: Align(
                                       alignment: Alignment.topLeft,
                                       child: Text(
@@ -183,38 +208,39 @@ class _OrgFarmerCompletedOrdersState extends State<OrgFarmerCompletedOrders> {
                                   ),
                                   Text('Order ID: ${order.id}'),
                                   Text('Buyer: ${order['buyerName']}'),
-                                  ...items.map<Widget>((item) => ListTile(
-                                        leading: Image.network(
-                                          item['productImage'],
-                                          errorBuilder: (BuildContext context,
-                                              Object exception,
-                                              StackTrace? stackTrace) {
-                                            // Return any widget you want to be displayed instead of the network image like an asset image or an icon
-                                            return const Icon(Icons.error);
-                                          },
-                                        ),
-                                        title: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(item['productName']),
-                                          ],
-                                        ),
-                                        subtitle: Text(
-                                            'Price: ${item['productPrice']}'),
-                                        trailing: Text(
-                                          'Quantity: ${item['productQuantity']}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      )),
+                                  ...filteredItems
+                                      .map<Widget>((item) => ListTile(
+                                            leading: Image.network(
+                                              item['productImage'],
+                                              errorBuilder:
+                                                  (BuildContext context,
+                                                      Object exception,
+                                                      StackTrace? stackTrace) {
+                                                return const Icon(Icons.error);
+                                              },
+                                            ),
+                                            title: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(item['productName']),
+                                              ],
+                                            ),
+                                            subtitle: Text(
+                                                'Price: ${item['productPrice']}'),
+                                            trailing: Text(
+                                              'Quantity: ${item['productQuantity']}',
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          )),
                                   Text(
                                     'Delivery Fee: $deliveryFee',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    'Total Payment: ${items.fold(0.0, (total, item) {
+                                    'Total Payment: ${filteredItems.fold(0.0, (total, item) {
                                           var itemSubtotal =
                                               item['productPrice'] *
                                                   item['productQuantity'];
